@@ -18,20 +18,20 @@ $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
 $principal = New-Object Security.Principal.WindowsPrincipal $identity
 $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
+# Quick shortcut
+function c. { code . }
+function e. { explorer . }
+function m { notepad $args }
+function n { notepad $args }
+function dotnetWatch { dotnet run watch }
+
 # If so and the current host is a command line, then change to red color 
 # as warning to user that they are operating in an elevated context
 # Useful shortcuts for traversing directories
-function cd.. { Set-Location ..\.. }
+function cd.. { Set-Location .. }
 function cd... { Set-Location ..\.. }
 function cd.... { Set-Location ..\..\.. }
-
-# Compute file hashes - useful for checking successful downloads 
-function md5 { Get-FileHash -Algorithm MD5 $args }
-function sha1 { Get-FileHash -Algorithm SHA1 $args }
-function sha256 { Get-FileHash -Algorithm SHA256 $args }
-
-# Quick shortcut to start notepad
-function n { notepad $args }
+function cd..... { Set-Location ..\..\..\.. }
 
 # Drive shortcuts
 function HKLM: { Set-Location HKLM: }
@@ -109,30 +109,6 @@ Function Test-CommandExists {
     Catch { Write-Host "$command does not exist"; RETURN $false }
     Finally { $ErrorActionPreference = $oldPreference }
 } 
-#
-# Aliases
-#
-# If your favorite editor is not here, add an elseif and ensure that the directory it is installed in exists in your $env:Path
-#
-if (Test-CommandExists nvim) {
-    $EDITOR='nvim'
-} elseif (Test-CommandExists pvim) {
-    $EDITOR='pvim'
-} elseif (Test-CommandExists vim) {
-    $EDITOR='vim'
-} elseif (Test-CommandExists vi) {
-    $EDITOR='vi'
-} elseif (Test-CommandExists code) {
-    $EDITOR='code'
-} elseif (Test-CommandExists notepad) {
-    $EDITOR='notepad'
-} elseif (Test-CommandExists notepad++) {
-    $EDITOR='notepad++'
-} elseif (Test-CommandExists sublime_text) {
-    $EDITOR='sublime_text'
-}
-Set-Alias -Name vim -Value $EDITOR
-
 
 function ll { Get-ChildItem -Path $pwd -File }
 function GitAddCommit {
@@ -144,18 +120,7 @@ function GitAddCommitPush {
     git commit -m "wip"
     git push
 }
-function Get-PubIP {
-    (Invoke-WebRequest http://ifconfig.me/ip ).Content
-}
-function uptime {
-    #Windows Powershell only
-	If ($PSVersionTable.PSVersion.Major -eq 5 ) {
-		Get-WmiObject win32_operatingsystem |
-        Select-Object @{EXPRESSION={ $_.ConverttoDateTime($_.lastbootuptime)}} | Format-Table -HideTableHeaders
-	} Else {
-        net statistics workstation | Select-String "since" | foreach-object {$_.ToString().Replace('Statistics since ', '')}
-    }
-}
+
 
 function reload-profile {
     & $profile
@@ -182,18 +147,37 @@ function grep($regex, $dir) {
 function touch($file) {
     "" | Out-File $file -Encoding ASCII
 }
-function df {
-    get-volume
+
+
+# JUNK SCRIPTS -------------------------------------------------------------------------------
+# Compute file hashes - useful for checking successful downloads 
+function md5 { Get-FileHash -Algorithm MD5 $args }
+function sha1 { Get-FileHash -Algorithm SHA1 $args }
+function sha256 { Get-FileHash -Algorithm SHA256 $args }
+function Get-PubIP {
+    (Invoke-WebRequest http://ifconfig.me/ip ).Content
 }
-function sed($file, $find, $replace) {
-    (Get-Content $file).replace("$find", $replace) | Set-Content $file
+function uptime {
+    #Windows Powershell only
+	If ($PSVersionTable.PSVersion.Major -eq 5 ) {
+		Get-WmiObject win32_operatingsystem |
+        Select-Object @{EXPRESSION={ $_.ConverttoDateTime($_.lastbootuptime)}} | Format-Table -HideTableHeaders
+	} Else {
+        net statistics workstation | Select-String "since" | foreach-object {$_.ToString().Replace('Statistics since ', '')}
+    }
 }
+# function df {
+#     get-volume
+# }
+# function sed($file, $find, $replace) {
+#     (Get-Content $file).replace("$find", $replace) | Set-Content $file
+# }
 function which($name) {
     Get-Command $name | Select-Object -ExpandProperty Definition
 }
-function export($name, $value) {
-    set-item -force -path "env:$name" -value $value;
-}
+# function export($name, $value) {
+#     set-item -force -path "env:$name" -value $value;
+# }
 function pkill($name) {
     Get-Process $name -ErrorAction SilentlyContinue | Stop-Process
 }
