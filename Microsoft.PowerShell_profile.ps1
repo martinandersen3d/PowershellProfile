@@ -28,13 +28,43 @@ function clr { Clear-Host }
 function clear { Clear-Host }
 
 
-# Fzf Subdirs 3 leves down, that does not start with a "." dot
-function d { Get-ChildItem -Path . -Directory -Recurse -Depth 3 | Where-Object { -not $_.Name.StartsWith(".") } | Select-Object -ExpandProperty FullName | Select-Object -ExpandProperty FullName | fzf --layout=reverse | Set-Location
+# Fzf Subdirs 3 leves down, that does not start with  ".git" or is "node_modules"
+# function s { Get-ChildItem -Path . -Directory -Recurse -Depth 3 | Where-Object { (-not $_.Name.StartsWith(".git")) -and ($_.Name -ne "node_modules") } | Select-Object -ExpandProperty FullName | fzf --layout=reverse | Set-Location }
+
+# List Dirs in current dir
+function d { Get-ChildItem -Path . -Directory | Select-Object @{Name='SubPath';Expression={Split-Path $_.FullName -Leaf} } }
+
+# List files in current dir
+function f {  Get-ChildItem -Path . -File | Select-Object @{Name='SubPath';Expression={Split-Path $_.FullName -Leaf} } }
+
+# Navigate subdirectories with fzf
+function s {
+    if (!(Get-Command fzf -ErrorAction SilentlyContinue)) {
+        Write-Host "fzf is not installed. Please install it and try again."
+        Exit
+    }
+    
+    $subdirectories = Get-ChildItem -Path . -Directory -Recurse -Depth 3 | Where-Object { (-not $_.Name.StartsWith(".git")) -and ($_.Name -ne "node_modules") } | Select-Object -ExpandProperty FullName 
+
+    # Use fzf to select a subdirectory
+    $selectedSubdirectory = $subdirectories | fzf --layout=reverse
+
+    # Check if a directory is selected
+    if ($selectedSubdirectory) {
+        # Navigate to the selected subdirectory
+        Set-Location $selectedSubdirectory
+    } else {
+        Write-Host "Nothing selected."
+    }
 }
 
 # If so and the current host is a command line, then change to red color 
 # as warning to user that they are operating in an elevated context
 # Useful shortcuts for traversing directories
+
+function .. { Set-Location .. }
+function ... { Set-Location ..\.. }
+function .... { Set-Location ..\..\.. }
 function cd.. { Set-Location .. }
 function cd... { Set-Location ..\.. }
 function cd.... { Set-Location ..\..\.. }
@@ -149,6 +179,37 @@ function touch($file) {
     "" | Out-File $file -Encoding ASCII
 }
 
+# Print info about a file or dir
+function info {
+    param(
+        [string]$Path
+    )
+
+    try {
+        $item = Get-Item $Path -ErrorAction Stop
+        Write-Host "Name: $($item.Name)"
+        Write-Host "Type: $($item.GetType().Name)"
+        Write-Host "Full Path: $($item.FullName)"
+        
+        if ($item -is [System.IO.FileInfo]) {
+            $sizeMB = [math]::Round($item.Length / 1MB, 2)
+            Write-Host "Size: $($sizeMB) MB"
+        }
+        elseif ($item -is [System.IO.DirectoryInfo]) {
+            $totalSize = 0
+            $childItems = Get-ChildItem $Path -Recurse
+            foreach ($child in $childItems) {
+                $totalSize += $child.Length
+            }
+            $totalSizeMB = [math]::Round($totalSize / 1MB, 2)
+            Write-Host "Total Size: $($totalSizeMB) MB"
+            Write-Host "Number of items inside: $($childItems.Count)"
+        }
+    }
+    catch {
+        Write-Host "Error: $_"
+    }
+}
 
 # JUNK SCRIPTS -------------------------------------------------------------------------------
 # Compute file hashes - useful for checking successful downloads 
@@ -206,29 +267,11 @@ $multiLineString = @"
 "@
 Write-Output $multiLineString
 
-# Table -----------------------
 
-# # Define the data for the table
-# $row1 = [PSCustomObject]@{
-#     Column1 = "Value1 Row1"
-#     Column2 = "Value2 Row1"
-# }
-
-# $row2 = [PSCustomObject]@{
-#     Column1 = "Value1 Row2"
-#     Column2 = "Value2 Row2"
-# }
-
-# # Create an array containing both rows
-# $tableRows = @($row1, $row2)
-
-# # Output the table
-# $tableRows | Format-Table -AutoSize
-
-# Array table ------------------------
+# Help Promt when is starts up - Array table ------------------------
 # Define the array
 $array = @(
-    @("S", "Sub Dirs FZF (Depth 3) "),
+    @("S", "Sub-dirs Fzf (Depth 3) "),
     @("D", "List Directorys"),
     @("F", "List Files"),
     @("G", "Go To Favorites FZF"),
