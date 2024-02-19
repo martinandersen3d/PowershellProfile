@@ -24,6 +24,8 @@ function e. { explorer . }
 function m { notepad $args }
 function n { notepad $args }
 function dotnetWatch { dotnet run watch }
+function clr { Clear-Host }
+function clear { Clear-Host }
 
 # If so and the current host is a command line, then change to red color 
 # as warning to user that they are operating in an elevated context
@@ -185,4 +187,4 @@ function pgrep($name) {
     Get-Process $name
 }
 
-clr
+Clear-Host
