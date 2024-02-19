@@ -192,11 +192,16 @@ function pgrep($name) {
 # First Lines when started -----------------------------------------------------------------------------
 
 Clear-Host
+# Print Profile Location
 Write-Host "Profile: $PROFILE"
+
+# Mulitline varaible
 $multiLineString = @"
 
 "@
 Write-Output $multiLineString
+
+# Table -----------------------
 
 # Define the data for the table
 $row1 = [PSCustomObject]@{
@@ -211,6 +216,25 @@ $row2 = [PSCustomObject]@{
 
 # Create an array containing both rows
 $tableRows = @($row1, $row2)
+
+# Output the table
+$tableRows | Format-Table -AutoSize
+
+# Key value Pair table ------------------------
+# Create a hashtable
+$hashTable = @{
+    "Key1" = "Value1"
+    "Key2" = "Value2"
+    "Key3" = "Value3"
+}
+
+# Convert the hashtable to an array of custom objects
+$tableRows = $hashTable.GetEnumerator() | ForEach-Object {
+    [PSCustomObject]@{
+        Key = $_.Key
+        Value = $_.Value
+    }
+}
 
 # Output the table
 $tableRows | Format-Table -AutoSize
