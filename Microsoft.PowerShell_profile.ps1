@@ -229,9 +229,9 @@ Write-Output $multiLineString
 # Define the array
 $array = @(
     @("S", "Sub Dirs FZF (Depth 3) "),
-    @("D", "List Directorys")
-    @("F", "List Files")
-    @("G", "Go To Favorites FZF")
+    @("D", "List Directorys"),
+    @("F", "List Files"),
+    @("G", "Go To Favorites FZF"),
     @("X", "Execute Script")
 )
 
