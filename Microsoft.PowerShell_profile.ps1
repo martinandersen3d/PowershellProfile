@@ -332,9 +332,9 @@ Clear-Host
 Write-Host "Profile: $PROFILE"
 
 # Mulitline varaible
-$multiLineString = @"
-"@
-Write-Output $multiLineString
+# $multiLineString = @"
+# "@
+# Write-Output $multiLineString
 
 
 # Help Promt when is starts up - Array table ------------------------
