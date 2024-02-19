@@ -1,0 +1,1 @@
+explorer ($env:userprofile + "\Documents\Powershell")
