@@ -203,22 +203,22 @@ Write-Output $multiLineString
 
 # Table -----------------------
 
-# Define the data for the table
-$row1 = [PSCustomObject]@{
-    Column1 = "Value1 Row1"
-    Column2 = "Value2 Row1"
-}
+# # Define the data for the table
+# $row1 = [PSCustomObject]@{
+#     Column1 = "Value1 Row1"
+#     Column2 = "Value2 Row1"
+# }
 
-$row2 = [PSCustomObject]@{
-    Column1 = "Value1 Row2"
-    Column2 = "Value2 Row2"
-}
+# $row2 = [PSCustomObject]@{
+#     Column1 = "Value1 Row2"
+#     Column2 = "Value2 Row2"
+# }
 
-# Create an array containing both rows
-$tableRows = @($row1, $row2)
+# # Create an array containing both rows
+# $tableRows = @($row1, $row2)
 
-# Output the table
-$tableRows | Format-Table -AutoSize
+# # Output the table
+# $tableRows | Format-Table -AutoSize
 
 # Key value Pair table ------------------------
 # Create a hashtable
