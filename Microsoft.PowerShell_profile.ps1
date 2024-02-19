@@ -309,7 +309,6 @@ Write-Host "Profile: $PROFILE"
 
 # Mulitline varaible
 $multiLineString = @"
-
 "@
 Write-Output $multiLineString
 
