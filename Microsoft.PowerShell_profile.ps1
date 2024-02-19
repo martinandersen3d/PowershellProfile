@@ -58,7 +58,10 @@ function s {
     }
 }
 
-# Navigate directorys 
+# Navigate directorys:
+# g: Will output a number before each dir
+# g [number]: will jump to directory
+# g [search-string] will jump to first matching directory
 function g {
     $userDir = [System.Environment]::ExpandEnvironmentVariables($env:UserProfile)
     $dirs = @(

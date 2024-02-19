@@ -10,5 +10,8 @@ Execute the following command in an elevated PowerShell window to install the Po
 irm "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1" | iex
 ```
 
+# TODO:
+- Execute scripts
+
 # Inspiration
 https://christitus.com/pretty-powershell/
