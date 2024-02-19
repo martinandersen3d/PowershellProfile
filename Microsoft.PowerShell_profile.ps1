@@ -40,12 +40,6 @@ function HKLM: { Set-Location HKLM: }
 function HKCU: { Set-Location HKCU: }
 function Env: { Set-Location Env: }
 
-# Creates drive shortcut for Work Folders, if current user account is using it
-if (Test-Path "$env:USERPROFILE\Work Folders") {
-    New-PSDrive -Name Work -PSProvider FileSystem -Root "$env:USERPROFILE\Work Folders" -Description "Work Folders"
-    function Work: { Set-Location Work: }
-}
-
 # Set up command prompt and window title. Use UNIX-style convention for identifying 
 # whether user is elevated (root) or not. Window title shows current version of PowerShell
 # and appends [ADMIN] if appropriate for easy taskbar identification
@@ -187,4 +181,37 @@ function pgrep($name) {
     Get-Process $name
 }
 
+
+# # Creates drive shortcut for Work Folders, if current user account is using it
+# if (Test-Path "$env:USERPROFILE\Work Folders") {
+#     New-PSDrive -Name Work -PSProvider FileSystem -Root "$env:USERPROFILE\Work Folders" -Description "Work Folders"
+#     function Work: { Set-Location Work: }
+# }
+
+
+# First Lines when started -----------------------------------------------------------------------------
+
 Clear-Host
+Write-Host "Profile: $PROFILE"
+$multiLineString = @"
+
+"@
+Write-Output $multiLineString
+
+# Define the data for the table
+$row1 = [PSCustomObject]@{
+    Column1 = "Value1 Row1"
+    Column2 = "Value2 Row1"
+}
+
+$row2 = [PSCustomObject]@{
+    Column1 = "Value1 Row2"
+    Column2 = "Value2 Row2"
+}
+
+# Create an array containing both rows
+$tableRows = @($row1, $row2)
+
+# Output the table
+$tableRows | Format-Table -AutoSize
+Write-Host "_______________________________________________________"
