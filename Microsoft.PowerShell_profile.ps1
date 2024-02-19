@@ -357,4 +357,4 @@ $tableRows = $array | ForEach-Object {
 
 # Output the table without headers
 $tableRows | Format-Table -AutoSize -HideTableHeaders
-Write-Host "________"
+# Write-Host "________"
