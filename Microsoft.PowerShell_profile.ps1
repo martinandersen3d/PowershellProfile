@@ -27,6 +27,11 @@ function dotnetWatch { dotnet run watch }
 function clr { Clear-Host }
 function clear { Clear-Host }
 
+
+# Fzf Subdirs 3 leves down, that does not start with a "." dot
+function d { Get-ChildItem -Path . -Directory -Recurse -Depth 3 | Where-Object { -not $_.Name.StartsWith(".") } | Select-Object -ExpandProperty FullName | Select-Object -ExpandProperty FullName | fzf --layout=reverse | Set-Location
+}
+
 # If so and the current host is a command line, then change to red color 
 # as warning to user that they are operating in an elevated context
 # Useful shortcuts for traversing directories
@@ -223,8 +228,11 @@ Write-Output $multiLineString
 # Array table ------------------------
 # Define the array
 $array = @(
-    @("A", "a"),
-    @("B", "B")
+    @("S", "Sub Dirs FZF (Depth 3) "),
+    @("D", "List Directorys")
+    @("F", "List Files")
+    @("G", "Go To Favorites FZF")
+    @("X", "Execute Script")
 )
 
 # Convert the array elements to custom objects
