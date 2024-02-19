@@ -220,22 +220,21 @@ Write-Output $multiLineString
 # # Output the table
 # $tableRows | Format-Table -AutoSize
 
-# Key value Pair table ------------------------
-# Create a hashtable
-$hashTable = @{
-    "Key1" = "Value1"
-    "Key2" = "Value2"
-    "Key3" = "Value3"
-}
+# Array table ------------------------
+# Define the array
+$array = @(
+    @("A", "a"),
+    @("B", "B")
+)
 
-# Convert the hashtable to an array of custom objects
-$tableRows = $hashTable.GetEnumerator() | ForEach-Object {
+# Convert the array elements to custom objects
+$tableRows = $array | ForEach-Object {
     [PSCustomObject]@{
-        Key = $_.Key
-        Value = $_.Value
+        Column1 = $_[0]
+        Column2 = $_[1]
     }
 }
 
-# Output the table
-$tableRows | Format-Table -AutoSize
+# Output the table without headers
+$tableRows | Format-Table -AutoSize -HideTableHeaders
 Write-Host "_______________________________________________________"
