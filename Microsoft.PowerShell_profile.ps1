@@ -83,16 +83,37 @@ function g {
 
     # $args is an automatic variable that contains any method arguments
     if ($args) {
-        # Method parameter is set
+        # Check if the first argument is a number
+        if ($args[0] -is [int]) {
+            # Method parameter is a number
+            $index = $args[0]
 
-        # $args[0] is the first argument (i.e. the index of the directory to navigate to)
-        $param = $args[0]
+            # Check if the index is valid
+            if ($index -ge 1 -and $index -le $dirs.Length) {
+                # Get array item by index
+                $arrayItem = $dirs[$index-1]
 
-        # Get array item by index
-        $arrayItem = $dirs[$param-1]
+                # Use the Set-Location cmdlet (or its alias cd) to navigate to the directory
+                Set-Location $arrayItem
+            } else {
+                Write-Host "Invalid directory index."
+            }
+        } else {
+            # Method parameter is a string (search string)
+            $searchString = $args[0].ToLower()
 
-        # Use the Set-Location cmdlet (or its alias cd) to navigate to the directory
-        Set-Location $arrayItem
+            # Loop through directories
+            foreach ($dir in $dirs) {
+                if ($dir.ToLower() -like "*$searchString*") {
+                    # Use the Set-Location cmdlet (or its alias cd) to navigate to the directory
+                    Set-Location $dir
+                    return
+                }
+            }
+
+            # If no matching directory is found
+            Write-Host "No directory matching '$searchString' found."
+        }
     }
     else {
         # No method parameters send, will print a list of directories
