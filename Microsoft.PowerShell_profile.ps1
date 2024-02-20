@@ -67,6 +67,7 @@ function g {
     $dirs = @(
         "C:\",
         "C:\MartinPrivat",
+        "C:\Github",
         "C:\temp",
         "$userDir",
         "$userDir\source\repos",
@@ -279,6 +280,36 @@ function info {
     catch {
         Write-Host "Error: $_"
     }
+}
+
+# It will get the sizes of the folders in the current directory, and show it as a table
+function Get-FolderSizes {
+    try {
+        $folders = Get-ChildItem -Directory
+        $folderInfo = @()
+        
+        foreach ($folder in $folders) {
+            $folderSize = (Get-ChildItem $folder.FullName -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
+            $folderInfo += [PSCustomObject]@{
+                Name = $folder.Name
+                Size_MB = [math]::Round($folderSize, 2)
+            }
+        }
+
+        $folderInfo | Format-Table -AutoSize
+    }
+    catch {
+        Write-Host "Error: $_"
+    }
+}
+
+# Start firefox with json file file
+function json {
+    param (
+        [string]$FilePath
+    )
+
+    Start-Process -FilePath 'C:\Program Files\Mozilla Firefox\firefox.exe' -ArgumentList '-new-tab', $FilePath
 }
 
 # JUNK SCRIPTS -------------------------------------------------------------------------------
