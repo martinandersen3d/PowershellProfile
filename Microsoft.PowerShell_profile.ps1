@@ -147,6 +147,10 @@ function HKLM: { Set-Location HKLM: }
 function HKCU: { Set-Location HKCU: }
 function Env: { Set-Location Env: }
 
+Set-Alias -Name choco-search -Value 'choco search'
+
+Set-Alias -Name choco-install -Value 'choco install'
+
 # Set up command prompt and window title. Use UNIX-style convention for identifying 
 # whether user is elevated (root) or not. Window title shows current version of PowerShell
 # and appends [ADMIN] if appropriate for easy taskbar identification
