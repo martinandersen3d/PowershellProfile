@@ -121,6 +121,7 @@ function g {
     }
     else {
         # No method parameters send, will print a list of directories
+        Write-Host "Write 'g number or string'"
         Write-Host ""
         for ($i = 0; $i -lt $dirs.Length; $i++) {
             Write-Host "$($i + 1) $($dirs[$i])"
@@ -374,7 +375,7 @@ $array = @(
     @("S", "Sub-dirs Fzf (Depth 3) "),
     @("D", "List Directorys"),
     @("F", "List Files"),
-    @("G", "Go To Favorites FZF"),
+    @("G", "Go To Favorites"),
     @("X", "Execute Script")
 )
 
