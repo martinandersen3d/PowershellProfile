@@ -168,9 +168,9 @@ function choco-install {
 # and appends [ADMIN] if appropriate for easy taskbar identification
 function prompt { 
     if ($isAdmin) {
-        "📁 [" + (Get-Location) + "] # " 
+        "[" + (Get-Location) + "] # " 
     } else {
-        "📁 [" + (Get-Location) + "] $ "
+        "[" + (Get-Location) + "] $ "
     }
 }
 
