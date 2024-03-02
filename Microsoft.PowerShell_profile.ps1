@@ -350,40 +350,40 @@ function Is-Binary {
     return $false
 }
 
-function Search-Content {
-    param (
-        [Parameter(Mandatory=$true, Position=0)]
-        [string]$searchContent
-    )
+# function Search-Content {
+#     param (
+#         [Parameter(Mandatory=$true, Position=0)]
+#         [string]$searchContent
+#     )
 
-    # Define the directory to search in
-    $directory = Get-ChildItem -Directory -Recurse
+#     # Define the directory to search in
+#     $directory = Get-ChildItem -Directory -Recurse
 
-    # Loop through each subdirectory
-    foreach ($dir in $directory) {
-        # Get all files in the current directory
-        $files = Get-ChildItem -Path $dir.FullName -File -Recurse
+#     # Loop through each subdirectory
+#     foreach ($dir in $directory) {
+#         # Get all files in the current directory
+#         $files = Get-ChildItem -Path $dir.FullName -File -Recurse
 
-        # Loop through each file
-        foreach ($file in $files) {
-            try {
-                # Check if the file is binary
-                if (!(Is-Binary -filePath $file.FullName)) {
-                    # Read the content of the file
-                    $content = Get-Content -Path $file.FullName -ErrorAction Stop
+#         # Loop through each file
+#         foreach ($file in $files) {
+#             try {
+#                 # Check if the file is binary
+#                 if (!(Is-Binary -filePath $file.FullName)) {
+#                     # Read the content of the file
+#                     $content = Get-Content -Path $file.FullName -ErrorAction Stop
 
-                    # Check if the content contains the search content
-                    if ($content -match $searchContent) {
-                        Write-Host "Found '$searchContent' in file: $($file.FullName)"
-                    }
-                }
-            }
-            catch {
-                Write-Host "Error reading file: $($file.FullName)"
-            }
-        }
-    }
-}
+#                     # Check if the content contains the search content
+#                     if ($content -match $searchContent) {
+#                         Write-Host "Found '$searchContent' in file: $($file.FullName)"
+#                     }
+#                 }
+#             }
+#             catch {
+#                 Write-Host "Error reading file: $($file.FullName)"
+#             }
+#         }
+#     }
+# }
 
 
 # JUNK SCRIPTS -------------------------------------------------------------------------------
