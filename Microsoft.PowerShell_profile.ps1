@@ -411,6 +411,7 @@ function Search-Content {
     }
 }
 
+# Call the function to list all methods in the PowerShell profile
 function ListCommands {
     try {
         $profilePath = $profile
@@ -436,10 +437,7 @@ function ListCommands {
         Write-Error "An error occurred: $_"
     }
 }
-
-# Call the function to list all methods in the PowerShell profile
-Get-PowerShellProfileMethods
-
+function l { ListCommands }
 
 # JUNK SCRIPTS -------------------------------------------------------------------------------
 # Compute file hashes - useful for checking successful downloads 
@@ -505,7 +503,7 @@ $array = @(
     @("F", "List Files"),
     @("G", "Go To Favorites"),
     @("X", "Execute Script"),
-    @("ListCommands", "Execute Script")
+    @("L", "List Commands")
 )
 
 
