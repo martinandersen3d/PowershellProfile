@@ -13,5 +13,10 @@ irm "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1" |
 # TODO:
 - Execute scripts
 
+# Dependencies
+```
+choco install -y fzf ripgrep 
+```
+
 # Inspiration
 https://christitus.com/pretty-powershell/
