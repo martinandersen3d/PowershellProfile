@@ -385,9 +385,6 @@ function Search-Content {
     }
 }
 
-# Test the function with the search content
-Search-Content "Your search content here"
-
 
 # JUNK SCRIPTS -------------------------------------------------------------------------------
 # Compute file hashes - useful for checking successful downloads 
