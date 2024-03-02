@@ -350,40 +350,65 @@ function Is-Binary {
     return $false
 }
 
-# function Search-Content {
-#     param (
-#         [Parameter(Mandatory=$true, Position=0)]
-#         [string]$searchContent
-#     )
+function Search-Content {
+    param (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$searchContent
+    )
 
-#     # Define the directory to search in
-#     $directory = Get-ChildItem -Directory -Recurse
+    # Step 1: Define an array of exclude strings
+    $excludeDirs = @(
+        "node_modules",
+        "dist",
+        "bin",
+        "obj",
+        "build",
+        "out",
+        "tmp",
+        "temp",
+        "coverage",
+        ".cache",
+        ".vs",
+        ".idea"
+        )
 
-#     # Loop through each subdirectory
-#     foreach ($dir in $directory) {
-#         # Get all files in the current directory
-#         $files = Get-ChildItem -Path $dir.FullName -File -Recurse
+    # Step 1: Get a list of all subdirectories
+    $subdirs = Get-ChildItem -Directory -Recurse
 
-#         # Loop through each file
-#         foreach ($file in $files) {
-#             try {
-#                 # Check if the file is binary
-#                 if (!(Is-Binary -filePath $file.FullName)) {
-#                     # Read the content of the file
-#                     $content = Get-Content -Path $file.FullName -ErrorAction Stop
+    # Step 2: Initialize an array to store the full names
+    $subdirNames = @()
 
-#                     # Check if the content contains the search content
-#                     if ($content -match $searchContent) {
-#                         Write-Host "Found '$searchContent' in file: $($file.FullName)"
-#                     }
-#                 }
-#             }
-#             catch {
-#                 Write-Host "Error reading file: $($file.FullName)"
-#             }
-#         }
-#     }
-# }
+    # Step 3: Iterate over each subdirectory and add its full name to the array
+    foreach ($subdir in $subdirs) {
+        $subdirNames += $subdir.FullName
+    }
+
+
+    # Step 4: Initialize an array to store filtered directory names
+    $subdirsFiltered = @()
+
+    # Step 5: Iterate over each directory name and check if it should be excluded
+    foreach ($dirName in $subdirNames) {
+        $exclude = $false
+        foreach ($excludedir in $excludeDirs) {
+            if ($dirName -like "*\$excludedir*") {
+                $exclude = $true
+                break
+            }
+        }
+        if (-not $exclude) {
+            $subdirsFiltered += $dirName
+        }
+    }
+
+
+    foreach ($path in $subdirsFiltered) {
+        Write-Host ""
+        Write-Host "$path" -ForegroundColor Yellow
+        rg -i --context 1 "$searchContent" "$path"
+    }
+}
+
 
 
 # JUNK SCRIPTS -------------------------------------------------------------------------------
