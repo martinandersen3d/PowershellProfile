@@ -329,6 +329,65 @@ function json {
     Start-Process -FilePath 'C:\Program Files\Mozilla Firefox\firefox.exe' -ArgumentList '-new-tab', $FilePath
 }
 
+function Is-Binary {
+    param (
+        [string]$filePath
+    )
+
+    # Read a portion of the file
+    $byteArray = [System.IO.File]::ReadAllBytes($filePath)
+    
+    # Loop through each byte
+    foreach ($byte in $byteArray) {
+        # If any byte is outside the range of printable ASCII characters (0x20 - 0x7E), it's binary
+        if ($byte -lt 0x20 -or $byte -gt 0x7E) {
+            return $true
+        }
+    }
+    
+    # If all bytes are within the printable ASCII range, it's likely a text file
+    return $false
+}
+
+function Search-Content {
+    param (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$searchContent
+    )
+
+    # Define the directory to search in
+    $directory = Get-ChildItem -Directory -Recurse
+
+    # Loop through each subdirectory
+    foreach ($dir in $directory) {
+        # Get all files in the current directory
+        $files = Get-ChildItem -Path $dir.FullName -File -Recurse
+
+        # Loop through each file
+        foreach ($file in $files) {
+            try {
+                # Check if the file is binary
+                if (!(Is-Binary -filePath $file.FullName)) {
+                    # Read the content of the file
+                    $content = Get-Content -Path $file.FullName -ErrorAction Stop
+
+                    # Check if the content contains the search content
+                    if ($content -match $searchContent) {
+                        Write-Host "Found '$searchContent' in file: $($file.FullName)"
+                    }
+                }
+            }
+            catch {
+                Write-Host "Error reading file: $($file.FullName)"
+            }
+        }
+    }
+}
+
+# Test the function with the search content
+Search-Content "Your search content here"
+
+
 # JUNK SCRIPTS -------------------------------------------------------------------------------
 # Compute file hashes - useful for checking successful downloads 
 function md5 { Get-FileHash -Algorithm MD5 $args }
