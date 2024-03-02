@@ -82,7 +82,8 @@ function g {
         "$userDir\Documents\WindowsPowerShell"
         "C:\Program Files",
         "C:\Program Files (x86)",
-        "C:\ProgramData"
+        "C:\ProgramData",
+        "C:\ProgramData\chocolatey\lib"
     )
 
     # $args is an automatic variable that contains any method arguments
