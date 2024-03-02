@@ -350,6 +350,8 @@ function Is-Binary {
     return $false
 }
 
+# Searches all the content of files in the current diretory and subpaths for a given string
+# example usage: Search-Content "TODO"
 function Search-Content {
     param (
         [Parameter(Mandatory=$true, Position=0)]
@@ -409,6 +411,34 @@ function Search-Content {
     }
 }
 
+function ListCommands {
+    try {
+        $profilePath = $profile
+        if (-not (Test-Path $profilePath)) {
+            Write-Error "PowerShell profile not found."
+            return
+        }
+        
+        $profileContent = Get-Content $profilePath -Raw
+        $profileMethods = [regex]::Matches($profileContent, 'function\s+([^({\s]+)')
+        
+        if ($profileMethods.Count -eq 0) {
+            Write-Output "No custom methods found in the PowerShell profile."
+            return
+        }
+        
+        Write-Output "Methods in PowerShell profile:"
+        $profileMethods | ForEach-Object {
+            $_.Groups[1].Value
+        }
+    }
+    catch {
+        Write-Error "An error occurred: $_"
+    }
+}
+
+# Call the function to list all methods in the PowerShell profile
+Get-PowerShellProfileMethods
 
 
 # JUNK SCRIPTS -------------------------------------------------------------------------------
@@ -474,8 +504,10 @@ $array = @(
     @("D", "List Directorys"),
     @("F", "List Files"),
     @("G", "Go To Favorites"),
-    @("X", "Execute Script")
+    @("X", "Execute Script"),
+    @("ListCommands", "Execute Script")
 )
+
 
 # Convert the array elements to custom objects
 $tableRows = $array | ForEach-Object {
