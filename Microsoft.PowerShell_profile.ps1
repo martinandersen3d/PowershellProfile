@@ -28,8 +28,16 @@ function clr { Clear-Host }
 function clear { Clear-Host }
 
 # Update scripts from the git repo
-# function u { irm "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1" | iex }
-
+function u {
+    $url = "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1"
+    try {
+        $scriptContent = Invoke-RestMethod -Uri $url
+        Invoke-Expression -Command $scriptContent
+    }
+    catch {
+        Write-Error "An error occurred while executing the script from URL: $_"
+    }
+}
 
 # Fzf Subdirs 3 leves down, that does not start with  ".git" or is "node_modules"
 # function s { Get-ChildItem -Path . -Directory -Recurse -Depth 3 | Where-Object { (-not $_.Name.StartsWith(".git")) -and ($_.Name -ne "node_modules") } | Select-Object -ExpandProperty FullName | fzf --layout=reverse | Set-Location }
