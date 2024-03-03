@@ -175,6 +175,18 @@ function choco-install {
     choco install $PackageName
 }
 
+# takes multiple names as argument
+function Choco-Info {
+    param (
+        [string[]]$packages
+    )
+
+    foreach ($package in $packages) {
+        Write-Host "Looking up information for package: $package"
+        choco info $package
+    }
+}
+
 # Set up command prompt and window title. Use UNIX-style convention for identifying 
 # whether user is elevated (root) or not. Window title shows current version of PowerShell
 # and appends [ADMIN] if appropriate for easy taskbar identification
