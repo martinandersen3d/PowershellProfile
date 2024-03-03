@@ -28,7 +28,7 @@ function clr { Clear-Host }
 function clear { Clear-Host }
 
 # Update scripts from the git repo
-function u { Invoke-RestMethod "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1" | Invoke-Expression }
+function u { irm "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1" | iex }
 
 
 # Fzf Subdirs 3 leves down, that does not start with  ".git" or is "node_modules"
