@@ -27,6 +27,9 @@ function dotnetWatch { dotnet run watch }
 function clr { Clear-Host }
 function clear { Clear-Host }
 
+# Update scripts from the git repo
+function u { Invoke-RestMethod "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1" | Invoke-RestMethod }
+
 
 # Fzf Subdirs 3 leves down, that does not start with  ".git" or is "node_modules"
 # function s { Get-ChildItem -Path . -Directory -Recurse -Depth 3 | Where-Object { (-not $_.Name.StartsWith(".git")) -and ($_.Name -ne "node_modules") } | Select-Object -ExpandProperty FullName | fzf --layout=reverse | Set-Location }
@@ -503,7 +506,8 @@ $array = @(
     @("F", "List Files"),
     @("G", "Go To Favorites"),
     @("X", "Execute Script"),
-    @("L", "List Commands")
+    @("L", "List Commands"),
+    @("U", "Update Scripts")
 )
 
 
