@@ -514,8 +514,8 @@ $array = @(
     @("F", "List Files"),
     @("G", "Go To Favorites"),
     @("X", "Execute Script"),
-    @("L", "List Commands")
-    # @("U", "Update Scripts")
+    @("L", "List Commands"),
+    @("U", "Update Scripts")
 )
 
 
