@@ -176,14 +176,15 @@ function choco-install {
 }
 
 # takes multiple names as argument
-function choco-info {
-    param (
+function ChocoInfo {
+    param(
         [string[]]$packages
     )
 
     foreach ($package in $packages) {
-        Write-Host "Looking up information for package: $package"
+        Write-Host "=== $package ======================================================="
         choco info $package
+        Write-Host ""
     }
 }
 
