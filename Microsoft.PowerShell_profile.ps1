@@ -176,7 +176,7 @@ function choco-install {
 }
 
 # takes multiple names as argument
-function Choco-Info {
+function choco-info {
     param (
         [string[]]$packages
     )
