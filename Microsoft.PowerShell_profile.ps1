@@ -73,6 +73,7 @@ function s {
 # g: Will output a number before each dir
 # g [number]: will jump to directory
 # g [search-string] will jump to first matching directory
+# g [directory] will jump to directory in current directory
 function g {
     $userDir = [System.Environment]::ExpandEnvironmentVariables($env:UserProfile)
     $dirs = @(
@@ -101,6 +102,7 @@ function g {
     if ($args) {
         # Check if the first argument is a number
         if ($args[0] -is [int]) {
+            # g [number]: will jump to directory
             # Method parameter is a number
             $index = $args[0]
 
@@ -115,6 +117,7 @@ function g {
                 Write-Host "Invalid directory index."
             }
         } else {
+            # g [search-string] will jump to first matching directory
             # Method parameter is a string (search string)
             $searchString = $args[0].ToLower()
 
@@ -127,7 +130,7 @@ function g {
                 }
             }
 
-            #  Jump to a path in the current directory
+            # g [directory] will jump to directory in current directory
             # Example: In you user folder, you write: g .\Documents, then it will cd into that
             $path = $args[0]
             try {
