@@ -134,7 +134,7 @@ function g {
                 $absolutePath = Resolve-Path -Path $path
                 if (Test-Path -Path $absolutePath -PathType Container) {
                     Set-Location -Path $absolutePath
-                    
+                    return
                     # Write-Host "Changed directory to: $absolutePath"
                 } else {
                     Write-Host "Directory does not exist: $absolutePath"
