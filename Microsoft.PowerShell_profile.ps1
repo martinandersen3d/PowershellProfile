@@ -129,7 +129,7 @@ function g {
 
             #  Jump to a path in the current directory
             # Example: In you user folder, you write: g .\Documents, then it will cd into that
-            $path = $args[0].ToLower()
+            $path = $args[0]
             try {
                 $absolutePath = Resolve-Path -Path $path
                 if (Test-Path -Path $absolutePath -PathType Container) {
