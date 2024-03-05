@@ -127,6 +127,22 @@ function g {
                 }
             }
 
+            #  Jump to a path in the current directory
+            # Example: In you user folder, you write: g .\Documents, then it will cd into that
+            $path = $args[0].ToLower()
+            try {
+                $absolutePath = Resolve-Path -Path $path
+                if (Test-Path -Path $absolutePath -PathType Container) {
+                    Set-Location -Path $absolutePath
+                    
+                    # Write-Host "Changed directory to: $absolutePath"
+                } else {
+                    Write-Host "Directory does not exist: $absolutePath"
+                }
+            } catch {
+                Write-Host "An error occurred: $_.Exception.Message"
+            }
+
             # If no matching directory is found
             Write-Host "No directory matching '$searchString' found."
         }
