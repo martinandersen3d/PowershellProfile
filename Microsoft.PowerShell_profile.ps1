@@ -135,6 +135,7 @@ function g {
                 if (Test-Path -Path $absolutePath -PathType Container) {
                     Set-Location -Path $absolutePath
                     return
+                    Exit
                     # Write-Host "Changed directory to: $absolutePath"
                 } else {
                     Write-Host "Directory does not exist: $absolutePath"
