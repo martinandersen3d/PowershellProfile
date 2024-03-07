@@ -196,7 +196,7 @@ function choco-install {
 }
 
 # takes multiple names as argument
-function ChocoInfo {
+function choco-info {
     param(
         [string[]]$packages
     )
@@ -284,7 +284,11 @@ function GitAddCommitPush {
     git commit -m "wip"
     git push
 }
-
+function GitAutoCommit {
+    # Get the firectory name of the current powershell profile
+    $profileBasePath = Split-Path $PROFILE -Parent
+    & "$profileBasePath\UserScripts\GitAutoCommit.ps1"
+}
 
 function reload-profile {
     & $profile
