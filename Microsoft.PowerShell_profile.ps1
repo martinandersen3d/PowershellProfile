@@ -181,8 +181,13 @@ function t {
         # Extract filename
         $fileName = Split-Path -Path $selectedFile -Leaf
         # Navigate to the selected subdirectory
-        $newFileName = Read-Host -Prompt "TEMPLATE`n`nSelected: $fileName`nDir: $currentDir`n`n`nEnter New Filename"
+        $newFileName = Read-Host -Prompt "TEMPLATE`n`nSelected: $fileName`nDir: $currentDir`n`n`nEnter New Filename (Or Enter for the same name)"
         
+        # If no filename is given, then set it to the selected
+        if ($newFileName -eq "") {
+            $newFileName = $fileName 
+        }
+
         # Check if the file already exists
         if (Test-Path -Path ".\$newFileName") {
             # Prompt user for confirmation
