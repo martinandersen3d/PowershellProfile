@@ -181,7 +181,7 @@ function t {
         # Extract filename
         $fileName = Split-Path -Path $selectedFile -Leaf
         # Navigate to the selected subdirectory
-        $newFileName = Read-Host -Prompt "TEMPLATE`n`nSelected: $fileName`nDir: $currentDir`n`n`nEnter New Filename (Or Enter for the same name)"
+        $newFileName = Read-Host -Prompt "TEMPLATE`n`nSelected: $fileName`nDir: $currentDir`n`n(Press Enter to keep the same name)`n`n`nEnter New Filename"
         
         # If no filename is given, then set it to the selected
         if ($newFileName -eq "") {
