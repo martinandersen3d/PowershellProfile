@@ -178,8 +178,10 @@ function t {
     $currentDir = $PWD.Path
     # Check if a file is selected
     if ($selectedFile) {
+        # Extract filename
+        $fileName = Split-Path -Path $selectedFile -Leaf
         # Navigate to the selected subdirectory
-        $newFileName = Read-Host -Prompt "TEMPLATE`n`nSelected: $selectedFile`nDir: $currentDir`n`n`nEnter New Filename"
+        $newFileName = Read-Host -Prompt "TEMPLATE`n`nSelected: $fileName`nDir: $currentDir`n`n`nEnter New Filename"
         
         # Check if the file already exists
         if (Test-Path -Path ".\$newFileName") {
