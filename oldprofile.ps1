@@ -73,7 +73,6 @@ function s {
 # g: Will output a number before each dir
 # g [number]: will jump to directory
 # g [search-string] will jump to first matching directory
-# g [directory] will jump to directory in current directory
 function g {
     $userDir = [System.Environment]::ExpandEnvironmentVariables($env:UserProfile)
     $dirs = @(
@@ -102,7 +101,6 @@ function g {
     if ($args) {
         # Check if the first argument is a number
         if ($args[0] -is [int]) {
-            # g [number]: will jump to directory
             # Method parameter is a number
             $index = $args[0]
 
@@ -117,7 +115,6 @@ function g {
                 Write-Host "Invalid directory index."
             }
         } else {
-            # g [search-string] will jump to first matching directory
             # Method parameter is a string (search string)
             $searchString = $args[0].ToLower()
 
@@ -130,7 +127,7 @@ function g {
                 }
             }
 
-            # g [directory] will jump to directory in current directory
+            #  Jump to a path in the current directory
             # Example: In you user folder, you write: g .\Documents, then it will cd into that
             $path = $args[0]
             try {
@@ -138,7 +135,6 @@ function g {
                 if (Test-Path -Path $absolutePath -PathType Container) {
                     Set-Location -Path $absolutePath
                     return
-                    Exit
                     # Write-Host "Changed directory to: $absolutePath"
                 } else {
                     Write-Host "Directory does not exist: $absolutePath"
@@ -159,53 +155,6 @@ function g {
             Write-Host "$($i + 1) $($dirs[$i])"
         }
         Write-Host ""
-    }
-}
-
-# Generate or copy a file from ~/Templates to the current directory
-# 1. Select the file
-# 2. Rename to new filename
-function t {
-    if (!(Get-Command fzf -ErrorAction SilentlyContinue)) {
-        Write-Host "fzf is not installed. Please install it and try again."
-        Exit
-    }
-    
-    $files = Get-ChildItem -Path "~/Templates" -Recurse -File | Select-Object -ExpandProperty FullName
-
-    # Use fzf to select a file
-    $selectedFile = $files | fzf --layout=reverse --header="TEMPALTE: Copy File to Current Dir" --preview 'bat --color=always  {}'
-    $currentDir = $PWD.Path
-    # Check if a file is selected
-    if ($selectedFile) {
-        # Navigate to the selected subdirectory
-        $newFileName = Read-Host -Prompt "TEMPLATE`n`nSelected: $selectedFile`nDir: $currentDir`n``n`nEnter New Filename"
-        
-        # Check if the file already exists
-        if (Test-Path -Path ".\$newFileName") {
-            # Prompt user for confirmation
-            $confirmation = Read-Host "File '$newFileName' already exists. Do you want to overwrite it? (Y/N)"
-            
-            # If user confirms, copy the file with force
-            if ($confirmation -eq "Y" -or $confirmation -eq "y") {
-                Copy-Item -Path "$selectedFile" -Destination ".\$newFileName" -Force -Confirm:$false
-                
-                Write-Host "`nCreated: $currentDir\$newFileName`n"
-            }
-            else {
-                Write-Host "Operation aborted by user."
-            }
-        }
-        else {
-            # If file does not exist, simply copy it
-            Copy-Item -Path "$selectedFile" -Destination ".\$newFileName"
-            $currentDir = $PWD.Path
-            Write-Host "`nCreated: $currentDir\$newFileName`n"
-        }
-
-
-    } else {
-        Write-Host "Nothing selected."
     }
 }
 
@@ -243,7 +192,7 @@ function choco-install {
 }
 
 # takes multiple names as argument
-function choco-info {
+function ChocoInfo {
     param(
         [string[]]$packages
     )
@@ -336,6 +285,7 @@ function GitAutoCommit {
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\GitAutoCommit.ps1"
 }
+
 
 function reload-profile {
     & $profile
@@ -599,7 +549,6 @@ $array = @(
     @("G", "Go To Favorites"),
     @("X", "Execute Script"),
     @("L", "List Commands"),
-    @("T", "Generate file from Template"),
     @("U", "Update Scripts")
 )
 
