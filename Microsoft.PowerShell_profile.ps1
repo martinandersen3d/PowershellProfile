@@ -622,3 +622,15 @@ $tableRows = $array | ForEach-Object {
 # Output the table without headers
 $tableRows | Format-Table -AutoSize -HideTableHeaders
 # Write-Host "________"
+
+
+# Prompt Style  -----------------------------------------------------------------------------
+
+
+function prompt {
+    # $rocket = [char]::ConvertFromUtf32(0x1F680)  # This is the Unicode for the "rocket" emoji
+    $closedFolder = [char]::ConvertFromUtf32(0x1F4C1)  # This is the Unicode for the "closed folder" emoji
+    $promptString = "$closedFolder $($PWD.Path) :"
+    Write-Host -NoNewline $promptString -ForegroundColor Yellow
+    return " "
+}
