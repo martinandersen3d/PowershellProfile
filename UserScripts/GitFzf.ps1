@@ -1,3 +1,4 @@
+# Define the array of Git commands
 $gitCommands = @(
     "git clone",
     "git init",
@@ -11,7 +12,11 @@ $gitCommands = @(
     "git status"
 )
 
-$gitCommandsAsString = $gitCommands -join "`n"
-$selectedCommand = $gitCommandsAsString | Out-String | Out-GridView -PassThru
+# Convert the array into a single string with newline characters
+$commandsAsString = $gitCommands -join "`n"
 
+# Use fzf to interactively select a command
+$selectedCommand = & fzf.exe --reverse --preview-window=down:70% --preview='echo {}' <<< $commandsAsString
+
+# Output the selected command
 Write-Output $selectedCommand
