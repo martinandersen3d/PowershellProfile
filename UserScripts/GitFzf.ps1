@@ -1,22 +1,24 @@
 # Define the array of Git commands
 $gitCommands = @(
-    "git clone",
-    "git init",
-    "git add",
-    "git commit",
-    "git push",
-    "git pull",
+    "git add .",
+    "git branch --list",
+    "git branch --remotes",
+    "git branch --show-current",
     "git checkout",
-    "git branch",
-    "git merge",
+    "git checkout -b dev # Create Branch",
+    "git checkout -b new_branch_name",
+    "git clone",
+    "git commit --all # Commit All",
+    "git commit --all ; git push # Commit All, without a Commit Message, and Push",
+    "git init",
+    # "git merge # Select a list to merge from",
+    "git pull",
+    "git push",
     "git status"
 )
 
-# Convert the array into a single string with newline characters
-$commandsAsString = $gitCommands -join "`n"
-
-# Use fzf to interactively select a command
-$selectedCommand = & fzf.exe --reverse --preview-window=down:70% --preview='echo {}' <<< $commandsAsString
+# Pipe the array of commands to fzf for interactive selection
+$selectedCommand = $gitCommands | Out-String | fzf.exe
 
 # Output the selected command
 Write-Output $selectedCommand
