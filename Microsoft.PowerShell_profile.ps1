@@ -164,6 +164,10 @@ function g {
 
 # Preview Files in Dir With FZF
 function p {
+    if (!(Get-Command fzf -ErrorAction SilentlyContinue)) {
+        Write-Host "fzf is not installed. Please install it and try again."
+        Exit
+    }
     fzf --preview "bat --theme=Nord --color=always {}" --layout=reverse
 }
 
