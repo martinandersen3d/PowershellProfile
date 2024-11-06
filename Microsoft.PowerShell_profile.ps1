@@ -162,6 +162,11 @@ function g {
     }
 }
 
+# Preview Files in Dir With FZF
+function p {
+    fzf --preview "bat --theme=Nord --color=always {}" --layout=reverse
+}
+
 # Generate or copy a file from ~/Templates to the current directory
 # 1. Select the file
 # 2. Rename to new filename
@@ -603,13 +608,13 @@ $array = @(
     @("S", "Sub-dirs Fzf (Depth 3) "),
     @("D", "List Directorys"),
     @("F", "List Files"),
+    @("P", "Preview Files in Dir With FZF"),
     @("G", "Go To Favorites"),
     @("X", "Execute Script"),
     @("L", "List Commands"),
     @("T", "Generate file from Template"),
     @("U", "Update Scripts")
 )
-
 
 # Convert the array elements to custom objects
 $tableRows = $array | ForEach-Object {
