@@ -342,17 +342,25 @@ function GitAddCommit {
     git add .
     git commit -m "wip"
 }
-function GitAddCommitPush {
+function GitCommitPush {
     git add .
     git commit -m "wip"
     git push
 }
-function GitAutoCommit {
+function GitCommitAutoMessage {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\GitAutoCommit.ps1"
 }
 
+function GitCommitPreviewFzf {
+    git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --preview "git diff HEAD -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
+}
+function GitCommitMessagePreview {
+    # Get the firectory name of the current powershell profile
+    $profileBasePath = Split-Path $PROFILE -Parent
+    & "$profileBasePath\UserScripts\GitCommitMessagePreview.ps1"
+}
 function reload-profile {
     & $profile
 }
