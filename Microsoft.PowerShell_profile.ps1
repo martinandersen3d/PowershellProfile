@@ -338,15 +338,16 @@ Function Test-CommandExists {
 } 
 
 function ll { Get-ChildItem -Path $pwd -File }
-function GitAddCommit {
-    git add .
-    git commit -m "wip"
-}
-function GitCommitPush {
-    git add .
-    git commit -m "wip"
-    git push
-}
+
+# function GitCommit {
+#     git add .
+#     git commit -m "wip"
+# }
+# function GitCommitPush {
+#     git add .
+#     git commit -m "wip"
+#     git push
+# }
 function GitCommitAutoMessage {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
@@ -354,12 +355,15 @@ function GitCommitAutoMessage {
 }
 
 function GitCommitPreviewFzf {
-    git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --preview "git diff HEAD -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
+    git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --header "[COMMIT DIFF]: CURRENT vs. HEAD" --header-first --preview "git diff HEAD -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
 }
 function GitCommitMessagePreview {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\GitCommitMessagePreview.ps1"
+}
+function GitPullRequestPreviewFzf {
+    git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
 }
 function reload-profile {
     & $profile
