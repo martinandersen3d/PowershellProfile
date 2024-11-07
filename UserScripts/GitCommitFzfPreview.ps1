@@ -1,0 +1,1 @@
+git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --preview "git diff HEAD -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
