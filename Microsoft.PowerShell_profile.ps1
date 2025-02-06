@@ -45,6 +45,12 @@ function u {
 # List Dirs in current dir
 function d { Get-ChildItem -Path . -Directory | Select-Object @{Name='SubPath';Expression={Split-Path $_.FullName -Leaf} } }
 
+# List Dirs in current dir as table with columns
+function dd {
+    Get-ChildItem | Format-Wide -Column 3
+  }
+ 
+
 # List files in current dir
 function f {  Get-ChildItem -Path . -File | Select-Object @{Name='SubPath';Expression={Split-Path $_.FullName -Leaf} } }
 
@@ -133,18 +139,41 @@ function g {
             # g [directory] will jump to directory in current directory
             # Example: In you user folder, you write: g .\Documents, then it will cd into that
             $path = $args[0]
-            try {
-                $absolutePath = Resolve-Path -Path $path
-                if (Test-Path -Path $absolutePath -PathType Container) {
-                    Set-Location -Path $absolutePath
-                    return
-                    Exit
-                    # Write-Host "Changed directory to: $absolutePath"
-                } else {
-                    Write-Host "Directory does not exist: $absolutePath"
+
+            # Check if the path exists *before* trying to resolve it
+            if (Test-Path -Path $path) {
+                try {
+                    $absolutePath = Resolve-Path -Path $path
+                    if (Test-Path -Path $absolutePath -PathType Container) { # Double-check if it's a directory
+                        Set-Location -Path $absolutePath
+                        return  # Return from the script/function
+                    } else {
+                        Write-Host "Path exists, but is not a directory: $absolutePath"
+                    }
+                } catch {
+                    Write-Host "An error occurred during resolution: $_.Exception.Message"
                 }
-            } catch {
-                Write-Host "An error occurred: $_.Exception.Message"
+            }
+            
+            # g [directory-partial-match] will jump to directory in current directory
+            # Example: In you user folder, you write: "g one", then it will cd into "C:\Users\m\OneDrive". case-incensive
+
+            # If the initial Test-Path failed OR Resolve-Path failed, check for partial matches
+            $partialMatches = Get-ChildItem -Directory -Path . | Where-Object {$_.Name -match "(?i)^$path"}
+            
+            if ($partialMatches) {
+                # Write-Host "Possible matches in the current directory:" # Uncomment for detailed output
+                # foreach ($match in $partialMatches) {
+                #     Write-Host "  $match"
+                # }
+            
+                if ($partialMatches.Count -gt 0) {
+                    Set-Location -Path $partialMatches[0].FullName
+                    Write-Host "Navigated to: $($partialMatches[0].FullName)"
+                    return # Return after setting location to partial match
+                }
+            } else {
+                Write-Host "No full or partial matches found for '$path' in the current directory."
             }
 
             # If no matching directory is found
@@ -621,14 +650,15 @@ Write-Host "Profile: $PROFILE"
 # Help Promt when is starts up - Array table ------------------------
 # Define the array
 $array = @(
-    @("S", "Sub-dirs Fzf (Depth 3) "),
     @("D", "List Directorys"),
+    @("DD", "List Directorys as table"),
     @("F", "List Files"),
-    @("P", "Preview Files in Dir With FZF"),
     @("G", "Go To Favorites"),
-    @("X", "Execute Script"),
     @("L", "List Commands"),
+    @("P", "Preview Files in Dir With FZF"),
+    @("S", "Sub-dirs Fzf (Depth 3) "),
     @("T", "Generate file from Template"),
+    @("X", "Execute Script"),
     @("U", "Update Scripts")
 )
 
