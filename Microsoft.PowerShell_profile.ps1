@@ -89,6 +89,8 @@ function g {
         "C:\temp",
         "$userDir",
         "$userDir\source\repos",
+        "$userDir\source\repos\EmplyInddateringV2",
+        "$userDir\source\repos\Esas-Dmjx-Metadir-Inddatering",
         "$userDir\Documents",
         "$userDir\Downloads",
         "$userDir\Desktop",
