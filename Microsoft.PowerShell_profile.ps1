@@ -687,3 +687,31 @@ function prompt {
     Write-Host -NoNewline $promptString -ForegroundColor Yellow
     return " "
 }
+
+
+# Autocomplete with TAB Key -----------------------------------------------------------------
+# Shows navigable menu of all options when hitting Tab
+# https://techcommunity.microsoft.com/blog/itopstalkblog/autocomplete-in-powershell/2604524
+Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+
+# Dotnet command Autocomplete with TAB Key -----------------------------------------------------------------
+# https://learn.microsoft.com/en-us/dotnet/core/tools/enable-tab-autocomplete?WT.mc_id=modinfra-35653-salean#powershell
+# PowerShell parameter completion shim for the dotnet CLI
+Register-ArgumentCompleter -Native -CommandName dotnet -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
+        dotnet complete --position $cursorPosition "$commandAst" | ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+        }
+}
+
+# WinGet command Autocomplete with TAB Key -----------------------------------------------------------------
+https://github.com/microsoft/winget-cli/blob/1fbfacc13950de8a17875d40a8beb99fc6ada6c2/doc/Completion.md
+Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
+        [Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
+        $Local:word = $wordToComplete.Replace('"', '""')
+        $Local:ast = $commandAst.ToString().Replace('"', '""')
+        winget complete --word="$Local:word" --commandline "$Local:ast" --position $cursorPosition | ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+        }
+}
