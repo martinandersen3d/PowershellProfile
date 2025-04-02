@@ -14,6 +14,7 @@ if (!(Test-Path -Path $PROFILE -PathType Leaf)) {
         }
 
         Invoke-RestMethod https://github.com/martinandersen3d/PowershellProfile/raw/main/Microsoft.PowerShell_profile.ps1 -OutFile $PROFILE
+        Invoke-RestMethod https://github.com/martinandersen3d/PowershellProfile/raw/main/git-cheatsheet.md -OutFile $PROFILE
         Write-Host "The profile @ [$PROFILE] has been created."
     }
     catch {
@@ -24,6 +25,7 @@ if (!(Test-Path -Path $PROFILE -PathType Leaf)) {
  else {
 		 Get-Item -Path $PROFILE | Move-Item -Destination oldprofile.ps1 -Force
 		 Invoke-RestMethod https://github.com/martinandersen3d/PowershellProfile/raw/main/Microsoft.PowerShell_profile.ps1 -OutFile $PROFILE
+         Invoke-RestMethod https://github.com/martinandersen3d/PowershellProfile/raw/main/git-cheatsheet.md -OutFile $PROFILE
 		 Write-Host "The profile @ [$PROFILE] has been created and old profile removed."
  }
 & $profile

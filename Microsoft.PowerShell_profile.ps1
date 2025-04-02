@@ -379,6 +379,16 @@ function ll { Get-ChildItem -Path $pwd -File }
 #     git commit -m "wip"
 #     git push
 # }
+
+function GitCheatsheet {
+    $filePath = "$HOME\Documents\WindowsPowerShell\git-cheatsheet.md"
+    if (Test-Path $filePath) {
+        bat $filePath
+    } else {
+        Write-Host "Cheatsheet not found: $filePath" -ForegroundColor Red
+    }
+}
+
 function GitCommitAutoMessage {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
@@ -395,12 +405,6 @@ function GitCommitMessagePreview {
 }
 function GitPullRequestPreviewFzf {
     git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
-}
-function g-text1 {
-    Write-Output("Text1")
-}
-function g-text2 {
-    Write-Output("Text2")
 }
 
 function reload-profile {
@@ -668,7 +672,8 @@ $array = @(
     @("S", "Sub-dirs Fzf (Depth 3) "),
     @("T", "Generate file from Template"),
     @("X", "Execute Script"),
-    @("U", "Update Scripts")
+    @("U", "Update Scripts"),
+    @("GitCheatsheet", "GitCheatsheet")
 )
 
 # Convert the array elements to custom objects
