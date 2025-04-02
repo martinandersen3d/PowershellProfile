@@ -383,7 +383,7 @@ function ll { Get-ChildItem -Path $pwd -File }
 function GitCheatsheet {
     $filePath = "$HOME\Documents\WindowsPowerShell\git-cheatsheet.md"
     if (Test-Path $filePath) {
-        bat $filePath
+        bat --paging=never $filePath
     } else {
         Write-Host "Cheatsheet not found: $filePath" -ForegroundColor Red
     }
