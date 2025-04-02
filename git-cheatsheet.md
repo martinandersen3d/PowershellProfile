@@ -41,21 +41,21 @@ Use command `git fetch` before the `git branch`
 |--------------------------------------------|---------------------------------------------------------------------|
 | git diff                                   | Shows changes in the working directory (unstaged).                  |
 | git diff branch1..branch2 -- myFilename.cs | Compares changes in a specific file between two branches.           |
-| git diff --staged                          | Shows changes that are staged but not committed.                    |
 | git diff HEAD                              | Shows differences between working directory and latest commit.      |
 | git diff HEAD~1                            | Compares the working directory with the previous commit.            |
-| git diff --name-only                       | Shows only the names of modified files.                             |
-| git diff --name-status                     | Shows names and status (modified, added, deleted).                  |
 | git diff branch1 branch2                   | Shows differences between two branches.                             |
 | git diff commit1 commit2                   | Compares two specific commits.                                      |
-| git diff --color-words                     | Highlights word differences instead of lines.                       |
-| git diff --stat                            | Displays summary of changes (files changed, insertions, deletions). |
-| git diff --ignore-space-change             | Ignores whitespace changes.                                         |
-| git diff --diff-filter=D                   | Shows only deleted files.                                           |
-| git diff origin/main                       | Compares local changes with origin/main.                            |
 | git diff HEAD -- file.txt                  | Shows differences for a specific file.                              |
-| git diff -U5                               | Shows 5 lines of context instead of default 3.                      |
+| git diff origin/main                       | Compares local changes with origin/main.                            |
 | git diff --cached                          | Same as --staged (shows staged changes).                            |
+| git diff --color-words                     | Highlights word differences instead of lines.                       |
+| git diff --diff-filter=D                   | Shows only deleted files.                                           |
+| git diff --ignore-space-change             | Ignores whitespace changes.                                         |
+| git diff --name-only                       | Shows only the names of modified files.                             |
+| git diff --name-status                     | Shows names and status (modified, added, deleted).                  |
+| git diff --staged                          | Shows changes that are staged but not committed.                    |
+| git diff --stat                            | Displays summary of changes (files changed, insertions, deletions). |
+| git diff -U5                               | Shows 5 lines of context instead of default 3.                      |
 
 # Git Blame
 Shows who last modified each line of file.txt
