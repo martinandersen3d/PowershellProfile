@@ -396,6 +396,13 @@ function GitCommitMessagePreview {
 function GitPullRequestPreviewFzf {
     git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
 }
+function g-text1 {
+    Write-Output("Text1")
+}
+function g-text2 {
+    Write-Output("Text2")
+}
+
 function reload-profile {
     & $profile
 }
