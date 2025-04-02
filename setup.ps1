@@ -14,7 +14,7 @@ if (!(Test-Path -Path $PROFILE -PathType Leaf)) {
         }
 
         Invoke-RestMethod https://github.com/martinandersen3d/PowershellProfile/raw/main/Microsoft.PowerShell_profile.ps1 -OutFile $PROFILE
-        Invoke-WebRequest -Uri "https://github.com/martinandersen3d/PowershellProfile/raw/main/git-cheatsheet.md" -OutFile "$env:USERPROFILE\Documents\WindowsPowerShell\git-cheatsheet.md" -Force
+        Invoke-WebRequest -Uri "https://github.com/martinandersen3d/PowershellProfile/raw/main/git-cheatsheet.md" -OutFile "$env:USERPROFILE\Documents\WindowsPowerShell\git-cheatsheet.md"
 
         Write-Host "The profile @ [$PROFILE] has been created."
     }
@@ -26,7 +26,7 @@ if (!(Test-Path -Path $PROFILE -PathType Leaf)) {
  else {
 		 Get-Item -Path $PROFILE | Move-Item -Destination oldprofile.ps1 -Force
 		 Invoke-RestMethod https://github.com/martinandersen3d/PowershellProfile/raw/main/Microsoft.PowerShell_profile.ps1 -OutFile $PROFILE
-         Invoke-WebRequest -Uri "https://github.com/martinandersen3d/PowershellProfile/raw/main/git-cheatsheet.md" -OutFile "$env:USERPROFILE\Documents\WindowsPowerShell\git-cheatsheet.md" -Force
+         Invoke-WebRequest -Uri "https://github.com/martinandersen3d/PowershellProfile/raw/main/git-cheatsheet.md" -OutFile "$env:USERPROFILE\Documents\WindowsPowerShell\git-cheatsheet.md"
 
 		 Write-Host "The profile @ [$PROFILE] has been created and old profile removed."
  }
