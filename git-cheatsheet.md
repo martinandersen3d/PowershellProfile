@@ -4,6 +4,7 @@ git config --global grep.patternType perl
 
 # Git Branch
 > Use command `git fetch` before the `git branch`
+
 | Command                   | Description                              |
 |---------------------------|------------------------------------------|
 | git branch --list         | Lists all local branches.                |
