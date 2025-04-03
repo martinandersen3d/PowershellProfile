@@ -30,6 +30,14 @@ if (!(Test-Path -Path $PROFILE -PathType Leaf)) {
 
 		 Write-Host "The profile @ [$PROFILE] has been created and old profile removed."
  }
+
+
+ if (Get-Command git -ErrorAction SilentlyContinue) {
+    git config --global alias.gg "log --oneline --graph --decorate --all"
+    git config --global alias.lol "log --oneline --decorate"
+}
+
+
 & $profile
 
 # Choco install

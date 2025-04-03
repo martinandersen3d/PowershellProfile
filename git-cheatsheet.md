@@ -16,7 +16,7 @@ Use command `git fetch` before the `git branch`
 | git log --follow --pretty=oneline -- myFilename.cs  | Displays a simple commit message history for a file (tracks renames). |
 | git log --follow -p -- myFilename.cs                | Shows detailed diffs for each commit of a file (tracks renames).      |
 | git log --oneline --decorate                        | Shows a compact log with commit messages and references.              |
-| git log --oneline --graph --decorate                | Displays a graphical commit history with references.                  |
+| git log --oneline --graph --decorate --all          | Displays a graphical commit history with references.                  |
 | git log --pretty=format:"%h - %s" --name-only -n 10 | Shows changed files in the last 10 commits.                           |
 | git log -S 'search_string' -- myFilename.cs         | Shows all commits that added or removed a specific string in a file.  |
 
