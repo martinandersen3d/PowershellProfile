@@ -690,12 +690,24 @@ $tableRows | Format-Table -AutoSize -HideTableHeaders
 
 
 # Prompt Style  -----------------------------------------------------------------------------
-
-
+# Checks if .git exists in the current directory (indicating a Git repo).
+# Runs git branch --show-current to get the active branch name.
+# Displays the branch name with  (or you can replace it with another symbol).
+# Uses 2>$null to suppress errors in case git is not available or the directory is not a repo.
 function prompt {
-    # $rocket = [char]::ConvertFromUtf32(0x1F680)  # This is the Unicode for the "rocket" emoji
-    $closedFolder = [char]::ConvertFromUtf32(0x1F4C1)  # This is the Unicode for the "closed folder" emoji
-    $promptString = "$closedFolder $($PWD.Path) :"
+    $closedFolder = [char]::ConvertFromUtf32(0x1F4C1)  # Closed folder emoji
+    $path = $PWD.Path
+    $branch = ""
+
+    # Check if inside a Git repository
+    if (Test-Path ".git") {
+        $branch = git branch --show-current 2>$null
+        if ($branch) {
+            $branch = " <$branch>"  # Git branch symbol
+        }
+    }
+
+    $promptString = "$closedFolder $path$branch :"
     Write-Host -NoNewline $promptString -ForegroundColor Yellow
     return " "
 }
