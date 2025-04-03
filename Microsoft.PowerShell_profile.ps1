@@ -698,6 +698,7 @@ function prompt {
     $closedFolder = [char]::ConvertFromUtf32(0x1F4C1)  # Closed folder emoji
     $path = $PWD.Path
     $branch = ""
+    $adminPrefix = if ($isAdmin) { " [ADMIN]" } else { "" }
 
     # Check if inside a Git repository
     if (Test-Path ".git") {
@@ -707,7 +708,7 @@ function prompt {
         }
     }
 
-    $promptString = "$closedFolder $path$branch :"
+    $promptString = "$closedFolder$adminPrefix $path$branch :"
     Write-Host -NoNewline $promptString -ForegroundColor Yellow
     return " "
 }
