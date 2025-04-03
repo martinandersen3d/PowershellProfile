@@ -696,12 +696,12 @@ $tableRows | Format-Table -AutoSize -HideTableHeaders
 # Uses 2>$null to suppress errors in case git is not available or the directory is not a repo.
 function prompt {
     $closedFolder = [char]::ConvertFromUtf32(0x1F4C1)  # Closed folder emoji
+    $adminPrefix = if ($isAdmin) { " [ADMIN]" } else { "" }
     $path = $PWD.Path
     $branch = ""
-    $adminPrefix = if ($isAdmin) { " [ADMIN]" } else { "" }
 
-    # Check if inside a Git repository
-    if (Test-Path ".git") {
+    # Check if inside a Git repository (even in subdirectories)
+    if (git rev-parse --is-inside-work-tree 2>$null) {
         $branch = git branch --show-current 2>$null
         if ($branch) {
             $branch = " <$branch>"  # Git branch symbol
