@@ -759,6 +759,10 @@ Register-ArgumentCompleter -Native -CommandName git -ScriptBlock {
     $args = $inputLine.Split()
 
     $gitCommands = @(
+        'add -A && git commit -m "ADDED: "',
+        'add -A && git commit -m "CHANGED: " && git push',
+        'add -A && git commit -m "DELETED: " && git push',
+        'add -A && git commit -m "FIXED: && git push"',    
         'add', 'bisect', 'branch', 'checkout', 'clone', 'commit', 'diff',
         'fetch', 'grep', 'init', 'log', 'merge', 'mv', 'pull', 'push',
         'rebase', 'reset', 'restore', 'rm', 'show', 'status', 'switch', 'tag', 'whatchanged'
