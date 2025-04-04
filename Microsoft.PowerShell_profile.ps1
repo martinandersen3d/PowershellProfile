@@ -691,7 +691,7 @@ $array = @(
     @("X", "Execute Script"),
     @("U", "Update Scripts"),
     @("GitCheatsheet", "GitCheatsheet")
-    @("g_<TAB>", "Git Tools")
+    @("g\_\<TAB\>", "Git Tools")
 )
 
 # Convert the array elements to custom objects
