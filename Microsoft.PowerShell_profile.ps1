@@ -1006,15 +1006,15 @@ Register-ArgumentCompleter -Native -CommandName choco -ScriptBlock {
 
     $chocoCommands = @(
         'find',
-        'list',
-        'search',
         'help',
         'info',
         'install -y ',
-        'pin',
+        'list',
         'outdated',
-        'upgrade',
-        'uninstall'
+        'pin',
+        'search',
+        'uninstall',
+        'upgrade'
     )
 
     if ($args.Count -eq 1 -or ($args.Count -eq 2 -and $args[1] -like "$wordToComplete*")) {
@@ -1037,23 +1037,23 @@ Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
     $args = $inputLine.Split()
 
     $wingetCommands = @(
-        'install',
-        'show',
-        'source',
-        'search',
-        'list',
-        'upgrade',
-        'uninstall',
-        'hash',
-        'validate',
-        'settings',
-        'features',
-        'export',
-        'import',
-        'pin',
         'configure',
         'download',
-        'repair'
+        'export',
+        'features',
+        'hash',
+        'import',
+        'install',
+        'list',
+        'pin',
+        'repair',
+        'search',
+        'settings',
+        'show',
+        'source',
+        'uninstall',
+        'upgrade',
+        'validate'
     )
 
     if ($args.Count -eq 1 -or ($args.Count -eq 2 -and $args[1] -like "$wordToComplete*")) {
@@ -1100,7 +1100,7 @@ Register-ArgumentCompleter -Native -CommandName npm -ScriptBlock {
         'hook',
         'init',
         'install',
-        'install-test',
+        # 'install-test',
         'link',
         'logout',
         'ls',
@@ -1118,7 +1118,7 @@ Register-ArgumentCompleter -Native -CommandName npm -ScriptBlock {
         'restart',
         'root',
         'run',
-        'run-script',
+        # 'run-script',
         'search',
         'set-script',
         'shrinkwrap',
@@ -1130,8 +1130,8 @@ Register-ArgumentCompleter -Native -CommandName npm -ScriptBlock {
         'test',
         'token',
         'uninstall',
-        'unpublish',
-        'unstar',
+        # 'unpublish',
+        # 'unstar',
         'update',
         'version',
         'view',
@@ -1158,22 +1158,22 @@ Register-ArgumentCompleter -Native -CommandName pip -ScriptBlock {
     $args = $inputLine.Split()
 
     $pipCommands = @(
-        'install',
-        'download',
-        'uninstall',
-        'freeze',
-        'list',
-        'show',
-        'check',
-        'config',
-        'search',
         'cache',
-        'index',
-        'help',
-        'debug',
-        'hash',
-        'inspect',
+        'check',
         'completion',
+        'config',
+        'debug',
+        'download',
+        'freeze',
+        'hash',
+        'help',
+        # 'index',
+        # 'inspect',
+        'install',
+        'list',
+        'search',
+        'show',
+        'uninstall',
         'wheel'
     )
 
