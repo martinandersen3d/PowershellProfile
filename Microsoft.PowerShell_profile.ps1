@@ -740,3 +740,31 @@ Register-ArgumentCompleter -Native -CommandName dotnet -ScriptBlock {
 #             [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
 #         }
 # }
+
+Register-ArgumentCompleter -Native -CommandName git -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
+
+    $inputLine = $commandAst.ToString()
+
+    $gitCommands = @(
+        'add', 'bisect', 'branch', 'checkout', 'clone', 'commit', 'diff',
+        'fetch', 'grep', 'init', 'log', 'merge', 'mv', 'pull', 'push',
+        'rebase', 'reset', 'restore', 'rm', 'show', 'status', 'switch', 'tag'
+    )
+
+    $parts = $inputLine.Split()
+    if ($parts.Count -eq 1 -or ($parts.Count -eq 2 -and $parts[1] -like "$wordToComplete*")) {
+        $gitCommands |
+        Where-Object { $_ -like "$wordToComplete*" } |
+        ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+        }
+    }
+    elseif ($parts.Count -ge 2 -and $parts[1] -eq 'checkout') {
+        git branch --format='%(refname:short)' |
+        Where-Object { $_ -like "$wordToComplete*" } |
+        ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+        }
+    }
+}
