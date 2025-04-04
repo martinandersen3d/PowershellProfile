@@ -741,6 +741,7 @@ Register-ArgumentCompleter -Native -CommandName dotnet -ScriptBlock {
 #         }
 # }
 
+# Look here for inspiration: https://github.com/kzrnm/git-completion-pwsh/tree/main
 Register-ArgumentCompleter -Native -CommandName git -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
 
@@ -749,7 +750,7 @@ Register-ArgumentCompleter -Native -CommandName git -ScriptBlock {
     $gitCommands = @(
         'add', 'bisect', 'branch', 'checkout', 'clone', 'commit', 'diff',
         'fetch', 'grep', 'init', 'log', 'merge', 'mv', 'pull', 'push',
-        'rebase', 'reset', 'restore', 'rm', 'show', 'status', 'switch', 'tag'
+        'rebase', 'reset', 'restore', 'rm', 'show', 'status', 'switch', 'tag', 'whatchanged'
     )
 
     $parts = $inputLine.Split()

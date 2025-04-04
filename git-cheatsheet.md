@@ -2,6 +2,12 @@
 git config --global grep.lineNumber true
 git config --global grep.patternType perl
 
+# Awesome commands
+| Command                                             | Description                                                           |
+|-----------------------------------------------------|-----------------------------------------------------------------------|
+| git whatchanged                                     | Displays commit message and what files that canged in commit history  |
+
+
 # Git Branch
 Use command `git fetch` before the `git branch`
 | Command                   | Description                              |
