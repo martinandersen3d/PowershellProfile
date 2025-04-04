@@ -12,6 +12,7 @@ git config --global grep.patternType perl
 Use command `git fetch` before the `git branch`
 | Command                   | Description                              |
 |---------------------------|------------------------------------------|
+| git branch --all          | Lists all local and remote branches.     |
 | git branch --list         | Lists all local branches.                |
 | git branch --remotes      | Lists all remote branches.               |
 | git branch --show-current | Displays the name of the current branch. |
@@ -86,6 +87,20 @@ Records all changes to the tip of branches and allows you to view the history of
 |-----------------------|--------------------------------------------|
 | git reflog --date=iso | Shows the reflog with ISO-formatted dates. |
 
+# Git Commit
+| Command                                  | Description                                                                  |
+|------------------------------------------|------------------------------------------------------------------------------|
+| git add -A && git commit -m "Message"    | Stages all changes (new, modified and deleted) and commits with message.     |
+| git commit --all --message="message"     | Stages all changes (modified and deleted) and commits with a message.        |
+| git commit -m "message"                  | Commits changes with a custom message.                                       |
+| git commit --amend                       | Modifies the previous commit (useful for fixing mistakes).                   |
+| git commit --amend -m "new message"      | Amends the previous commit with a new message.                               |
+| git commit -a                            | Automatically stages files that have been modified before committing.        |
+| git commit --dry-run                     | Shows what would be committed without actually committing.                   |
+| git commit -v                            | Shows a diff of the changes when committing.                                 |
+| git commit --all                         | Stages all modified files before committing.                                 |
+| git commit --squash=<commit>             | Combines the changes from a specified commit into the current commit.        |
+| git commit --message="message"           | Same as -m "message", commits with a custom message.                         |
 
 Markdown Table Prettifier
 https://marketplace.visualstudio.com/items?itemName=darkriszty.markdown-table-prettify
