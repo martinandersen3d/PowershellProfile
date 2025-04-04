@@ -390,7 +390,7 @@ function GitCheatsheet {
 }
 
 
-function GitAddAllCommitPushMessage {
+function g_AddAllCommitPushMessage {
     param (
         [string]$Message
     )
@@ -406,21 +406,21 @@ function GitAddAllCommitPushMessage {
     git push
 }
 
-function GitCommitAutoMessage {
+function g_CommitAutoMessage {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\GitAutoCommit.ps1"
 }
 
-function GitCommitPreviewFzf {
+function g_CommitPreviewFzf {
     git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --header "[COMMIT DIFF]: CURRENT vs. HEAD" --header-first --preview "git diff HEAD -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
 }
-function GitCommitMessagePreview {
+function g_CommitMessagePreview {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\GitCommitMessagePreview.ps1"
 }
-function GitPullRequestPreviewFzf {
+function g_PullRequestPreviewFzf {
     git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
 }
 
@@ -691,6 +691,7 @@ $array = @(
     @("X", "Execute Script"),
     @("U", "Update Scripts"),
     @("GitCheatsheet", "GitCheatsheet")
+    @("g_<TAB>", "Git Tools")
 )
 
 # Convert the array elements to custom objects
