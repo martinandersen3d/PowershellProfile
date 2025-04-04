@@ -690,8 +690,8 @@ $array = @(
     @("T", "Generate file from Template"),
     @("X", "Execute Script"),
     @("U", "Update Scripts"),
-    @("GitCheatsheet", "GitCheatsheet")
-    @("g\_\<TAB\>", "Git Tools")
+    @("GitCheatsheet", "GitCheatsheet"),
+    @("g_<TAB>", "Git Tools")
 )
 
 # Convert the array elements to custom objects
