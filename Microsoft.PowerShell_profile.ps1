@@ -389,6 +389,23 @@ function GitCheatsheet {
     }
 }
 
+
+function GitAddAllCommitPushMessage {
+    param (
+        [string]$Message
+    )
+    
+    if (-not $Message) {
+        Write-Host "Error: A commit message is required."
+        return
+    }
+    
+    # If message is passed, proceed with git add, commit, and push
+    git add .
+    git commit -m $Message
+    git push
+}
+
 function GitCommitAutoMessage {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
