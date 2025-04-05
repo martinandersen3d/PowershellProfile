@@ -763,6 +763,8 @@ Register-ArgumentCompleter -Native -CommandName git -ScriptBlock {
         'add -A && git commit -m "CHANGED: " && git push',
         'add -A && git commit -m "DELETED: " && git push',
         'add -A && git commit -m "FIXED: " && git push',    
+        'checkout dev && git pull origin dev',    
+        'checkout -b <new-branch-name>',    
         'branch --all',    
         'log --oneline --decorate',    
         'log --oneline --graph --decorate --all ',    
