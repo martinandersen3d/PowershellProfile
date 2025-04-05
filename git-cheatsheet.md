@@ -7,7 +7,6 @@ git config --global grep.patternType perl
 |-----------------------------------------------------|-----------------------------------------------------------------------|
 | git whatchanged                                     | Displays commit message and what files that canged in commit history  |
 
-
 # Git Branch
 Use command `git fetch` before the `git branch`
 | Command                   | Description                              |
@@ -79,7 +78,6 @@ Shows who last modified each line of file.txt
 | git blame -w file.txt                      | Ignores whitespace changes.                       |
 | git blame -s file.txt                      | Suppresses the filename in the output.            |
 | git blame --reverse HEAD~5 file.txt        | Shows blame from 5 commits ago onward.            |
-
 
 # Git Reflog
 Records all changes to the tip of branches and allows you to view the history of reference updates, including those that are not part of the commit history.
