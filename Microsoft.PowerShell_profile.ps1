@@ -188,7 +188,7 @@ function g {
                     return # Return after setting location to partial match
                 }
             } else {
-                Write-Host "No full or partial matches found for '$path' in the current directory."
+                # Write-Host "No full or partial matches found for '$path' in the current directory."
             }
 
             # ===== Added: fallback recursive search from current directory with depth 3 =====
@@ -209,8 +209,6 @@ function g {
                 Write-Host "Error while searching from current directory: $_"
             }
             # ===== End of deep search =====
-
-            Write-Host "No directory matching '$searchString' found."
 
             # If no matching directory is found
             Write-Host "No directory matching '$searchString' found."
