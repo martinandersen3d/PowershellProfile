@@ -23,6 +23,13 @@ $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administ
 Set-Alias -Name su -Value admin
 Set-Alias -Name sudo -Value admin
 Set-Alias python python
+Set-Alias choco choco
+Set-Alias code code
+Set-Alias explorer explorer
+Set-Alias node node
+Set-Alias notepad notepad
+Set-Alias dotnet dotnet
+Set-Alias winget winget
 
 # Quick shortcut
 function c. { code . }
@@ -183,6 +190,27 @@ function g {
             } else {
                 Write-Host "No full or partial matches found for '$path' in the current directory."
             }
+
+            # ===== Added: fallback recursive search from current directory with depth 3 =====
+            $searchDepth = 3
+            $currentDir = Get-Location
+
+            try {
+                $deepMatch = Get-ChildItem -Path $currentDir -Directory -Recurse -Depth $searchDepth -ErrorAction SilentlyContinue |
+                    Where-Object { $_.Name -like "*$searchString*" } |
+                    Select-Object -First 1
+
+                if ($deepMatch) {
+                    Set-Location -Path $deepMatch.FullName
+                    # Write-Host "Navigated to: $($deepMatch.FullName) (found by deep search from current directory)"
+                    return
+                }
+            } catch {
+                Write-Host "Error while searching from current directory: $_"
+            }
+            # ===== End of deep search =====
+
+            Write-Host "No directory matching '$searchString' found."
 
             # If no matching directory is found
             Write-Host "No directory matching '$searchString' found."
