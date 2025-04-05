@@ -18,6 +18,12 @@ $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
 $principal = New-Object Security.Principal.WindowsPrincipal $identity
 $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
+# Set UNIX-like aliases for the admin command, so sudo <command> will run the command
+# with elevated rights. 
+Set-Alias -Name su -Value admin
+Set-Alias -Name sudo -Value admin
+Set-Alias python python
+
 # Quick shortcut
 function c. { code . }
 function e. { explorer . }
@@ -338,12 +344,6 @@ function admin {
         Start-Process "$psHome\powershell.exe" -Verb runAs
     }
 }
-
-# Set UNIX-like aliases for the admin command, so sudo <command> will run the command
-# with elevated rights. 
-Set-Alias -Name su -Value admin
-Set-Alias -Name sudo -Value admin
-
 
 # Make it easy to edit this profile once it's installed
 function Edit-Profile {
