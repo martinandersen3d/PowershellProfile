@@ -73,8 +73,8 @@ if (-not (Is-WingetAvailable)) {
 
 # Re-check if winget is now available
 if (-not (Is-WingetAvailable)) {
-    Write-Error "winget is still not available. Exiting script."
-    exit 1
+    Write-Error "winget is still not available"
+    # exit 1
 }
 
 # List of packages to check and install if needed
