@@ -664,7 +664,6 @@ function pgrep($name) {
 #     function Work: { Set-Location Work: }
 # }
 
-
 # First Lines when started -----------------------------------------------------------------------------
 
 Clear-Host
@@ -675,6 +674,7 @@ Write-Host "Profile: $PROFILE"
 # $multiLineString = @"
 # "@
 # Write-Output $multiLineString
+
 
 
 # Help Promt when is starts up - Array table ------------------------
