@@ -23,7 +23,7 @@ $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administ
 Set-Alias -Name su -Value admin
 Set-Alias -Name sudo -Value admin
 Set-Alias python python
-Set-Alias choco choco
+# Set-Alias choco choco
 Set-Alias code code
 Set-Alias explorer explorer
 Set-Alias node node
