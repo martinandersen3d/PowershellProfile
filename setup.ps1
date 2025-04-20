@@ -73,26 +73,7 @@ if (-not (CheckCommand "pwsh")) { $allOk = $false }
 
 # If Git is missing, check if winget is installed and offer to install git
 if (-not (CheckCommand "git")) {
-    if (CheckCommand "winget") {
-        LogRed "Git is not installed."
-        $choice = Read-Host "Do you want to install Git using winget? (Y/N)"
-        if ($choice -match '^[Yy]$') {
-            LogGreen "Installing Git..."
-            winget install --id Git.Git -e --source winget
-            if (CheckCommand "git") {
-                LogGreen "Git installed successfully!"
-            } else {
-                LogRed "Failed to install Git. Please install it manually."
-                exit 1
-            }
-        } else {
-            LogRed "Git is required for this script to continue. Aborting."
-            exit 1
-        }
-    } else {
-        LogRed "Git is not installed, and winget is not available to install it."
-        exit 1
-    }
+        LogRed "Git is not installed. Aborting."
 }
 
 if (-not (CheckCommand "pwsh")){
@@ -111,7 +92,7 @@ LogTitle "Clone Git Repo to: $home\AppData\Local\Temp\PowerShellProfile"
 
 $target = "$env:TEMP\PowerShellProfile"
 if (Test-Path $target) {
-    Remove-Item -Recurse -Force $target
+    Remove-Item -Recurse -Force $target -ErrorAction SilentlyContinue
     LogGreen "Removing path: $target"
 }
 
@@ -189,3 +170,15 @@ TryCopyFile "$GitDir\git-cheatsheet.md" "$documentsPath\PowerShell\git-cheatshee
 # TryCopyFolder "C:\SourceStuff" "D:\BackupStuff"
 TryCopyFolder "$GitDir\UserScripts" "$documentsPath\WindowsPowerShell\UserScripts"
 TryCopyFolder "$GitDir\UserScripts" "$documentsPath\PowerShell\UserScripts"
+
+
+# ----------------------------------------------
+# RELOAD PROFILE
+# ----------------------------------------------
+Start-Sleep -Seconds 1
+
+LogTitle "Complete - Press any key to reload profile"
+Write-Host "Press any key to continue..."
+[void][System.Console]::ReadKey($true)
+
+& $profile

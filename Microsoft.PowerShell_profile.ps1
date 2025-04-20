@@ -29,7 +29,7 @@ Set-Alias explorer explorer
 Set-Alias node node
 Set-Alias notepad notepad
 Set-Alias dotnet dotnet
-Set-Alias winget winget
+# Set-Alias winget "C:\Users\m\AppData\Local\Microsoft\WindowsApps\winget.exe"
 
 # Quick shortcut
 function c. { code . }
