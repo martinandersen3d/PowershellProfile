@@ -10,6 +10,18 @@ Execute the following command in an elevated PowerShell window to install the Po
 irm "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1" | iex
 ```
 
+# Requirements
+- Run as Admin
+- PowerShell 7+, required to use WinGet
+- WinGet
+- 'App Installer' from Microsoft Store has WinGet
+- Git Installed (but if WinGet is working, it will ask to install it)
+
+# Troubleshouting Installation:
+1. Install Powershell 7.5+ 
+2. Install WinGet
+3. WinGet only works in PowerShell version 7+
+
 # TODO:
 - Execute scripts
 

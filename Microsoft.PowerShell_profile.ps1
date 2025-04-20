@@ -112,7 +112,8 @@ function g {
         "$userDir\AppData\Local\Microsoft\VisualStudio",
         "$userDir\Obsidian2",
         "$userDir\Desktop\SCREENSHOTS",
-        "$userDir\Documents\WindowsPowerShell"
+        "$userDir\Documents\WindowsPowerShell",
+        "$userDir\Documents\PowerShell",
         "C:\Program Files",
         "C:\Program Files (x86)",
         "C:\ProgramData",
