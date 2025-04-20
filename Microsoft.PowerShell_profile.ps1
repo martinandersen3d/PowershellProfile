@@ -22,14 +22,6 @@ $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administ
 # with elevated rights. 
 Set-Alias -Name su -Value admin
 Set-Alias -Name sudo -Value admin
-Set-Alias python python
-# Set-Alias choco choco
-Set-Alias code code
-Set-Alias explorer explorer
-Set-Alias node node
-Set-Alias notepad notepad
-Set-Alias dotnet dotnet
-# Set-Alias winget "C:\Users\m\AppData\Local\Microsoft\WindowsApps\winget.exe"
 
 # Quick shortcut
 function c. { code . }
