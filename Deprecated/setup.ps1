@@ -77,7 +77,7 @@ if (-not (Is-WingetAvailable)) {
 
 # Re-check if winget is now available
 if (-not (Is-WingetAvailable)) {
-    Write-Error "winget is still not available. Winget only works in Powershell 7+ and above. Maybe install winget manually, install 'App Installer' from Microsoft Store and be sure to run this script from Powershell version 7+"
+    Write-Error "winget is still not available. Maybe install winget manually, install 'App Installer' from Microsoft Store or install it from https://learn.microsoft.com/en-us/windows/msix/app-installer/install-update-app-installer"
     # exit 1
 }
 

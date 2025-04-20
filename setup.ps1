@@ -29,7 +29,7 @@ LogTitle "Requirements:"
 
 LogInfo "- Run as Admin"
 LogInfo "- Git Installed"
-LogInfo "- PowerShell 7+, required to use WinGet"
+LogInfo "- PowerShell 7+"
 LogInfo "- WinGet"
 LogInfo "- 'App Installer' from Microsoft Store has WinGet"
 
@@ -74,17 +74,53 @@ if (-not (CheckCommand "pwsh")) { $allOk = $false }
 # If Git is missing, check if winget is installed and offer to install git
 if (-not (CheckCommand "git")) {
         LogRed "Git is not installed. Aborting."
+        exit 1
 }
 
 if (-not (CheckCommand "pwsh")){
-    LogRed "Powershell 7+ is required for this script to continue, since winget only works in PowerShell version 7+. Aborting."
-    exit 1
+    LogRed "Powershell 7+ is not Installed. You can install it later. Continue..."
 }
 
 if (-not (CheckCommand "winget")){
-    LogRed "WinGet is required for this script to continue, since winget only works in PowerShell version 7+. Aborting."
+    LogRed "WinGet is required for this script to continue. Maybe install winget manually, install 'App Installer' from Microsoft Store or install it from https://learn.microsoft.com/en-us/windows/msix/app-installer/install-update-app-installer. Aborting."
     exit 1
 }
+
+# ---------------------------------------------------------------------------
+LogTitle "Install Suggestions"
+# ---------------------------------------------------------------------------
+function CheckAndSuggestCommand {
+    param(
+        [string]$CommandName,
+        [string]$WingetInstallCommand,
+        [string]$ChocoInstallCommand
+    )
+
+    # Check if the command is available
+    if (Get-Command $CommandName -ErrorAction SilentlyContinue) {
+        LogGreen "'$CommandName' is already available."
+        # return $true
+    } else {
+        LogRed "'$CommandName' is NOT available."
+        
+        # Suggest installation methods
+        if ($WingetInstallCommand) {
+            LogRed "You can install '$CommandName' using winget: $WingetInstallCommand"
+        }
+        if ($ChocoInstallCommand) {
+            LogRed "You can install '$CommandName' using choco: $ChocoInstallCommand"
+        }
+        
+        # return $false
+    }
+}
+CheckAndSuggestCommand "git" "winget install --id Git.Git" "choco install git"
+CheckAndSuggestCommand "fzf" "winget install junegunn.fzf" "choco install fzf"
+CheckAndSuggestCommand "bat" "winget install sharkdp.bat" "choco install bat"
+CheckAndSuggestCommand "git" "winget install git.git" "choco install git"
+CheckAndSuggestCommand "pwsh" "winget install Microsoft.PowerShell" "choco install powershell-core"
+CheckAndSuggestCommand "rg" "winget install BurntSushi.ripgrep.GNU" "choco install ripgrep"
+
 
 # ---------------------------------------------------------------------------
 LogTitle "Clone Git Repo to: $home\AppData\Local\Temp\PowerShellProfile"
@@ -180,5 +216,5 @@ Start-Sleep -Seconds 1
 LogTitle "Complete - Press any key to reload profile"
 Write-Host "Press any key to continue..."
 [void][System.Console]::ReadKey($true)
-
+Clear-Host
 & $profile
