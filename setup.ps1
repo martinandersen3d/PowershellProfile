@@ -185,4 +185,6 @@ TryCopyFile "$GitDir\git-cheatsheet.md" "$documentsPath\PowerShell\git-cheatshee
 
 # Start Copy Folders
 
-TryCopyFolder "C:\SourceStuff" "D:\BackupStuff"
+# TryCopyFolder "C:\SourceStuff" "D:\BackupStuff"
+TryCopyFolder "$GitDir\UserScripts" "$documentsPath\WindowsPowerShell\UserScripts"
+TryCopyFolder "$GitDir\UserScripts" "$documentsPath\PowerShell\UserScripts"
