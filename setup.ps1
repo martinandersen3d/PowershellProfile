@@ -174,6 +174,7 @@ function TryCopyFolder {
 $GitDir = "$home\AppData\Local\Temp\PowerShellProfile"
 # User Documents Folder - Example: C:\Users\<user>\Documents
 $documentsPath = [Environment]::GetFolderPath('MyDocuments')
+
 # Start Copy Files
 TryCopyFile "$GitDir\Microsoft.WindowsTerminal\settings.json" "$home\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
 
