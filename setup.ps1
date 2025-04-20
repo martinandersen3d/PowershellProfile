@@ -6,11 +6,13 @@
 if (!(Test-Path -Path $PROFILE -PathType Leaf)) {
     try {
         # Detect Version of Powershell & Create Profile directories if they do not exist.
+        # For Powershell 7 and above
         if ($PSVersionTable.PSEdition -eq "Core" ) { 
-            if (!(Test-Path -Path ($env:userprofile + "\Documents\Powershell"))) {
-                New-Item -Path ($env:userprofile + "\Documents\Powershell") -ItemType "directory"
+            if (!(Test-Path -Path ($env:userprofile + "\Documents\PowerShell"))) {
+                New-Item -Path ($env:userprofile + "\Documents\PowerShell") -ItemType "directory"
             }
         }
+        # For windows powershell 5
         elseif ($PSVersionTable.PSEdition -eq "Desktop") {
             if (!(Test-Path -Path ($env:userprofile + "\Documents\WindowsPowerShell"))) {
                 New-Item -Path ($env:userprofile + "\Documents\WindowsPowerShell") -ItemType "directory"
@@ -19,6 +21,7 @@ if (!(Test-Path -Path $PROFILE -PathType Leaf)) {
 
         Invoke-RestMethod https://github.com/martinandersen3d/PowershellProfile/raw/main/Microsoft.PowerShell_profile.ps1 -OutFile $PROFILE
         Invoke-WebRequest -Uri "https://github.com/martinandersen3d/PowershellProfile/raw/main/git-cheatsheet.md" -OutFile "$env:USERPROFILE\Documents\WindowsPowerShell\git-cheatsheet.md"
+        Invoke-WebRequest -Uri "https://github.com/martinandersen3d/PowershellProfile/raw/main/git-cheatsheet.md" -OutFile "$env:USERPROFILE\Documents\PowerShell\git-cheatsheet.md"
 
         Write-Host "The profile @ [$PROFILE] has been created."
     }
@@ -31,6 +34,7 @@ if (!(Test-Path -Path $PROFILE -PathType Leaf)) {
 		 Get-Item -Path $PROFILE | Move-Item -Destination oldprofile.ps1 -Force
 		 Invoke-RestMethod https://github.com/martinandersen3d/PowershellProfile/raw/main/Microsoft.PowerShell_profile.ps1 -OutFile $PROFILE
          Invoke-WebRequest -Uri "https://github.com/martinandersen3d/PowershellProfile/raw/main/git-cheatsheet.md" -OutFile "$env:USERPROFILE\Documents\WindowsPowerShell\git-cheatsheet.md"
+         Invoke-WebRequest -Uri "https://github.com/martinandersen3d/PowershellProfile/raw/main/git-cheatsheet.md" -OutFile "$env:USERPROFILE\Documents\PowerShell\git-cheatsheet.md"
 
 		 Write-Host "The profile @ [$PROFILE] has been created and old profile removed."
  }
@@ -73,7 +77,7 @@ if (-not (Is-WingetAvailable)) {
 
 # Re-check if winget is now available
 if (-not (Is-WingetAvailable)) {
-    Write-Error "winget is still not available"
+    Write-Error "winget is still not available. Maybe install winget manually, install 'App Installer' from Microsoft Store and be sure to run this script from Powershell version 7+"
     # exit 1
 }
 
@@ -82,6 +86,7 @@ $packages = @(
     "junegunn.fzf",
     "sharkdp.bat",
     "git.git",
+    "Microsoft.PowerShell",
     "BurntSushi.ripgrep.GNU"
 )
 
