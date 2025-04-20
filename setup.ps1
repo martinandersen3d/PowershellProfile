@@ -138,11 +138,11 @@ function TryCopyFile {
         # Copy file
         Copy-Item -Path $SourcePath -Destination $DestinationPath -Force -ErrorAction Stop
         LogGreen "Copied file '$SourcePath' to '$DestinationPath'."
-        return $true
+        # return $true
     }
     catch {
         LogRed "Failed to copy file from '$SourcePath' to '$DestinationPath': $_"
-        return $false
+        # return $false
     }
 }
 
@@ -162,11 +162,11 @@ function TryCopyFolder {
         # Copy contents recursively
         Copy-Item -Path $SourceFolder\* -Destination $DestinationFolder -Recurse -Force -ErrorAction Stop
         LogGreen "Copied folder '$SourceFolder' to '$DestinationFolder'."
-        return $true
+        # return $true
     }
     catch {
         LogRed "Failed to copy folder from '$SourceFolder' to '$DestinationFolder': $_"
-        return $false
+        # return $false
     }
 }
 
