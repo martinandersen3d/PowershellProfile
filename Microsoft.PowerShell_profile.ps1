@@ -754,7 +754,7 @@ Write-Host "Profile: $PROFILE"
 
 # Help Promt when is starts up - Array table ------------------------
 
-Write-Host "`e[4mThis part is underlined`e[0m and `e[90mthis is gray text`e[0m"
+# Write-Host "`e[4mThis part is underlined`e[0m and `e[90mthis is gray text`e[0m"
 
 $keyGroup1 = @(
     @{ Key = "`e[4;33mNAVIGATION`e[0m"; Description = "" },
@@ -789,9 +789,9 @@ $keyGroup2 = @(
 
     @{ Key = ""; Description = "" },
     @{ Key = "`e[4;33mSEARCH`e[0m"; Description = "" },
-    @{ Key = "SearchFileName  `e[90m`"`Name`"` `e[0m"; Description = "Sarch for part of filename" },
-    @{ Key = "SearchFolderName  `e[90m`"`Name`"` `e[0m"; Description = "Sarch for part of foldername" },
-    @{ Key = "SearchContent  `e[90m`"`Hi`"` `e[0m"; Description = "Search inside files with RipGrep" }
+    @{ Key = "SearchFileName `e[90m`"`Name`"` `e[0m"; Description = "Sarch for part of filename" },
+    @{ Key = "SearchFolderName `e[90m`"`Name`"` `e[0m"; Description = "Sarch for part of foldername" },
+    @{ Key = "SearchContent `e[90m`"`Hi`"` `e[0m"; Description = "Search inside files with RipGrep" }
 )
 
 # Create table combining the two arrays
