@@ -114,7 +114,7 @@ function CheckAndSuggestCommand {
         # return $false
     }
 }
-CheckAndSuggestCommand "git" "winget install --id Git.Git" "choco install git"
+CheckAndSuggestCommand "git" "winget install Git.Git" "choco install git"
 CheckAndSuggestCommand "fzf" "winget install junegunn.fzf" "choco install fzf"
 CheckAndSuggestCommand "bat" "winget install sharkdp.bat" "choco install bat"
 CheckAndSuggestCommand "git" "winget install git.git" "choco install git"
