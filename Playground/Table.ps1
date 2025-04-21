@@ -48,6 +48,7 @@ $keyGroup1 = @(
 # Define second array with Key2 and Description2
 $keyGroup2 = @(
     @{ Key = "`e[4;33mGIT`e[0m"; Description = "" },
+    @{ Key = "GitCommitPush `e[90m`"`Message`"` `e[0m"; Description = "Add, Commit with message and PUSH" },
     @{ Key = "GitCheatsheet"; Description = "Git Cheatsheet Overview" },
     @{ Key = "GitCommitPush <string>"; Description = "Add, Commit with message and PUSH" },
     @{ Key = "GitAutoCommitMessage"; Description = "Add, Commit auto generated message" },
@@ -55,7 +56,7 @@ $keyGroup2 = @(
     @{ Key = "GitShowCurrentCommitDiffFzf"; Description = "Show current commit diff in FZF" },
     @{ Key = "GitShowCommitMessage"; Description = "Preview auto generated Commit Message" },
     @{ Key = "GitShowCurrentBranchVSDevFzf"; Description = "In FZF Diff current branch vs dev" },
-    @{ Key = "g_<TAB>"; Description = "Git Tools" },
+    @{ Key = "Git<TAB>"; Description = "Git Tools" },
     @{ Key = "git <TAB>"; Description = "Git Auto suggestions" },
 
     @{ Key = ""; Description = "" },

@@ -753,10 +753,13 @@ Write-Host "Profile: $PROFILE"
 
 
 # Help Promt when is starts up - Array table ------------------------
+
+Write-Host "`e[4mThis part is underlined`e[0m and `e[90mthis is gray text`e[0m"
+
 $keyGroup1 = @(
     @{ Key = "`e[4;33mNAVIGATION`e[0m"; Description = "" },
     @{ Key = "LL"; Description = "List Folders and Files" },
-    @{ Key = "G <text>"; Description = "Go To Favorites" },
+    @{ Key = "G `e[90m<string> `e[0m"; Description = "Go To Favorites" },
     @{ Key = "S"; Description = "Go To Sub-dirs Fzf (Depth 3)" },
     @{ Key = "D"; Description = "List Directorys" },
     @{ Key = "DD"; Description = "List Directorys as table" },
@@ -774,21 +777,21 @@ $keyGroup1 = @(
 # Define second array with Key2 and Description2
 $keyGroup2 = @(
     @{ Key = "`e[4;33mGIT`e[0m"; Description = "" },
-    @{ Key = "GitCheatsheet"; Description = "Git Cheatsheet Overview" },
-    @{ Key = "GitCommitPush <string>"; Description = "Add, Commit with message and PUSH" },
     @{ Key = "GitAutoCommitMessage"; Description = "Add, Commit auto generated message" },
+    @{ Key = "GitCheatsheet"; Description = "Git Cheatsheet Overview" },
+    @{ Key = "GitCommitPush `e[90m`"`Msg`"` `e[0m"; Description = "Add, Commit with message and PUSH" },
     @{ Key = "GitPush"; Description = "Git Push" },
+    @{ Key = "GitShowCurrentBranchVSDevFzf"; Description = "In FZF Diff current branch vs dev" },
     @{ Key = "GitShowCurrentCommitDiffFzf"; Description = "Show current commit diff in FZF" },
     @{ Key = "GitShowCommitMessage"; Description = "Preview auto generated Commit Message" },
-    @{ Key = "GitShowCurrentBranchVSDevFzf"; Description = "In FZF Diff current branch vs dev" },
-    @{ Key = "g_<TAB>"; Description = "Git Tools" },
+    @{ Key = "Git<TAB>"; Description = "Git Tools" },
     @{ Key = "git <TAB>"; Description = "Git Auto suggestions" },
 
     @{ Key = ""; Description = "" },
     @{ Key = "`e[4;33mSEARCH`e[0m"; Description = "" },
-    @{ Key = "SearchFileName <string>"; Description = "Sarch for part of filename" },
-    @{ Key = "SearchFolderName <string>"; Description = "Sarch for part of foldername" },
-    @{ Key = "SearchContent <string>"; Description = "Search inside files with RipGrep" }
+    @{ Key = "SearchFileName  `e[90m`"`Name`"` `e[0m"; Description = "Sarch for part of filename" },
+    @{ Key = "SearchFolderName  `e[90m`"`Name`"` `e[0m"; Description = "Sarch for part of foldername" },
+    @{ Key = "SearchContent  `e[90m`"`Hi`"` `e[0m"; Description = "Search inside files with RipGrep" }
 )
 
 # Create table combining the two arrays
