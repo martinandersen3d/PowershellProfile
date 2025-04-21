@@ -447,7 +447,7 @@ function GitCheatsheet {
 }
 
 
-function g_AddAllCommitPushMessage {
+function GitCommitPush {
     param (
         [string]$Message
     )
@@ -458,26 +458,35 @@ function g_AddAllCommitPushMessage {
     }
     
     # If message is passed, proceed with git add, commit, and push
+    Write-Host "[COMMAND] git add ."
+
     git add .
+    Write-Host "[COMMAND] git commit -m $Message"
     git commit -m $Message
+    Write-Host "[COMMAND] git push"
     git push
 }
 
-function g_CommitAutoMessage {
+function GitPush {    
+    Write-Host "[COMMAND] git push"
+    git push
+}
+
+function GitAutoCommitMessage {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\GitAutoCommit.ps1"
 }
 
-function g_CommitPreviewFzf {
+function GitShowCurrentCommitDiffFzf {
     git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --header "[COMMIT DIFF]: CURRENT vs. HEAD" --header-first --preview "git diff HEAD -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
 }
-function g_CommitMessagePreview {
+function GitShowCommitMessage {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
-    & "$profileBasePath\UserScripts\GitCommitMessagePreview.ps1"
+    & "$profileBasePath\UserScripts\GitShowCommitMessagePreview.ps1"
 }
-function g_PullRequestPreviewFzf {
+function GitShowCurrentBranchVSDevFzf {
     git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
 }
 
@@ -742,38 +751,57 @@ Write-Host "Profile: $PROFILE"
 
 
 # Help Promt when is starts up - Array table ------------------------
-# Define the array
-$array = @(
-    @("D", "List Directorys"),
-    @("DD", "List Directorys as table"),
-    @("F", "List Files"),
-    @("G", "Go To Favorites"),
-    @("L", "List Commands"),
-    @("LL", "List Folders and Files"),
-    @("P", "Preview Files in Dir With FZF"),
-    @("S", "Sub-dirs Fzf (Depth 3) "),
-    @("T", "Generate file from Template"),
-    @("X", "Execute Script"),
-    @("U", "Update Scripts"),
-    @("GitCheatsheet", "GitCheatsheet"),
-    @("g_<TAB>", "Git Tools"),
-    @("git <TAB>", "Git Auto suggestions"),
-    @("SearchFileName", "Sarch for part of filename"),
-    @("SearchFolderName", "Sarch for part of foldername"),
-    @("SearchContent", "Search inside files with RipGrep")
+$keyGroup1 = @(
+    @{ Key = "`e[4;33mNAVIGATION`e[0m"; Description = "" },
+    @{ Key = "LL"; Description = "List Folders and Files" },
+    @{ Key = "G <text>"; Description = "Go To Favorites" },
+    @{ Key = "S"; Description = "Go To Sub-dirs Fzf (Depth 3)" },
+    @{ Key = "D"; Description = "List Directorys" },
+    @{ Key = "DD"; Description = "List Directorys as table" },
+    @{ Key = "F"; Description = "List Files" },
+    @{ Key = ""; Description = "" },
+
+    @{ Key = "`e[4;33mSCRIPTS`e[0m"; Description = "" },
+    @{ Key = "L"; Description = "List Commands" },
+    @{ Key = "P"; Description = "Preview Files in Dir With FZF" },
+    @{ Key = "T"; Description = "Generate file from Template" },
+    @{ Key = "X"; Description = "Execute Script" },
+    @{ Key = "U"; Description = "Update Scripts" }
 )
 
-# Convert the array elements to custom objects
-$tableRows = $array | ForEach-Object {
+# Define second array with Key2 and Description2
+$keyGroup2 = @(
+    @{ Key = "`e[4;33mGIT`e[0m"; Description = "" },
+    @{ Key = "GitCheatsheet"; Description = "Git Cheatsheet Overview" },
+    @{ Key = "GitCommitPush <string>"; Description = "Add, Commit with message and PUSH" },
+    @{ Key = "GitAutoCommitMessage"; Description = "Add, Commit auto generated message" },
+    @{ Key = "GitPush"; Description = "Git Push" },
+    @{ Key = "GitShowCurrentCommitDiffFzf"; Description = "Show current commit diff in FZF" },
+    @{ Key = "GitShowCommitMessage"; Description = "Preview auto generated Commit Message" },
+    @{ Key = "GitShowCurrentBranchVSDevFzf"; Description = "In FZF Diff current branch vs dev" },
+    @{ Key = "g_<TAB>"; Description = "Git Tools" },
+    @{ Key = "git <TAB>"; Description = "Git Auto suggestions" },
+
+    @{ Key = ""; Description = "" },
+    @{ Key = "`e[4;33mSEARCH`e[0m"; Description = "" },
+    @{ Key = "SearchFileName <string>"; Description = "Sarch for part of filename" },
+    @{ Key = "SearchFolderName <string>"; Description = "Sarch for part of foldername" },
+    @{ Key = "SearchContent <string>"; Description = "Search inside files with RipGrep" }
+)
+
+# Create table combining the two arrays
+$table = for ($i = 0; $i -lt [Math]::Max($keyGroup1.Count, $keyGroup2.Count); $i++) {
     [PSCustomObject]@{
-        Column1 = $_[0]
-        Column2 = $_[1]
+        Key1         = $keyGroup1[$i].Key
+        Description1 = "  " + $keyGroup1[$i].Description
+        Key2         = "  | " + $keyGroup2[$i].Key
+        Description2 = " " + $keyGroup2[$i].Description
     }
 }
 
-# Output the table without headers
-$tableRows | Format-Table -AutoSize -HideTableHeaders
-# Write-Host "________"
+# Display the table
+$table | Format-Table -AutoSize -HideTableHeaders
+
 
 
 # Prompt Style  -----------------------------------------------------------------------------
