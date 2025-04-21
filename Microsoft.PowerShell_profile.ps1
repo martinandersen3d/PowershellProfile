@@ -387,17 +387,43 @@ Function Test-CommandExists {
     Finally { $ErrorActionPreference = $oldPreference }
 } 
 
-function ll { Get-ChildItem -Path $pwd -File }
+function ll {
+    param (
+        [string]$Path = "."
+    )
 
-# function GitCommit {
-#     git add .
-#     git commit -m "wip"
-# }
-# function GitCommitPush {
-#     git add .
-#     git commit -m "wip"
-#     git push
-# }
+    function Convert-Size {
+        param ([long]$bytes)
+        switch ($bytes) {
+            { $_ -lt 1KB } { return "{0:N1} B" -f $bytes; break }
+            { $_ -lt 1MB } { return "{0:N1} KB" -f ($bytes / 1KB); break }
+            { $_ -lt 1GB } { return "{0:N1} MB" -f ($bytes / 1MB); break }
+            { $_ -lt 1TB } { return "{0:N1} GB" -f ($bytes / 1GB); break }
+            default        { return "{0:N1} TB" -f ($bytes / 1TB) }
+        }
+    }
+
+    function Get-EmojiPrefix {
+        param ($item)
+        if ($item.PSIsContainer) {
+            return "📁"
+        } else {
+            return "📄"
+        }
+    }
+
+    Get-ChildItem -Path $Path | ForEach-Object {
+        $isFolder = $_.PSIsContainer
+        [PSCustomObject]@{
+            Name           = "$(Get-EmojiPrefix $_) $($_.Name)"
+            Type           = if ($isFolder) { "Folder" } else { $_.Extension.TrimStart('.') }
+            Size           = if ($isFolder) { "" } else { Convert-Size $_.Length }
+            'Date Modified'= $_.LastWriteTime
+            'Date Created' = $_.CreationTime
+        }
+    } | Format-Table -AutoSize
+}
+
 
 function GitCheatsheet {
     $filePath = "$HOME\Documents\WindowsPowerShell\git-cheatsheet.md"
@@ -705,6 +731,7 @@ $array = @(
     @("F", "List Files"),
     @("G", "Go To Favorites"),
     @("L", "List Commands"),
+    @("LL", "List Folders and Files"),
     @("P", "Preview Files in Dir With FZF"),
     @("S", "Sub-dirs Fzf (Depth 3) "),
     @("T", "Generate file from Template"),
