@@ -639,6 +639,12 @@ function SearchFileName($name) {
     }
 }
 
+function SearchFolderName([string]$name = "") {
+    Get-ChildItem -Directory -Recurse -Filter "*$name*" -ErrorAction SilentlyContinue | ForEach-Object {
+        Write-Output $_.FullName
+    }
+}
+
 # Call the function to list all methods in the PowerShell profile
 function ListCommands {
     try {
@@ -741,6 +747,7 @@ $array = @(
     @("g_<TAB>", "Git Tools"),
     @("git <TAB>", "Git Auto suggestions"),
     @("SearchFileName", "Sarch for part of filename"),
+    @("SearchFolderName", "Sarch for part of foldername"),
     @("SearchContent", "Search inside files with RipGrep")
 )
 
