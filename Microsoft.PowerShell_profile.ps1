@@ -795,8 +795,8 @@ $keyGroup2 = @(
 
     @{ Key = ""; Description = "" },
     @{ Key = "`e[4;33mSEARCH`e[0m"; Description = "" },
-    @{ Key = "SearchFileName `e[90m`"`Name`"` `e[0m"; Description = "Sarch for part of filename" },
-    @{ Key = "SearchFolderName `e[90m`"`Name`"` `e[0m"; Description = "Sarch for part of foldername" },
+    @{ Key = "SearchFileName `e[90m`"`Name`"` `e[0m"; Description = "Search for part of filename" },
+    @{ Key = "SearchFolderName `e[90m`"`Name`"` `e[0m"; Description = "Search for part of foldername" },
     @{ Key = "SearchContent `e[90m`"`Hi`"` `e[0m"; Description = "Search inside files with RipGrep" }
 )
 
