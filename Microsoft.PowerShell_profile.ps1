@@ -446,12 +446,6 @@ function g_PullRequestPreviewFzf {
 function reload-profile {
     & $profile
 }
-function find-file($name) {
-    Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
-        $place_path = $_.directory
-        Write-Output "${place_path}\${_}"
-    }
-}
 function unzip ($file) {
     Write-Output("Extracting", $file, "to", $pwd)
     $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
@@ -553,7 +547,7 @@ function Is-Binary {
 
 # Searches all the content of files in the current diretory and subpaths for a given string
 # example usage: Search-Content "TODO"
-function Search-Content {
+function SearchContent {
     param (
         [Parameter(Mandatory=$true, Position=0)]
         [string]$searchContent
@@ -609,6 +603,13 @@ function Search-Content {
         Write-Host ""
         Write-Host "$path" -ForegroundColor Yellow
         rg -i --context 1 "$searchContent" "$path"
+    }
+}
+
+function SearchFileName($name) {
+    Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
+        $place_path = $_.directory
+        Write-Output "${place_path}\${_}"
     }
 }
 
@@ -711,7 +712,9 @@ $array = @(
     @("U", "Update Scripts"),
     @("GitCheatsheet", "GitCheatsheet"),
     @("g_<TAB>", "Git Tools"),
-    @("git <TAB>", "Git Auto suggestions")
+    @("git <TAB>", "Git Auto suggestions"),
+    @("SearchFileName", "Sarch for part of filename"),
+    @("SearchContent", "Search inside files with RipGrep")
 )
 
 # Convert the array elements to custom objects
