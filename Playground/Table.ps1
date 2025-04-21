@@ -55,7 +55,7 @@ $keyGroup2 = @(
     @{ Key = "GitPush"; Description = "Git Push" },
     @{ Key = "GitShowCurrentCommitDiffFzf"; Description = "Show current commit diff in FZF" },
     @{ Key = "GitShowCommitMessage"; Description = "Preview auto generated Commit Message" },
-    @{ Key = "GitShowCurrentBranchVSDevFzf"; Description = "In FZF Diff current branch vs dev" },
+    @{ Key = "GitShowCurrentBranchVSDevFzf"; Description = "Show current Branch VS Dev diff In FZF" },
     @{ Key = "Git<TAB>"; Description = "Git Tools" },
     @{ Key = "git <TAB>"; Description = "Git Auto suggestions" },
 

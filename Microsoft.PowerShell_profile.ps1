@@ -29,8 +29,14 @@ function e. { explorer . }
 function m { notepad $args }
 function n { notepad $args }
 function dotnetWatch { dotnet run watch }
-function clr { Clear-Host }
-function clear { Clear-Host }
+function clr { 
+    Clear-Host 
+    & $profile
+}
+function clear { 
+    Clear-Host 
+    & $profile
+}
 
 # Update scripts from the git repo
 function u {
@@ -784,8 +790,8 @@ $keyGroup2 = @(
     @{ Key = "GitShowCurrentBranchVSDevFzf"; Description = "In FZF Diff current branch vs dev" },
     @{ Key = "GitShowCurrentCommitDiffFzf"; Description = "Show current commit diff in FZF" },
     @{ Key = "GitShowCommitMessage"; Description = "Preview auto generated Commit Message" },
-    @{ Key = "Git<TAB>"; Description = "Git Tools" },
-    @{ Key = "git <TAB>"; Description = "Git Auto suggestions" },
+    @{ Key = "Git`e[90m<TAB> `e[0m"; Description = "Git Tools" },
+    @{ Key = "git `e[90m<TAB> `e[0m"; Description = "Git Auto suggestions" },
 
     @{ Key = ""; Description = "" },
     @{ Key = "`e[4;33mSEARCH`e[0m"; Description = "" },
