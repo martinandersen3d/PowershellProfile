@@ -402,15 +402,27 @@ function ll {
             default        { return "{0:N1} TB" -f ($bytes / 1TB) }
         }
     }
-
     function Get-EmojiPrefix {
         param ($item)
+    
+        # Use Unicode escape sequences to represent emojis
+        $folderEmoji = [char]0x1F4C1  # 📁
+        $fileEmoji   = [char]0x1F4C4  # 📄
+    
         if ($item.PSIsContainer) {
-            return "📁"
+            return $folderEmoji
         } else {
-            return "📄"
+            return $fileEmoji
         }
     }
+    # function Get-EmojiPrefix {
+    #     param ($item)
+    #     if ($item.PSIsContainer) {
+    #         return "📁"
+    #     } else {
+    #         return "📄"
+    #     }
+    # }
 
     Get-ChildItem -Path $Path | ForEach-Object {
         $isFolder = $_.PSIsContainer
