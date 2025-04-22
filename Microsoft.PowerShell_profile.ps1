@@ -268,7 +268,7 @@ function p {
         Write-Host "fzf is not installed. Please install it and try again."
         Exit
     }
-    fzf --preview "bat --theme='Visual Studio Dark+' --color=always {}" --layout=reverse
+    fzf --preview 'bat --theme="Visual Studio Dark+" --color=always {}' --layout=reverse
 }
 
 # Generate or copy a file from ~/Templates to the current directory
