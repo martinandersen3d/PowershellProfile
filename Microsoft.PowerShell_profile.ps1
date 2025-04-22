@@ -64,7 +64,6 @@ function m {
         [string[]]$File
     )
 
-    # Pre‑flight: ensure dependencies are present
     if (-not (Get-Command fzf -ErrorAction SilentlyContinue)) {
         Write-Error "fzf is not installed or not in PATH."
         return
@@ -76,11 +75,12 @@ function m {
 
     try {
         if ($File) {
-            micro @File
+            # Quote paths that may contain spaces
+            $quoted = $File | ForEach-Object { "`"$($_)`"" }
+            Invoke-Expression "micro $($quoted -join ' ')"
             return
         }
 
-        # Get relative file paths
         $files = Get-ChildItem -File -Recurse -ErrorAction SilentlyContinue |
             Where-Object {
                 $_.FullName -notmatch '\\(node_modules|\.git)[\\\/]' -and
@@ -95,7 +95,6 @@ function m {
             return
         }
 
-        # fzf selection
         $fzfArgs = @(
             '--multi'
             '--layout=reverse'
@@ -109,20 +108,25 @@ function m {
             return
         }
 
-        # Split selected into array safely, preserving paths with spaces
-        $toOpen = $selected -split "`n" | ForEach-Object { $_.Trim('"') } | Where-Object { Test-Path $_ }
+        # Split into lines (even if only one), trim and verify
+        $toOpen = $selected -split "`n" |
+            ForEach-Object { $_.Trim('"') } |
+            Where-Object { Test-Path $_ }
 
         if (-not $toOpen) {
             Write-Host "No valid files selected."
             return
         }
 
-        micro @toOpen
+        # Quote each path and launch micro
+        $quotedPaths = $toOpen | ForEach-Object { "`"$($_)`"" }
+        Invoke-Expression "micro $($quotedPaths -join ' ')"
     }
     catch {
         Write-Error "An error occurred in function m: $_"
     }
 }
+
 
 
 function CheatsheetGit {
