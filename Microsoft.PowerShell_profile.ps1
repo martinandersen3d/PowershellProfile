@@ -81,6 +81,7 @@ function m {
             return
         }
 
+        Write-Host "Loading..."
         $files = Get-ChildItem -File -Recurse -ErrorAction SilentlyContinue |
             Where-Object {
                 $_.FullName -notmatch '\\(node_modules|\.git)[\\\/]' -and
