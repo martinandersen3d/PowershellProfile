@@ -872,8 +872,10 @@ $keyGroup1 = @(
     @{ Key = ""; Description = "" },
 
     @{ Key = "`e[4;33mSCRIPTS`e[0m"; Description = "" },
-    @{ Key = "L"; Description = "List Commands" },
+    @{ Key = "M `e[90m`"`Name`"` `e[0m"; Description = "Open files in Micro" },
+    @{ Key = "M"; Description = "FZF Multiselect `e[90m<TAB> `e[0m files to Micro" },
     @{ Key = "P"; Description = "Preview Files in Dir With FZF" },
+    @{ Key = "L"; Description = "List Commands" },
     @{ Key = "T"; Description = "Generate file from Template" },
     @{ Key = "X"; Description = "Execute Script" },
     @{ Key = "U"; Description = "Update Scripts" }
