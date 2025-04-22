@@ -58,16 +58,16 @@
             "keys": "ctrl+t"
         },
         {
+            "id": "User.closePane",
+            "keys": "alt+w"
+        },
+        {
             "id": "Terminal.DuplicatePaneDown",
             "keys": "alt+h"
         },
         {
             "id": "User.closePane",
             "keys": "ctrl+w"
-        },
-        {
-            "id": "User.closePane",
-            "keys": "alt+w"
         },
         {
             "id": "Terminal.DuplicatePaneRight",
@@ -96,10 +96,23 @@
         {
             "id": "Terminal.ToggleCommandPalette",
             "keys": "f1"
-        },{
+        },
+        {
             "id": "Terminal.ToggleCommandPalette",
             "keys": "ctrl+shift+p"
-        }
+        },
+        {
+            "id": "Terminal.QuakeMode",
+            "keys": "win+f11"
+        },
+        {
+            "id": "Terminal.QuakeMode",
+            "keys": "win+<"
+        },
+        {
+            "id": "Terminal.QuakeMode",
+            "keys": "win+oem_102"
+          }
     ],
     "newTabMenu": 
     [
