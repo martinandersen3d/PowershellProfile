@@ -27,6 +27,15 @@ $Env:BAT_THEME = 'Visual Studio Dark+'
 # micro text editor
 $env:MICRO_TRUECOLOR = "1"
 
+# default fzf options for full‑color UI
+$Env:FZF_DEFAULT_OPTS = @(
+  '--ansi',
+  '--color=fg:#abb2bf,bg:#282c34,hl:#569cd6,fg+:#e06c75,bg+:#2c313c,hl+:#d19a66',
+  '--color=info:#56b6c2,prompt:#98c379,spinner:#61afef,header:#61afef'
+) -join ' '
+
+# ALIAS ------------------------------
+
 # Set UNIX-like aliases for the admin command, so sudo <command> will run the command
 # with elevated rights. 
 Set-Alias -Name su -Value admin
@@ -257,7 +266,7 @@ function p {
         Write-Host "fzf is not installed. Please install it and try again."
         Exit
     }
-    fzf --preview "bat --color=always {}" --layout=reverse
+    fzf --preview "bat --theme='Visual Studio Dark+' --color=always {}" --layout=reverse
 }
 
 # Generate or copy a file from ~/Templates to the current directory
