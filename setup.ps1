@@ -120,7 +120,22 @@ CheckAndSuggestCommand "bat" "winget install sharkdp.bat" "choco install bat"
 CheckAndSuggestCommand "git" "winget install git.git" "choco install git"
 CheckAndSuggestCommand "pwsh" "winget install Microsoft.PowerShell" "choco install powershell-core"
 CheckAndSuggestCommand "rg" "winget install BurntSushi.ripgrep.GNU" "choco install ripgrep"
+CheckAndSuggestCommand "micro" "winget install zyedidia.micro" "choco install micro"
 
+# ---------------------------------------------------------------------------
+LogTitle "Install Micro Terminal Text Editor from winget"
+# ---------------------------------------------------------------------------
+LogInfo "winget install zyedidia.micro:"
+winget install zyedidia.micro
+
+LogInfo "micro -plugin install filemanager:"
+micro -plugin install filemanager
+
+LogInfo "micro -plugin install fzf:"
+micro -plugin install fzf
+
+LogInfo "micro -plugin install quoter:"
+micro -plugin install quoter
 
 # ---------------------------------------------------------------------------
 LogTitle "Clone Git Repo to: $home\AppData\Local\Temp\PowerShellProfile"
@@ -207,6 +222,8 @@ TryCopyFile "$GitDir\git-cheatsheet.md" "$documentsPath\PowerShell\git-cheatshee
 # TryCopyFolder "C:\SourceStuff" "D:\BackupStuff"
 TryCopyFolder "$GitDir\UserScripts" "$documentsPath\WindowsPowerShell\UserScripts"
 TryCopyFolder "$GitDir\UserScripts" "$documentsPath\PowerShell\UserScripts"
+
+TryCopyFolder "$GitDir\zyedidia.micro" "$home\.config\micro"
 
 
 # ----------------------------------------------
