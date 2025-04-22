@@ -36,7 +36,7 @@ File:
 
 ```
 # VSCode Dark+ true-color theme for Micro
-# ~/.config/micro/colorschemes/vscode-dark-tc.micro
+# ~/.config/micro/colorschemes/vscode-dark.micro
 
 # Base
 color-link default            "#BBBBBB,#1E1E1E"
