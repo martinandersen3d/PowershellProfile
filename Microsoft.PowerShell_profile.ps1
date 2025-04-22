@@ -57,7 +57,7 @@ function clear {
     Clear-Host 
     & $profile
 }
-Get-ChildItem -Path . -File | Select-Object @{Name='SubPath';Expression={Split-Path $_.FullName -Leaf} }
+
 function m {
     [CmdletBinding()]
     param (
