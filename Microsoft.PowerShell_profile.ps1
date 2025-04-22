@@ -46,7 +46,45 @@ Set-Alias -Name sudo -Value admin
 # Quick shortcut
 function c. { code . }
 function e. { explorer . }
-function m { micro $args }
+function m {
+    param (
+        [string[]]$File
+    )
+
+    if ($File) {
+        micro @File
+    } else {
+        $files = Get-ChildItem -File -Recurse -ErrorAction SilentlyContinue |
+            Where-Object {
+                $_.FullName -notmatch '\\(node_modules|\.git)[\\\/]' -and
+                $_.Extension -notmatch '\.(exe|dll|bin|jpg|jpeg|png|gif|bmp|zip|rar|7z|iso|mp4|mp3|avi|mov|pdf|docx?|xlsx?|pptx?)$'
+            }
+
+        if (-not $files) {
+            Write-Host "No suitable files found."
+            return
+        }
+
+        $selectedFiles = $files | fzf --multi --layout=reverse `
+                                      --header="Micro: Select files to open" `
+                                      --preview 'bat --theme="Visual Studio Dark+" --color=always {}'
+
+        if ([string]::IsNullOrWhiteSpace($selectedFiles)) {
+            Write-Host "No file selected"
+            return
+        }
+
+        $fileList = $selectedFiles -split "`n" | Where-Object { Test-Path $_ }
+
+        if (-not $fileList) {
+            Write-Host "No valid files selected"
+            return
+        }
+
+        micro @fileList
+    }
+}
+
 function n { notepad $args }
 function dotnetWatch { dotnet run watch }
 function clr { 
@@ -283,7 +321,7 @@ function t {
     $files = Get-ChildItem -Path "~/Templates" -Recurse -File | Select-Object -ExpandProperty FullName
 
     # Use fzf to select a file
-    $selectedFile = $files | fzf --layout=reverse --header="TEMPALTE: Copy File to Current Dir" --preview 'bat --color=always  {}'
+    $selectedFile = $files | fzf --layout=reverse --header="TEMPALTE: Copy File to Current Dir" --preview 'bat --theme="Visual Studio Dark+" --color=always {}'
     $currentDir = $PWD.Path
     # Check if a file is selected
     if ($selectedFile) {
