@@ -35,7 +35,7 @@ Set-Alias -Name sudo -Value admin
 # Quick shortcut
 function c. { code . }
 function e. { explorer . }
-function m { notepad $args }
+function m { micro $args }
 function n { notepad $args }
 function dotnetWatch { dotnet run watch }
 function clr { 
@@ -257,7 +257,7 @@ function p {
         Write-Host "fzf is not installed. Please install it and try again."
         Exit
     }
-    fzf --preview "bat --theme=Nord --color=always {}" --layout=reverse
+    fzf --preview "bat --color=always {}" --layout=reverse
 }
 
 # Generate or copy a file from ~/Templates to the current directory
@@ -505,7 +505,7 @@ function GitAutoCommitMessage {
 }
 
 function GitShowCurrentCommitDiffFzf {
-    git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --header "[COMMIT DIFF]: CURRENT vs. HEAD" --header-first --preview "git diff HEAD -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
+    git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --header "[COMMIT DIFF]: CURRENT vs. HEAD" --header-first --preview "git diff HEAD -- {} | bat --color=always" --layout=reverse
 }
 function GitShowCommitMessage {
     # Get the firectory name of the current powershell profile
@@ -513,7 +513,7 @@ function GitShowCommitMessage {
     & "$profileBasePath\UserScripts\GitShowCommitMessagePreview.ps1"
 }
 function GitShowCurrentBranchVSDevFzf {
-    git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --theme=OneHalfLight --color=always" --layout=reverse
+    git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --color=always" --layout=reverse
 }
 
 function reload-profile {
