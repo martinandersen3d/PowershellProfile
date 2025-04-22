@@ -188,7 +188,7 @@ function TryCopyFolder {
 }
 
 # Variables
-$GitDir = "$home\AppData\Local\Temp\PowerShellProfile"
+$GitDir = "$env:TEMP\PowerShellProfile"
 # User Documents Folder - Example: C:\Users\<user>\Documents
 $documentsPath = [Environment]::GetFolderPath('MyDocuments')
 
