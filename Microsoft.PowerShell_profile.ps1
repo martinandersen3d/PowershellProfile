@@ -20,6 +20,10 @@ $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administ
 
 # ENVIRONMENT VARIABLES ------------------------------
 
+# BatCat: Tell batcat to use truecolors and theme
+$Env:COLORTERM = 'truecolor'
+$Env:BAT_THEME = 'Visual Studio Dark+'
+
 # micro text editor
 $env:MICRO_TRUECOLOR = "1"
 
