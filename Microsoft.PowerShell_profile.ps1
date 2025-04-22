@@ -58,7 +58,7 @@ function clear {
     & $profile
 }
 
-ffunction m {
+function m {
     [CmdletBinding()]
     param (
         [string[]]$File
