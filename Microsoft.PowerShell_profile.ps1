@@ -58,7 +58,7 @@ function clear {
     & $profile
 }
 
-function m {
+ffunction m {
     [CmdletBinding()]
     param (
         [string[]]$File
@@ -95,7 +95,7 @@ function m {
             return
         }
 
-        # Launch fzf in multi‑select mode with preview
+        # fzf selection
         $fzfArgs = @(
             '--multi'
             '--layout=reverse'
@@ -109,8 +109,9 @@ function m {
             return
         }
 
-        # Split and verify selected paths
-        $toOpen = $selected -split "`n" | Where-Object { Test-Path $_ }
+        # Split selected into array safely, preserving paths with spaces
+        $toOpen = $selected -split "`n" | ForEach-Object { $_.Trim('"') } | Where-Object { Test-Path $_ }
+
         if (-not $toOpen) {
             Write-Host "No valid files selected."
             return
