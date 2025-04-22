@@ -30,8 +30,10 @@ $env:MICRO_TRUECOLOR = "1"
 # default fzf options for full‑color UI
 $Env:FZF_DEFAULT_OPTS = @(
   '--ansi',
-  '--color=fg:#abb2bf,bg:#282c34,hl:#569cd6,fg+:#e06c75,bg+:#2c313c,hl+:#d19a66',
-  '--color=info:#56b6c2,prompt:#98c379,spinner:#61afef,header:#61afef'
+  '--color=fg:#d4d4d4,bg:#1e1e1e,hl:#569cd6',          # main UI
+  '--color=fg+:#ffffff,bg+:#094771,hl+:#4fc1ff',        # selected entry
+  '--color=prompt:#dcdcaa,pointer:#c586c0,marker:#ce9178',
+  '--color=spinner:#9cdcfe,header:#808080,info:#9cdcfe'
 ) -join ' '
 
 # ALIAS ------------------------------
