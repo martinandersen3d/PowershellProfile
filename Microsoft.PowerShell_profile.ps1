@@ -46,6 +46,18 @@ Set-Alias -Name sudo -Value admin
 # Quick shortcut
 function c. { code . }
 function e. { explorer . }
+
+function n { notepad $args }
+function dotnetWatch { dotnet run watch }
+function clr { 
+    Clear-Host 
+    & $profile
+}
+function clear { 
+    Clear-Host 
+    & $profile
+}
+
 function m {
     param (
         [string[]]$File
@@ -83,17 +95,6 @@ function m {
 
         micro @fileList
     }
-}
-
-function n { notepad $args }
-function dotnetWatch { dotnet run watch }
-function clr { 
-    Clear-Host 
-    & $profile
-}
-function clear { 
-    Clear-Host 
-    & $profile
 }
 
 function CheatsheetGit {
