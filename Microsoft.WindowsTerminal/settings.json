@@ -46,20 +46,8 @@
     "keybindings": 
     [
         {
-            "id": null,
-            "keys": "ctrl+shift+w"
-        },
-        {
-            "id": null,
-            "keys": "ctrl+comma"
-        },
-        {
             "id": "User.paste",
             "keys": "ctrl+v"
-        },
-        {
-            "id": null,
-            "keys": "ctrl+shift+t"
         },
         {
             "id": "User.copy.644BA8F2",
@@ -82,10 +70,6 @@
             "keys": "alt+w"
         },
         {
-            "id": null,
-            "keys": "alt+shift+minus"
-        },
-        {
             "id": "Terminal.DuplicatePaneRight",
             "keys": "alt+v"
         },
@@ -96,10 +80,6 @@
         {
             "id": "Terminal.DuplicatePaneRight",
             "keys": "alt+s"
-        },
-        {
-            "id": null,
-            "keys": "alt+shift+plus"
         },
         {
             "id": "User.splitPane.A6751878",
