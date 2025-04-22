@@ -43,6 +43,24 @@ function clear {
     & $profile
 }
 
+function CheatsheetGit {
+    $filePath = "$HOME\Documents\WindowsPowerShell\CheatSheet\git.md"
+    if (Test-Path $filePath) {
+        bat --paging=never  --style=plain $filePath
+    } else {
+        Write-Host "Cheatsheet not found: $filePath" -ForegroundColor Red
+    }
+}
+
+function CheatsheetPowershell {
+    $filePath = "$HOME\Documents\WindowsPowerShell\CheatSheet\powershell.md"
+    if (Test-Path $filePath) {
+        bat --paging=never  --style=plain $filePath
+    } else {
+        Write-Host "Cheatsheet not found: $filePath" -ForegroundColor Red
+    }
+}
+
 # Update scripts from the git repo
 function u {
     $url = "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1"
@@ -450,15 +468,6 @@ function ll {
 }
 
 
-function GitCheatsheet {
-    $filePath = "$HOME\Documents\WindowsPowerShell\git-cheatsheet.md"
-    if (Test-Path $filePath) {
-        bat --paging=never  --style=plain $filePath
-    } else {
-        Write-Host "Cheatsheet not found: $filePath" -ForegroundColor Red
-    }
-}
-
 
 function GitCommitPush {
     param (
@@ -789,7 +798,6 @@ $keyGroup1 = @(
 $keyGroup2 = @(
     @{ Key = "`e[4;33mGIT`e[0m"; Description = "" },
     @{ Key = "GitAutoCommitMessage"; Description = "Add, Commit auto generated message" },
-    @{ Key = "GitCheatsheet"; Description = "Git Cheatsheet Overview" },
     @{ Key = "GitCommitPush `e[90m`"`Msg`"` `e[0m"; Description = "Add, Commit with message and PUSH" },
     @{ Key = "GitPush"; Description = "Git Push" },
     @{ Key = "GitShowCurrentBranchVSDevFzf"; Description = "In FZF Diff current branch vs dev" },
@@ -802,7 +810,12 @@ $keyGroup2 = @(
     @{ Key = "`e[4;33mSEARCH`e[0m"; Description = "" },
     @{ Key = "SearchFileName `e[90m`"`Name`"` `e[0m"; Description = "Search for part of filename" },
     @{ Key = "SearchFolderName `e[90m`"`Name`"` `e[0m"; Description = "Search for part of foldername" },
-    @{ Key = "SearchContent `e[90m`"`Hi`"` `e[0m"; Description = "Search inside files with RipGrep" }
+    @{ Key = "SearchContent `e[90m`"`Hi`"` `e[0m"; Description = "Search inside files with RipGrep" },
+
+    @{ Key = ""; Description = "" },
+    @{ Key = "`e[4;33mCHEATSHEETS`e[0m"; Description = "" },
+    @{ Key = "CheatsheetGit"; Description = "Git Cheatsheet" },
+    @{ Key = "CheatsheetPowershell"; Description = "Powershell Cheatsheet" }
 )
 
 # Create table combining the two arrays

@@ -214,14 +214,14 @@ TryCopyFile "$GitDir\Microsoft.WindowsTerminal\settings.json" "$home\AppData\Loc
 TryCopyFile "$GitDir\Microsoft.PowerShell_profile.ps1" "$documentsPath\WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
 TryCopyFile "$GitDir\Microsoft.PowerShell_profile.ps1" "$documentsPath\PowerShell\Microsoft.PowerShell_profile.ps1"
 
-TryCopyFile "$GitDir\git-cheatsheet.md" "$documentsPath\WindowsPowerShell\git-cheatsheet.md"
-TryCopyFile "$GitDir\git-cheatsheet.md" "$documentsPath\PowerShell\git-cheatsheet.md"
-
 # Start Copy Folders
 
 # TryCopyFolder "C:\SourceStuff" "D:\BackupStuff"
 TryCopyFolder "$GitDir\UserScripts" "$documentsPath\WindowsPowerShell\UserScripts"
 TryCopyFolder "$GitDir\UserScripts" "$documentsPath\PowerShell\UserScripts"
+
+TryCopyFolder "$GitDir\CheatSheet" "$documentsPath\WindowsPowerShell\CheatSheet"
+TryCopyFolder "$GitDir\CheatSheet" "$documentsPath\PowerShell\CheatSheet"
 
 TryCopyFolder "$GitDir\zyedidia.micro" "$home\.config\micro"
 
@@ -231,7 +231,7 @@ TryCopyFolder "$GitDir\zyedidia.micro" "$home\.config\micro"
 # ----------------------------------------------
 Start-Sleep -Seconds 1
 
-LogTitle "Complete - Press any key to reload profile"
+LogTitle "Setup Complete - Press any key to reload terminal profile"
 Write-Host "Press any key to continue..."
 [void][System.Console]::ReadKey($true)
 Clear-Host
