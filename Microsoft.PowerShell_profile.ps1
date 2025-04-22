@@ -57,45 +57,70 @@ function clear {
     Clear-Host 
     & $profile
 }
-
+Get-ChildItem -Path . -File | Select-Object @{Name='SubPath';Expression={Split-Path $_.FullName -Leaf} }
 function m {
+    [CmdletBinding()]
     param (
         [string[]]$File
     )
 
-    if ($File) {
-        micro @File
-    } else {
+    # Pre‑flight: ensure dependencies are present
+    if (-not (Get-Command fzf -ErrorAction SilentlyContinue)) {
+        Write-Error "fzf is not installed or not in PATH."
+        return
+    }
+    if (-not (Get-Command micro -ErrorAction SilentlyContinue)) {
+        Write-Error "micro editor is not installed or not in PATH."
+        return
+    }
+
+    try {
+        if ($File) {
+            micro @File
+            return
+        }
+
+        # Gather all “suitable” file paths
         $files = Get-ChildItem -File -Recurse -ErrorAction SilentlyContinue |
             Where-Object {
                 $_.FullName -notmatch '\\(node_modules|\.git)[\\\/]' -and
                 $_.Extension -notmatch '\.(exe|dll|bin|jpg|jpeg|png|gif|bmp|zip|rar|7z|iso|mp4|mp3|avi|mov|pdf|docx?|xlsx?|pptx?)$'
-            }
+            } |
+            Select-Object -ExpandProperty FullName
 
         if (-not $files) {
             Write-Host "No suitable files found."
             return
         }
 
-        $selectedFiles = $files | fzf --multi --layout=reverse `
-                                      --header="Micro: Select files to open" `
-                                      --preview 'bat --theme="Visual Studio Dark+" --color=always {}'
+        # Launch fzf in multi‑select mode with preview
+        $fzfArgs = @(
+            '--multi'
+            '--layout=reverse'
+            '--header=Micro: Select files to open'
+            '--preview=bat --theme="Visual Studio Dark+" --color=always {}'
+        )
+        $selected = $files | fzf @fzfArgs
 
-        if ([string]::IsNullOrWhiteSpace($selectedFiles)) {
-            Write-Host "No file selected"
+        if ([string]::IsNullOrWhiteSpace($selected)) {
+            Write-Host "No file selected."
             return
         }
 
-        $fileList = $selectedFiles -split "`n" | Where-Object { Test-Path $_ }
-
-        if (-not $fileList) {
-            Write-Host "No valid files selected"
+        # Split into array, validate each path, then open
+        $toOpen = $selected -split "`n" | Where-Object { Test-Path $_ }
+        if (-not $toOpen) {
+            Write-Host "No valid files selected."
             return
         }
 
-        micro @fileList
+        micro @toOpen
+    }
+    catch {
+        Write-Error "An error occurred in function m: $_"
     }
 }
+
 
 function CheatsheetGit {
     $filePath = "$HOME\Documents\WindowsPowerShell\CheatSheet\git.md"
