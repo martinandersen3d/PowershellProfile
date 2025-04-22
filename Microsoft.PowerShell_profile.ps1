@@ -80,13 +80,15 @@ function m {
             return
         }
 
-        # Gather all “suitable” file paths
+        # Get relative file paths
         $files = Get-ChildItem -File -Recurse -ErrorAction SilentlyContinue |
             Where-Object {
                 $_.FullName -notmatch '\\(node_modules|\.git)[\\\/]' -and
                 $_.Extension -notmatch '\.(exe|dll|bin|jpg|jpeg|png|gif|bmp|zip|rar|7z|iso|mp4|mp3|avi|mov|pdf|docx?|xlsx?|pptx?)$'
             } |
-            Select-Object -ExpandProperty FullName
+            ForEach-Object {
+                Resolve-Path -Relative $_.FullName
+            }
 
         if (-not $files) {
             Write-Host "No suitable files found."
@@ -107,7 +109,7 @@ function m {
             return
         }
 
-        # Split into array, validate each path, then open
+        # Split and verify selected paths
         $toOpen = $selected -split "`n" | Where-Object { Test-Path $_ }
         if (-not $toOpen) {
             Write-Host "No valid files selected."
@@ -120,6 +122,7 @@ function m {
         Write-Error "An error occurred in function m: $_"
     }
 }
+
 
 
 function CheatsheetGit {
