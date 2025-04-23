@@ -226,7 +226,8 @@ function CommitPush {
 while ($true) {
     try {
         Clear-Host
-
+        Write-Host "$pwd"
+        Write-Host ""
         # Replace this with your method call
         Write-Output "Message:"
         Write-Output "-----------------------------------------"
