@@ -50,5 +50,12 @@ Hurl:
 Fselect:
 - https://github.com/jhspetersson/fselect/
 
+Presenterm:
+- https://github.com/mfontanini/presenterm
+
+Moniker: mediainfo
+Publisher Url: https://mediaarea.net/
+Description: A convenient unified display of the most relevant technical and tag data for video and audio files from command line.
+
 # Inspiration
 https://christitus.com/pretty-powershell/
