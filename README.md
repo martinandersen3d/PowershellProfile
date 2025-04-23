@@ -30,5 +30,10 @@ choco install -y fzf ripgrep batcat micro
 # Todo
 - https://github.com/dandavison/delta?tab=readme-ov-file
 
+Miller:
+- https://github.com/johnkerl/miller
+- https://miller.readthedocs.io/en/latest/10min/
+- Miller.Miller
+
 # Inspiration
 https://christitus.com/pretty-powershell/
