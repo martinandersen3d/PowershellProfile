@@ -884,8 +884,8 @@ $keyGroup1 = @(
 # Define second array with Key2 and Description2
 $keyGroup2 = @(
     @{ Key = "`e[4;33mGIT`e[0m"; Description = "" },
-    @{ Key = "GitAutoCommitPush"; Description = "Add, Commit, Push with auto generated message" },
-    @{ Key = "GitCommitPush `e[90m`"`Msg`"` `e[0m"; Description = "Add, Commit with message and PUSH" },
+    @{ Key = "GitAutoCommitPush"; Description = "Add, Commit, Push with auto message" },
+    @{ Key = "GitCommitPush `e[90m`"`Msg`"` `e[0m"; Description = "Add, Commit, Push with custom message" },
     @{ Key = "GitPush"; Description = "Git Push" },
     @{ Key = "GitShowCurrentBranchVSDevFzf"; Description = "In FZF Diff current branch vs dev" },
     @{ Key = "GitShowCurrentCommitDiffFzf"; Description = "Show current commit diff in FZF" },
