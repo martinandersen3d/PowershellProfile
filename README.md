@@ -27,7 +27,8 @@ irm "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1" |
 ```
 choco install -y fzf ripgrep batcat micro
 ```
-# Todo
+# Todo HIGH
+
 - https://github.com/dandavison/delta?tab=readme-ov-file
 
 Miller:
@@ -38,13 +39,21 @@ Miller:
 GiTui
 - https://github.com/gitui-org/gitui?tab=readme-ov-file#installation
 
+# Todo MED
 Broot?
 - https://dystroy.org/broot/
+
+Gum
+https://github.com/charmbracelet/gum?tab=readme-ov-file#table
+
+# Todo LOW
+
 
 https://ilya-sher.org/2018/04/10/list-of-json-tools-for-command-line/
 
 JID - Json Incremental Digger
 - https://github.com/simeji/jid
+
 YQ:
 - https://github.com/mikefarah/yq
 
@@ -62,6 +71,14 @@ Presenterm:
 Moniker: mediainfo
 Publisher Url: https://mediaarea.net/
 Description: A convenient unified display of the most relevant technical and tag data for video and audio files from command line.
+
+Watchman
+https://facebook.github.io/watchman/
+
+echocat.watch 
+Publisher: echocat
+Description: Like the unix one but works cross-platform without magic. 😄
+Homepage: https://github.com/echocat/watch/
 
 # Inspiration
 https://christitus.com/pretty-powershell/
@@ -86,7 +103,7 @@ Tool	Description	Install Command
 jq	Lightweight JSON processor	winget install stedolan.jq
 yq	Like jq, but for YAML	winget install mikefarah.yq
 xsv	Fast CSV toolkit	winget install BurntSushi.xsv
-visidata	Terminal spreadsheet for CSV/TSV/JSON	winget install saulpw.visidata
+visidata	Terminal spreadsheet for CSV/TSV/JSON	winget install saulpw.visidata (No it is a pip installer)
 glow	Render Markdown in the terminal	winget install charmbracelet.glow
 🔄 File Conversion
 
