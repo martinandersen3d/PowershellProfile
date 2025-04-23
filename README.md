@@ -80,6 +80,9 @@ Publisher: echocat
 Description: Like the unix one but works cross-platform without magic. 😄
 Homepage: https://github.com/echocat/watch/
 
+uutils.coreutils
+https://github.com/uutils/coreutils
+
 # Inspiration
 https://christitus.com/pretty-powershell/
 
