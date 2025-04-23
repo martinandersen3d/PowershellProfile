@@ -579,10 +579,10 @@ function GitPush {
     git push
 }
 
-function GitAutoCommitMessage {
+function GitAutoCommitPush {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
-    & "$profileBasePath\UserScripts\GitAutoCommit.ps1"
+    & "$profileBasePath\UserScripts\GitAutoCommitPush.ps1"
 }
 
 function GitShowCurrentCommitDiffFzf {
@@ -884,7 +884,7 @@ $keyGroup1 = @(
 # Define second array with Key2 and Description2
 $keyGroup2 = @(
     @{ Key = "`e[4;33mGIT`e[0m"; Description = "" },
-    @{ Key = "GitAutoCommitMessage"; Description = "Add, Commit auto generated message" },
+    @{ Key = "GitAutoCommitPush"; Description = "Add, Commit, Push with auto generated message" },
     @{ Key = "GitCommitPush `e[90m`"`Msg`"` `e[0m"; Description = "Add, Commit with message and PUSH" },
     @{ Key = "GitPush"; Description = "Git Push" },
     @{ Key = "GitShowCurrentBranchVSDevFzf"; Description = "In FZF Diff current branch vs dev" },
