@@ -42,7 +42,6 @@ function Test-HasGitConflicts {
 
 
 function RepeatForever {
-    Clear-Host
     # if (Test-GitInstalled) {
     #     Log-Error "Git not installed"
     #     exit
@@ -219,8 +218,10 @@ function CommitPush {
 
 while ($true) {
     try {
+        Clear-Host
 
         # Replace this with your method call
+        Write-Output "Message:"
         Write-Output "-----------------------------------------"
         $message = RepeatForever
         Write-Output "$message"
