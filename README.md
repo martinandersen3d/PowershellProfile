@@ -25,7 +25,7 @@ irm "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1" |
 
 # Dependencies
 ```
-choco install -y fzf ripgrep batcat
+choco install -y fzf ripgrep batcat micro
 ```
 # Todo
 - https://github.com/dandavison/delta?tab=readme-ov-file
