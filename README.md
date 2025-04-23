@@ -22,13 +22,13 @@ irm "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1" |
 2. Install WinGet
 3. WinGet only works in PowerShell version 7+
 
-# TODO:
-- Execute scripts
 
 # Dependencies
 ```
 choco install -y fzf ripgrep batcat
 ```
+# Todo
+- https://github.com/dandavison/delta?tab=readme-ov-file
 
 # Inspiration
 https://christitus.com/pretty-powershell/
