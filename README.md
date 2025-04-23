@@ -47,5 +47,8 @@ YQ:
 Hurl:
 - https://github.com/Orange-OpenSource/hurl?tab=readme-ov-file
 
+Fselect:
+- https://github.com/jhspetersson/fselect/
+
 # Inspiration
 https://christitus.com/pretty-powershell/
