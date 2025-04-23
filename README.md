@@ -65,3 +65,54 @@ Description: A convenient unified display of the most relevant technical and tag
 
 # Inspiration
 https://christitus.com/pretty-powershell/
+
+
+----
+
+# More utilities
+
+🧭 CLI Navigation & System Tools
+
+Tool	Description	Install Command
+fzf	Fuzzy finder for navigating output	winget install fzf
+bat	cat clone with syntax highlighting	winget install sharkdp.bat
+lsd	ls replacement with icons	winget install lsd
+eza	Modern replacement for ls (alt to lsd)	winget install eza-community.eza
+ripgrep	Recursive fast search (like grep)	winget install BurntSushi.ripgrep
+tldr	Community cheatsheets for commands	winget install tldr-pages.tldr
+📂 Viewing & Modifying JSON, CSV, and Structured Data
+
+Tool	Description	Install Command
+jq	Lightweight JSON processor	winget install stedolan.jq
+yq	Like jq, but for YAML	winget install mikefarah.yq
+xsv	Fast CSV toolkit	winget install BurntSushi.xsv
+visidata	Terminal spreadsheet for CSV/TSV/JSON	winget install saulpw.visidata
+glow	Render Markdown in the terminal	winget install charmbracelet.glow
+🔄 File Conversion
+
+Tool	Description	Install Command
+pandoc	Universal document converter	winget install pandoc
+imagemagick	Convert/edit images from CLI	winget install ImageMagick.ImageMagick
+ffmpeg	Convert audio/video files	winget install Gyan.FFmpeg
+💻 Developer Tools
+Git & Git-related
+
+Tool	Description	Install Command
+git	Version control system	winget install Git.Git
+gh	GitHub CLI	winget install GitHub.cli
+lazygit	TUI for Git	winget install jesseduffield.lazygit
+tig	Text-mode interface for Git	winget install jonas.tig
+delta	Syntax-highlighted Git diff viewer	winget install dandavison.delta
+✨ Extras & Helpers
+
+Tool	Description	Install Command
+hyperfine	Benchmark command-line tools	winget install sharkdp.hyperfine
+fd	Simplified find command	winget install sharkdp.fd
+duf	Disk usage viewer	winget install muesli.duf
+bottom	htop alternative with more metrics	winget install Clement.bottom
+📦 Quick Bulk Install Script
+powershell
+Copy
+Edit
+winget install fzf; winget install sharkdp.bat; winget install lsd; winget install eza-community.eza; winget install BurntSushi.ripgrep; winget install tldr-pages.tldr; winget install stedolan.jq; winget install mikefarah.yq; winget install BurntSushi.xsv; winget install saulpw.visidata; winget install charmbracelet.glow; winget install pandoc; winget install ImageMagick.ImageMagick; winget install Gyan.FFmpeg; winget install Git.Git; winget install GitHub.cli; winget install jesseduffield.lazygit; winget install jonas.tig; winget install dandavison.delta; winget install sharkdp.hyperfine; winget install sharkdp.fd; winget install muesli.duf; winget install Clement.bottom
+Let me know if you want a printable PDF, categorized Markdown version, or even a PowerShell script to automate checking/installing only what's missing.
