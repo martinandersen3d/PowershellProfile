@@ -41,5 +41,11 @@ GiTui
 Broot?
 - https://dystroy.org/broot/
 
+YQ:
+- https://github.com/mikefarah/yq
+
+Hurl:
+- https://github.com/Orange-OpenSource/hurl?tab=readme-ov-file
+
 # Inspiration
 https://christitus.com/pretty-powershell/
