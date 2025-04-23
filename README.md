@@ -38,5 +38,8 @@ Miller:
 GiTui
 - https://github.com/gitui-org/gitui?tab=readme-ov-file#installation
 
+Broot?
+- https://dystroy.org/broot/
+
 # Inspiration
 https://christitus.com/pretty-powershell/
