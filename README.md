@@ -35,5 +35,8 @@ Miller:
 - https://miller.readthedocs.io/en/latest/10min/
 - Miller.Miller
 
+GiTui
+- https://github.com/gitui-org/gitui?tab=readme-ov-file#installation
+
 # Inspiration
 https://christitus.com/pretty-powershell/
