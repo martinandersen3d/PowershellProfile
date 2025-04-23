@@ -237,8 +237,13 @@ while ($true) {
         Write-Output ""
         Write-Host "[ OK ] Commitet message, pull and push" -ForegroundColor Green
         Write-Host ""
-        Write-Host "Press ANY key to commit+push again" -ForegroundColor Yellow
-        [void][System.Console]::ReadKey($true)
+        Write-Host "Press ANY key to commit+push again, or 'q' to quit..." -ForegroundColor Yellow
+        $key = [System.Console]::ReadKey($true)
+        
+        if ($key.KeyChar -eq 'q') {
+            Write-Host "Quitting..." -ForegroundColor Red
+            exit
+        }
     } catch {
         Write-Error "An error occurred: $_"
     }
