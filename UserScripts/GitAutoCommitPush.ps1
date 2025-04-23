@@ -210,9 +210,16 @@ function CommitPush {
     param (
         [string]$Message
     )
+    Write-Host "[git pull]" -ForegroundColor Yellow
     git pull
+
+    Write-Host "[git add --all]" -ForegroundColor Yellow
     git add --all
+
+    Write-Host "[git commit -m ...]" -ForegroundColor Yellow
     git commit -m "$Message"
+
+    Write-Host "[git push]" -ForegroundColor Yellow
     git push
 }
 
