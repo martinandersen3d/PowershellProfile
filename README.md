@@ -41,8 +41,14 @@ GiTui
 Broot?
 - https://dystroy.org/broot/
 
+https://ilya-sher.org/2018/04/10/list-of-json-tools-for-command-line/
+
+JID - Json Incremental Digger
+- https://github.com/simeji/jid
 YQ:
 - https://github.com/mikefarah/yq
+
+https://github.com/kellyjonbrazil/jtbl
 
 Hurl:
 - https://github.com/Orange-OpenSource/hurl?tab=readme-ov-file
