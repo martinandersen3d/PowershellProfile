@@ -27,11 +27,7 @@ $Env:BAT_THEME = 'Visual Studio Dark+'
 # micro text editor
 $env:MICRO_TRUECOLOR = "1"
 
-# Yazi file manager
-$Env:YAZI_FILE_ONE = 'C:\Program Files\Git\usr\bin\file.exe'
-
-
-# default fzf options for full‑color UI
+# default fzf options for full‑color UI - VsCode-Dark inspired
 $Env:FZF_DEFAULT_OPTS = @(
   '--ansi',
   '--color=fg:#d4d4d4,bg:#1e1e1e,hl:#569cd6',          # main UI
@@ -39,6 +35,20 @@ $Env:FZF_DEFAULT_OPTS = @(
   '--color=prompt:#dcdcaa,pointer:#c586c0,marker:#ce9178',
   '--color=spinner:#9cdcfe,header:#808080,info:#9cdcfe'
 ) -join ' '
+
+# Yazi file manager
+$Env:YAZI_FILE_ONE = 'C:\Program Files\Git\usr\bin\file.exe'
+
+# Yazi file manager
+function y {
+    $tmp = [System.IO.Path]::GetTempFileName()
+    yazi $args --cwd-file="$tmp"
+    $cwd = Get-Content -Path $tmp -Encoding UTF8
+    if (-not [String]::IsNullOrEmpty($cwd) -and $cwd -ne $PWD.Path) {
+        Set-Location -LiteralPath ([System.IO.Path]::GetFullPath($cwd))
+    }
+    Remove-Item -Path $tmp
+}
 
 # ALIAS ------------------------------
 
