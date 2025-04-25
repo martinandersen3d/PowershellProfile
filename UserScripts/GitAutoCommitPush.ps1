@@ -1,5 +1,6 @@
 # 
 
+# 🟢 🟡 🔴
 # Create: 💖 🎇  ✨  🌟 ❇️  🔆     
 # Update: 🔎 🧐 🤓 ☕︎ ☕ 📝 👏  U+1F4DD   // Memo (editing), ✏️  U+270F    // Pencil, 🔁  U+1F501   // Clockwise arrows (sync/update), 🔄  U+1F504   // Counterclockwise arrows (refresh), 🆙  U+1F199   // UP! (upload/update), 🧠  U+1F9E0   // Brain (logic/AI file changed)    
 # Delete: 💔 🗑️ U+1F5D1 / Wastebasket, ❌  U+274C    // Cross mark(rejected/deleted)        
