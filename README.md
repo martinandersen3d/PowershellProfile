@@ -29,9 +29,18 @@ choco install -y fzf ripgrep batcat micro
 ```
 # Todo HIGH
 
-yazi
+### yazi
 https://github.com/sxyazi/yazi/tree/main/yazi-config/preset
 https://github.com/956MB/vscode.yazi?tab=readme-ov-file
+yazi dependacies:
+- fd:
+    - sharkdp.fd
+
+**How to Install Nerd Font for Yasi in Windows Terminal:**
+1. Download and rightclick on a Nerd font > Install, a Nerd Font (https://www.nerdfonts.com/)
+2. Maybe Restart pc?
+3. Windows Terminal > Settings > Default > Apperance > Font > Select: ..some Nerd Font 
+
 
 LF
 gokcehan.lf
