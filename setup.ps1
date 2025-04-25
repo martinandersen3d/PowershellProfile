@@ -114,13 +114,13 @@ function CheckAndSuggestCommand {
         # return $false
     }
 }
-CheckAndSuggestCommand "git" "winget install Git.Git" "choco install git"
-CheckAndSuggestCommand "fzf" "winget install junegunn.fzf" "choco install fzf"
 CheckAndSuggestCommand "bat" "winget install sharkdp.bat" "choco install bat"
+CheckAndSuggestCommand "fd" "winget install sharkdp.fd" "choco install fd"
+CheckAndSuggestCommand "fzf" "winget install junegunn.fzf" "choco install fzf"
 CheckAndSuggestCommand "git" "winget install git.git" "choco install git"
+CheckAndSuggestCommand "micro" "winget install zyedidia.micro" "choco install micro"
 CheckAndSuggestCommand "pwsh" "winget install Microsoft.PowerShell" "choco install powershell-core"
 CheckAndSuggestCommand "rg" "winget install BurntSushi.ripgrep.GNU" "choco install ripgrep"
-CheckAndSuggestCommand "micro" "winget install zyedidia.micro" "choco install micro"
 
 # ---------------------------------------------------------------------------
 LogTitle "Install Micro Terminal Text Editor from winget"

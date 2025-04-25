@@ -892,6 +892,7 @@ $keyGroup1 = @(
     @{ Key = "L"; Description = "List Commands" },
     @{ Key = "T"; Description = "Generate file from Template" },
     @{ Key = "X"; Description = "Execute Script" },
+    @{ Key = "Y"; Description = "Yazi File Manager" },
     @{ Key = "U"; Description = "Update Scripts" }
 )
 
