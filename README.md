@@ -29,6 +29,14 @@ choco install -y fzf ripgrep batcat micro
 ```
 # Todo HIGH
 
+yazi
+https://github.com/sxyazi/yazi/tree/main/yazi-config/preset
+https://github.com/956MB/vscode.yazi?tab=readme-ov-file
+
+LF
+gokcehan.lf
+https://github.com/gokcehan/lf?tab=readme-ov-file
+
 - https://github.com/dandavison/delta?tab=readme-ov-file
 
 Miller:

@@ -27,6 +27,10 @@ $Env:BAT_THEME = 'Visual Studio Dark+'
 # micro text editor
 $env:MICRO_TRUECOLOR = "1"
 
+# Yazi file manager
+$Env:YAZI_FILE_ONE = 'C:\Program Files\Git\usr\bin\file.exe'
+
+
 # default fzf options for full‑color UI
 $Env:FZF_DEFAULT_OPTS = @(
   '--ansi',
