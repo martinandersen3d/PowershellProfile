@@ -59,7 +59,7 @@ Set-Alias -Name sudo -Value admin
 
 Set-Alias WinGetInstall winget install
 Set-Alias WinGetSearch winget search
-Set-Alias WinGetshow winget show
+Set-Alias WinGetShow winget show
 Set-Alias WinGetUninstall winget uninstall
 
 # Quick shortcut
