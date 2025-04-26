@@ -120,6 +120,7 @@ CheckAndSuggestCommand "fzf" "winget install junegunn.fzf" "choco install fzf"
 CheckAndSuggestCommand "git" "winget install git.git" "choco install git"
 CheckAndSuggestCommand "micro" "winget install zyedidia.micro" "choco install micro"
 CheckAndSuggestCommand "pwsh" "winget install Microsoft.PowerShell" "choco install powershell-core"
+CheckAndSuggestCommand "tldr" "winget install tldr-pages.tlrc" "choco install tldr"
 CheckAndSuggestCommand "rg" "winget install BurntSushi.ripgrep.GNU" "choco install ripgrep"
 
 # ---------------------------------------------------------------------------
