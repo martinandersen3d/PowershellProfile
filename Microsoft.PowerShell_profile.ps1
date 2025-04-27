@@ -57,10 +57,10 @@ function y {
 Set-Alias -Name su -Value admin
 Set-Alias -Name sudo -Value admin
 
-Set-Alias WinGetInstall winget install
-Set-Alias WinGetSearch winget search
-Set-Alias WinGetShow winget show
-Set-Alias WinGetUninstall winget uninstall
+# Set-Alias WinGetInstall winget install
+# Set-Alias WinGetSearch winget search
+# Set-Alias WinGetShow winget show
+# Set-Alias WinGetUninstall winget uninstall
 
 # Quick shortcut
 function c. { code . }
@@ -234,6 +234,7 @@ function g {
         "$userDir\Desktop",
         "$userDir\Videos",
         "$userDir\.vscode",
+        "$userDir\AppData",
         "$userDir\AppData\Local\Microsoft\VisualStudio",
         "$userDir\Obsidian2",
         "$userDir\Desktop\SCREENSHOTS",
