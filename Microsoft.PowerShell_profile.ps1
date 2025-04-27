@@ -77,6 +77,7 @@ function clear {
     & $profile
 }
 
+# Open files with micro
 function m {
     [CmdletBinding()]
     param (
