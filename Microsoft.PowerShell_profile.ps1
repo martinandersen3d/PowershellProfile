@@ -353,6 +353,12 @@ function g {
     }
 }
 
+function GitAutoCommitPush {
+    # Get the firectory name of the current powershell profile
+    $profileBasePath = Split-Path $PROFILE -Parent
+    & "$profileBasePath\UserScripts\gg.ps1"
+}
+
 # Preview Files in Dir With FZF
 function p {
     if (!(Get-Command fzf -ErrorAction SilentlyContinue)) {
@@ -423,6 +429,7 @@ function t {
 function .. { Set-Location .. }
 function ... { Set-Location ..\.. }
 function .... { Set-Location ..\..\.. }
+function ..... { Set-Location ..\..\..\.. }
 function cd.. { Set-Location .. }
 function cd... { Set-Location ..\.. }
 function cd.... { Set-Location ..\..\.. }
