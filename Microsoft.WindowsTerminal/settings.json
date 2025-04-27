@@ -132,7 +132,13 @@
     ],
     "profiles": 
     {
-        "defaults": {},
+        "defaults": 
+        {
+            "font": 
+            {
+                "face": "Hack Nerd Font"
+            }
+        },
         "list": 
         [
             {
