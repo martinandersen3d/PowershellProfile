@@ -353,7 +353,7 @@ function g {
     }
 }
 
-function GitAutoCommitPush {
+function gg {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\gg.ps1"
@@ -624,6 +624,120 @@ function GitShowCommitMessage {
 function GitShowCurrentBranchVSDevFzf {
     git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --color=always" --layout=reverse
 }
+
+function ShowCsvInGridView {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)]
+        [string]$Path,
+
+        [Parameter(Position = 1)]
+        [string]$Delimiter
+    )
+
+    if (-not $Path) {
+        Write-Host ""
+        Write-Host "Usage:" -ForegroundColor Yellow
+        Write-Host "Show-CsvInGridView -Path '<PathToCsv>' [-Delimiter '<DelimiterCharacter>']"
+        Write-Host ""
+        Write-Host "Examples:"
+        Write-Host "Show-CsvInGridView -Path 'C:\data.csv'"
+        Write-Host "Show-CsvInGridView -Path 'C:\data.csv' -Delimiter ';'"
+        # Tab-separated CSV
+        # Show-CsvInGridView -Path "C:\data.csv" -Delimiter "`t"
+        Write-Host "Show-CsvInGridView -Path 'C:\data.csv' -Delimiter '`t'"
+
+        return
+    }
+
+    if (-not (Test-Path $Path)) {
+        Write-Error "Error: File '$Path' not found."
+        return
+    }
+
+    try {
+        $params = @{
+            Path = $Path
+        }
+
+        if ($Delimiter) {
+            $params['Delimiter'] = $Delimiter
+        }
+
+        Import-Csv @params | Out-GridView -Title ($Path | Split-Path -Leaf)
+    }
+    catch {
+        Write-Error "Error: $_"
+    }
+}
+
+function ShowJsonInGridView {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)]
+        [string]$Path,
+
+        [Parameter(Position = 1)]
+        [string]$Key
+    )
+
+    if (-not $Path) {
+        Write-Host ""
+        Write-Host "Usage:" -ForegroundColor Yellow
+        Write-Host "Show-JsonArrayInGridView -Path '<PathToJson>' [-Key '<ArrayPropertyName>']"
+        Write-Host ""
+        Write-Host "Examples:"
+        Write-Host "Show-JsonArrayInGridView -Path 'C:\data.json' -Key 'People'"
+        Write-Host "Show-JsonArrayInGridView -Path 'C:\arrayonly.json'"
+        return
+    }
+
+    if (-not (Test-Path $Path)) {
+        Write-Error "Error: File '$Path' not found."
+        return
+    }
+
+    try {
+        $json = Get-Content -Raw -Path $Path | ConvertFrom-Json
+
+        if ($Key) {
+            if ($json.PSObject.Properties.Name -notcontains $Key) {
+                throw "Key '$Key' not found in JSON."
+            }
+            $data = $json.$Key
+        }
+        else {
+            # No key provided: Assume the object itself is an array OR find the first array property
+            if ($json -is [System.Collections.IEnumerable] -and -not ($json -is [string])) {
+                $data = $json
+            }
+            else {
+                # Try to find a property that is an array
+                $arrayProp = $json.PSObject.Properties | Where-Object {
+                    $_.Value -is [System.Collections.IEnumerable] -and -not ($_.Value -is [string])
+                } | Select-Object -First 1
+
+                if ($arrayProp) {
+                    Write-Host "Info: No key provided. Automatically using key '$($arrayProp.Name)'." -ForegroundColor Yellow
+                    $data = $arrayProp.Value
+                }
+                else {
+                    throw "No array found at the root level or inside properties."
+                }
+            }
+        }
+
+        if (-not ($data -is [System.Collections.IEnumerable])) {
+            throw "The selected data is not an array."
+        }
+
+        $data | Out-GridView -Title ($Key ? $Key : "JSON Data")
+    }
+    catch {
+        Write-Error "Error: $_"
+    }
+}
+
 
 function reload-profile {
     & $profile
@@ -927,6 +1041,14 @@ $keyGroup2 = @(
     @{ Key = "SearchFileName `e[90m`"`Name`"` `e[0m"; Description = "Search for part of filename" },
     @{ Key = "SearchFolderName `e[90m`"`Name`"` `e[0m"; Description = "Search for part of foldername" },
     @{ Key = "SearchContent `e[90m`"`Hi`"` `e[0m"; Description = "Search inside files with RipGrep" },
+
+    @{ Key = ""; Description = "" },
+    @{ Key = "`e[4;33mSHOW FILE`e[0m"; Description = "" },
+    @{ Key = "ShowCsvInGridView `e[90m`"`File.csv`"` `e[0m"; Description = "Show CSV in GridView" },
+    @{ Key = "ShowCsvInGridView `e[90m`"`File.csv`"` `"`;`"` `e[0m"; Description = "GridView with custom delimiter" },
+    @{ Key = "ShowJsonInGridView `e[90m`"`File.json`"` `e[0m"; Description = "Show JSON array in GridView" },
+    @{ Key = "ShowJsonInGridView `e[90m`"`File.json`"` `"`data`"` `e[0m"; Description = "Provide a key for the array" },
+
 
     @{ Key = ""; Description = "" },
     @{ Key = "`e[4;33mCHEATSHEETS`e[0m"; Description = "" },

@@ -27,6 +27,10 @@ irm "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1" |
 ```
 choco install -y fzf ripgrep batcat micro
 ```
+# Todo General
+-  Show Json in searchable Grid View in powershell
+    - (Get-Content -Raw -Path "example.json" | ConvertFrom-Json) | Out-GridView
+
 # Todo HIGH
 
 ### yazi
