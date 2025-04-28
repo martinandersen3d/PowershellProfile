@@ -227,17 +227,15 @@ TryCopyFolder "$GitDir\CheatSheet" "$documentsPath\PowerShell\CheatSheet"
 TryCopyFolder "$GitDir\zyedidia.micro" "$home\.config\micro"
 
 # ----------------------------------------------
-LogTitle "HACK NERD FONT INSTALL" 
+LogTitle "HACK NERD FONT INSTALL"
 # ----------------------------------------------
-
-# Get the Downloads folder path
-$downloadFolder = [System.IO.Path]::Combine($env:USERPROFILE, "Downloads")
-$zipFilePath = Join-Path $downloadFolder "Hack.zip"
-$unzipFolderPath = Join-Path $downloadFolder "HackFonts"
 
 # Define variables
 $fontName = "Hack Nerd Font"
 $zipUrl = "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/Hack.zip"
+$downloadFolder = [System.IO.Path]::Combine($env:USERPROFILE, "Downloads")
+$zipFilePath = Join-Path $downloadFolder "Hack.zip"
+$unzipFolderPath = Join-Path $downloadFolder "HackFonts"
 
 # Check if the font is already installed
 $fonts = (New-Object -ComObject Shell.Application).Namespace(0x14).Items()
