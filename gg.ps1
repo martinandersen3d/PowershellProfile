@@ -222,10 +222,33 @@ function g {
     } else {
         # Write-Host "The bookmarks file does not exist: $tempFile"
     }
-Write-Host $result
+
+    # Parents match: If any of the parents dirs matches the searchStr, then add it to $result ----------------------------------------------
+    # Get the current location and convert it to a DirectoryInfo object
+    $currentDir = Get-Item -Path (Get-Location).Path
+
+    # Initialize an array to store parent directories
+    $parentDirectories = @()
+
+    # Walk up all parent directories to the root of the drive
+    $parentDir = $currentDir
+
+    while ($parentDir -ne $null) {
+        # Add the current parent directory to the array
+        $parentDirectories += $parentDir.FullName
+
+        # Check if the current parent directory matches the search string
+        if ($parentDir.Name -match "(?i)$searchStr") {
+            Write-Host "Match found: $($parentDir.FullName)"
+            $result.Add($parentDir.FullName) | Out-Null
+        }
+
+        # Move to the parent directory
+        $parentDir = $parentDir.Parent
+    }
+
 
     # Set the location  ----------------------------------------------
-
 
     # Perform a case-insensitive search in $presetDirs
     $filteredResult = $result | Where-Object { $_ -match "(?i)$searchStr" } | Select-Object -Unique
@@ -233,11 +256,10 @@ Write-Host $result
     if ($filteredResult.Count -eq 0) {
         Write-Host "No results found."
     } elseif ($filteredResult.Count -eq 1) {
-        # Write-Host "1 result found: $($filteredResult[0])"
-        $fullPath = Resolve-Path -Path $filteredResult[0]
-        Set-LocationIfExists "$fullPath"
-        # Set-Location -Path $filteredResult[0].FullName
+        # If there is only one item in the array, then we dont need to extract it.. powershell is wierd
+        $fullPath = Resolve-Path -Path $filteredResult
 
+        Set-LocationIfExists "$fullPath"
     } else {
 
         $selectedPath = $filteredResult | fzf --height 20% --reverse
@@ -247,12 +269,7 @@ Write-Host $result
         }
         $fullPath = Resolve-Path -Path $selectedPath
         Set-LocationIfExists "$fullPath"
-        
-
-        # Write-Host "$($result.Count) results found."
-        # foreach ($item in $result) {
-        #     Write-Host $item
-        # }
+ 
     }
     # $result.Add("one") | Out-Null
 
