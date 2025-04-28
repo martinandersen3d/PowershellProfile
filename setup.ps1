@@ -226,8 +226,6 @@ TryCopyFolder "$GitDir\CheatSheet" "$documentsPath\PowerShell\CheatSheet"
 
 TryCopyFolder "$GitDir\zyedidia.micro" "$home\.config\micro"
 
-
-
 # ----------------------------------------------
 LogTitle "HACK NERD FONT INSTALL" 
 # ----------------------------------------------
