@@ -1046,6 +1046,7 @@ $keyGroup2 = @(
     @{ Key = "`e[4;33mSHOW FILE`e[0m"; Description = "" },
     @{ Key = "ShowCsvInGridView `e[90m`"`File.csv`"` `e[0m"; Description = "Show CSV in GridView" },
     @{ Key = "ShowCsvInGridView `e[90m`"`File.csv`"` `"`;`"` `e[0m"; Description = "GridView with custom delimiter" },
+    @{ Key = "ShowCsvInGridView `e[90m`"`File.csv`"` `"``t`"` `e[0m"; Description = "GridView with custom delimiter" },
     @{ Key = "ShowJsonInGridView `e[90m`"`File.json`"` `e[0m"; Description = "Show JSON array in GridView" },
     @{ Key = "ShowJsonInGridView `e[90m`"`File.json`"` `"`data`"` `e[0m"; Description = "Provide a key for the array" },
 
