@@ -643,6 +643,8 @@ function ShowCsvInGridView {
         Write-Host "Examples:"
         Write-Host "Show-CsvInGridView -Path 'C:\data.csv'"
         Write-Host "Show-CsvInGridView -Path 'C:\data.csv' -Delimiter ';'"
+        Write-Host "Show-CsvInGridView -Path 'C:\data.csv' -Delimiter '`t'"
+
         return
     }
 
