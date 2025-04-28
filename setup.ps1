@@ -241,6 +241,7 @@ if ($fonts | Where-Object { $_.Name -like "*$fontName*" }) {
     LogRed "$fontName is not installed."
     LogInfo "Please install the '$fontName' from the official Nerd Fonts website:"
     LogInfo "https://www.nerdfonts.com/font-downloads"
+    LogInfo "The font '$fontName' is used for Windows Terminal, to display the correct symbols in Yazi File Manager"
 }
 
 
