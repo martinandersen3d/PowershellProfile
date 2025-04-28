@@ -2,6 +2,12 @@ param(
     [string]$inputValue
 )
 
+# TODO
+#  g .....
+#  1 level of c:\ folders 
+#  1 level of home folder
+
+
 # METHOD ---------------------------------------------------------------
 
 function Set-LocationIfExists {
@@ -172,6 +178,48 @@ function g {
         # Write-Host "The directory '$path' does not exist."
     }
 
+    # Parents match: If any of the parents dirs matches the searchStr, then add it to $result ----------------------------------------------
+    # Get the current location and convert it to a DirectoryInfo object
+    $currentDir = Get-Item -Path (Get-Location).Path
+
+    # Initialize an array to store parent directories
+    $parentDirectories = @()
+
+    # Walk up all parent directories to the root of the drive
+    $parentDir = $currentDir
+
+    while ($parentDir -ne $null) {
+        # Add the current parent directory to the array
+        $parentDirectories += $parentDir.FullName
+
+        # Check if the current parent directory matches the search string
+        if ($parentDir.Name -match "(?i)$searchStr") {
+            # Write-Host "Match found: $($parentDir.FullName)"
+            $result.Add($parentDir.FullName) | Out-Null
+        }
+
+        # Move to the parent directory
+        $parentDir = $parentDir.Parent
+    }
+
+    # Recursive search from current directory with depth 4 -----------------------------------------------------
+
+    $searchDepth = 4
+    $currentDir = Get-Location
+
+    try {
+        $deepMatch = Get-ChildItem -Path $currentDir -Directory -Recurse -Depth $searchDepth -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -like "*$searchStr*" } | ForEach-Object { $_.FullName } 
+
+        if ($deepMatch) {
+            foreach ($match in $deepMatch) {
+                $result.Add($match) | Out-Null
+            }
+        }
+    } catch {
+        Write-Host "Error while searching from current directory: $_"
+    }
+  
     # Add Presets to $result ---------------------------------------------------------------
 
     foreach ($dir in $presetDirs) {
@@ -198,24 +246,6 @@ function g {
         # Write-Host "No full or partial matches found for '$path' in the current directory."
     }
 
-    # Recursive search from current directory with depth 4 -----------------------------------------------------
-
-    $searchDepth = 4
-    $currentDir = Get-Location
-
-    try {
-        $deepMatch = Get-ChildItem -Path $currentDir -Directory -Recurse -Depth $searchDepth -ErrorAction SilentlyContinue |
-            Where-Object { $_.Name -like "*$searchStr*" } | ForEach-Object { $_.FullName } 
-
-        if ($deepMatch) {
-            foreach ($match in $deepMatch) {
-                $result.Add($match) | Out-Null
-            }
-        }
-    } catch {
-        Write-Host "Error while searching from current directory: $_"
-    }
-  
     # Load g-bookmarks.txt from user Temp and add paths to the array  ----------------------------------------------
 
     # Define the path to the bookmarks file
@@ -235,31 +265,6 @@ function g {
     } else {
         # Write-Host "The bookmarks file does not exist: $tempFile"
     }
-
-    # Parents match: If any of the parents dirs matches the searchStr, then add it to $result ----------------------------------------------
-    # Get the current location and convert it to a DirectoryInfo object
-    $currentDir = Get-Item -Path (Get-Location).Path
-
-    # Initialize an array to store parent directories
-    $parentDirectories = @()
-
-    # Walk up all parent directories to the root of the drive
-    $parentDir = $currentDir
-
-    while ($parentDir -ne $null) {
-        # Add the current parent directory to the array
-        $parentDirectories += $parentDir.FullName
-
-        # Check if the current parent directory matches the search string
-        if ($parentDir.Name -match "(?i)$searchStr") {
-            # Write-Host "Match found: $($parentDir.FullName)"
-            $result.Add($parentDir.FullName) | Out-Null
-        }
-
-        # Move to the parent directory
-        $parentDir = $parentDir.Parent
-    }
-
 
     # Set the location  ----------------------------------------------
 
