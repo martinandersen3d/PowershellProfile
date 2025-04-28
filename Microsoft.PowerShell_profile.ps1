@@ -1659,7 +1659,3 @@ Register-ArgumentCompleter -Native -CommandName tsc -ScriptBlock {
         [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
     }
 }
-
-# Zoxide
-# https://github.com/ajeetdsouza/zoxide
-Invoke-Expression (& { (zoxide init powershell | Out-String) })

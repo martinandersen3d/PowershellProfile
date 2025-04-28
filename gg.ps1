@@ -107,6 +107,19 @@ function g {
         return
     }
 
+    # CD special case commands "-" "--" "~" ----------------------------------------
+
+       # Handle special cases for "-", "--", and "~"
+       if ($searchStr -eq "-" -or $searchStr -eq "--" -or $searchStr -eq "~") {
+        try {
+            # Use Set-Location to handle these special cases
+            Set-Location -Path $searchStr
+            return
+        } catch {
+            Write-Host "An error occurred while navigating to '$searchStr': $_.Exception.Message"
+            return
+        }
+    }
 
     # Number Jump ---------------------------------------------------------------
     #  g <number> 
@@ -239,7 +252,7 @@ function g {
 
         # Check if the current parent directory matches the search string
         if ($parentDir.Name -match "(?i)$searchStr") {
-            Write-Host "Match found: $($parentDir.FullName)"
+            # Write-Host "Match found: $($parentDir.FullName)"
             $result.Add($parentDir.FullName) | Out-Null
         }
 
@@ -250,8 +263,11 @@ function g {
 
     # Set the location  ----------------------------------------------
 
+    # Filter the paths in $result to only include those paths that exist
+    $realPaths = $result | Where-Object { Test-Path $_ }
+
     # Perform a case-insensitive search in $presetDirs
-    $filteredResult = $result | Where-Object { $_ -match "(?i)$searchStr" } | Select-Object -Unique
+    $filteredResult = $realPaths | Where-Object { $_ -match "(?i)$searchStr" } | Select-Object -Unique
 
     if ($filteredResult.Count -eq 0) {
         Write-Host "No results found."
