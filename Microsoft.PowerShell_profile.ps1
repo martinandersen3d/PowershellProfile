@@ -632,7 +632,7 @@ function ShowCsvInGridView {
         [string]$Path,
 
         [Parameter(Position = 1)]
-        [string]$Delimiter
+        [char]$Delimiter
     )
 
     if (-not $Path) {
@@ -643,8 +643,6 @@ function ShowCsvInGridView {
         Write-Host "Examples:"
         Write-Host "Show-CsvInGridView -Path 'C:\data.csv'"
         Write-Host "Show-CsvInGridView -Path 'C:\data.csv' -Delimiter ';'"
-        # Tab-separated CSV
-        # Show-CsvInGridView -Path "C:\data.csv" -Delimiter "`t"
         Write-Host "Show-CsvInGridView -Path 'C:\data.csv' -Delimiter '`t'"
 
         return
@@ -656,21 +654,20 @@ function ShowCsvInGridView {
     }
 
     try {
-        $params = @{
-            Path = $Path
-        }
-
         if ($Delimiter) {
-            $params['Delimiter'] = $Delimiter
+            Import-Csv -Path $Path -Delimiter $Delimiter | Out-GridView -Title ($Path | Split-Path -Leaf)
         }
-
-        Import-Csv @params | Out-GridView -Title ($Path | Split-Path -Leaf)
+        else {
+            Import-Csv -Path $Path | Out-GridView -Title ($Path | Split-Path -Leaf)
+        }
     }
     catch {
         Write-Error "Error: $_"
     }
 }
 
+# (Get-Content -Raw -Path "example.json" | ConvertFrom-Json) | Out-GridView -Title "Json Data"
+# (Get-Content -Raw -Path "example.json" | ConvertFrom-Json).People | Out-GridView -Title "Json Data"
 function ShowJsonInGridView {
     [CmdletBinding()]
     param(
