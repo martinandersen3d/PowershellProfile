@@ -227,52 +227,20 @@ TryCopyFolder "$GitDir\CheatSheet" "$documentsPath\PowerShell\CheatSheet"
 TryCopyFolder "$GitDir\zyedidia.micro" "$home\.config\micro"
 
 # ----------------------------------------------
-LogTitle "HACK NERD FONT INSTALL"
+LogTitle "HACK NERD FONT CHECK"
 # ----------------------------------------------
 
 # Define variables
 $fontName = "Hack Nerd Font"
-$zipUrl = "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/Hack.zip"
-$downloadFolder = [System.IO.Path]::Combine($env:USERPROFILE, "Downloads")
-$zipFilePath = Join-Path $downloadFolder "Hack.zip"
-$unzipFolderPath = Join-Path $downloadFolder "HackFonts"
 
 # Check if the font is already installed
 $fonts = (New-Object -ComObject Shell.Application).Namespace(0x14).Items()
 if ($fonts | Where-Object { $_.Name -like "*$fontName*" }) {
     LogGreen "$fontName is already installed."
 } else {
-    LogRed "$fontName is not installed. Proceeding with installation..."
-
-    # Check if the zip file already exists
-    if (-not (Test-Path -Path $zipFilePath)) {
-        LogInfo "Downloading $fontName zip file..."
-        Invoke-WebRequest -Uri $zipUrl -OutFile $zipFilePath
-        LogGreen "Downloaded $fontName zip file to $zipFilePath."
-    } else {
-        LogInfo "Zip file already exists at $zipFilePath."
-    }
-
-    # Check if the unzip folder already exists
-    if (-not (Test-Path -Path $unzipFolderPath)) {
-        LogInfo "Unzipping $fontName files..."
-        Expand-Archive -Path $zipFilePath -DestinationPath $unzipFolderPath -Force
-        LogGreen "Unzipped files to $unzipFolderPath."
-    } else {
-        LogInfo "Unzipped folder already exists at $unzipFolderPath."
-    }
-
-    # Install the fonts
-    LogInfo "Installing fonts..."
-    $fontFiles = Get-ChildItem -Path $unzipFolderPath -Filter "*.ttf" -Recurse
-    foreach ($fontFile in $fontFiles) {
-        try {
-            Copy-Item -Path $fontFile.FullName -Destination "$env:WINDIR\Fonts" -Force
-            LogGreen "Installed font: $($fontFile.Name)"
-        } catch {
-            LogRed "Failed to install font: $($fontFile.Name). Error: $_"
-        }
-    }
+    LogRed "$fontName is not installed."
+    LogInfo "Please install the '$fontName' from the official Nerd Fonts website:"
+    LogInfo "https://www.nerdfonts.com/font-downloads"
 }
 
 
