@@ -632,7 +632,7 @@ function ShowCsvInGridView {
         [string]$Path,
 
         [Parameter(Position = 1)]
-        [char]$Delimiter
+        [string]$Delimiter
     )
 
     if (-not $Path) {
@@ -643,8 +643,6 @@ function ShowCsvInGridView {
         Write-Host "Examples:"
         Write-Host "Show-CsvInGridView -Path 'C:\data.csv'"
         Write-Host "Show-CsvInGridView -Path 'C:\data.csv' -Delimiter ';'"
-        Write-Host "Show-CsvInGridView -Path 'C:\data.csv' -Delimiter '`t'"
-
         return
     }
 
@@ -655,6 +653,11 @@ function ShowCsvInGridView {
 
     try {
         if ($Delimiter) {
+            # Validate: must be exactly one character
+            if ($Delimiter.Length -ne 1) {
+                throw "Delimiter must be exactly one character. Provided: '$Delimiter'"
+            }
+
             Import-Csv -Path $Path -Delimiter $Delimiter | Out-GridView -Title ($Path | Split-Path -Leaf)
         }
         else {
