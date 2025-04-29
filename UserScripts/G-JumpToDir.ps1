@@ -241,7 +241,7 @@ function g {
     # Get the current location and convert it to a DirectoryInfo object
     $currentDir = $null
     try {
-        $currentDir = Get-Item -Path (Get-Location).Path
+        $currentDir = Get-Item -Path (Get-Location).Path | Out-Null
     }
     catch {
         <#Do this if a terminating exception happens#>
