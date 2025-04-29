@@ -262,14 +262,16 @@ function g {
     }
 
     # Recursive search from current directory with depth 4 -----------------------------------------------------
-
-    $searchDepth = 4
+    
     $currentDir = Get-Location
-
+    $searchDepth = 4
+    if ($currentDir.Path -eq "C:\") {
+        $searchDepth = 2
+    }
     try {
         # The recursive search will exclude folders that starts with a dot "."
         $deepMatch = Get-ChildItem -Path $currentDir -Directory -Recurse -Depth $searchDepth -ErrorAction SilentlyContinue |
-            Where-Object { $_.Name -like "*$searchStr*" -and $_.Name -notmatch "^\."  } | ForEach-Object { $_.FullName } 
+            Where-Object {$_.FullName -notmatch "\\\." -and $_.Name -like "*$searchStr*"  } | ForEach-Object { $_.FullName } 
 
         if ($deepMatch) {
             foreach ($match in $deepMatch) {
