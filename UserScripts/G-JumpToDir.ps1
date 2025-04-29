@@ -239,7 +239,13 @@ function g {
 
     # Parents match: If any of the parents dirs matches the searchStr, then add it to $result ----------------------------------------------
     # Get the current location and convert it to a DirectoryInfo object
-    $currentDir = Get-Item -Path (Get-Location).Path
+    $currentDir = $null
+    try {
+        $currentDir = Get-Item -Path (Get-Location).Path
+    }
+    catch {
+        <#Do this if a terminating exception happens#>
+    }
 
     # Initialize an array to store parent directories
     $parentDirectories = @()
