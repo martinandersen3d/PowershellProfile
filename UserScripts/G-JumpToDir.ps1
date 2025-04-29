@@ -267,8 +267,9 @@ function g {
     $currentDir = Get-Location
 
     try {
+        # The recursive search will exclude folders that starts with a dot "."
         $deepMatch = Get-ChildItem -Path $currentDir -Directory -Recurse -Depth $searchDepth -ErrorAction SilentlyContinue |
-            Where-Object { $_.Name -like "*$searchStr*" } | ForEach-Object { $_.FullName } 
+            Where-Object { $_.Name -like "*$searchStr*" -and $_.Name -notmatch "^\."  } | ForEach-Object { $_.FullName } 
 
         if ($deepMatch) {
             foreach ($match in $deepMatch) {
