@@ -1,15 +1,28 @@
-param(
-    [string]$inputValue
-)
+
+# Navigate directorys:
+# g: Will output a number before each dir
+# g [number]: will jump to directory
+# g [search-string] will jump to first matching directory
+# g [directory] will jump to directory in current directory
+# g ..... will go up to the parent dirs
+# g [search-string] will recursive find matching dirs 4 levels down
+# g [search-string] will jump to a previous visited folder
+
+# param(
+#     [string]$inputValue
+# )
 
 # TODO
 #  g .....
+
+# Done
 #  1 level of c:\ folders 
 #  1 level of home folder
 
 
 # METHOD ---------------------------------------------------------------
 
+# It will set the location and save the path to g-bookmarks.txt in users Temp folder
 function Set-LocationIfExists {
     param (
         [string]$Path
@@ -36,6 +49,28 @@ function Set-LocationIfExists {
         }
     } else {
         Write-Host "The path '$Path' does not exist."
+    }
+}
+
+# Returns array
+function Get-DirectoriesFromPath {
+    param (
+        [string]$Path
+    )
+
+    try {
+        # Check if the path exists and is a directory
+        if (Test-Path -Path $Path -PathType Container) {
+            # Get all directories from the specified path and return their full paths
+            $directories = Get-ChildItem -Path $Path -Directory -ErrorAction Stop | ForEach-Object { $_.FullName }
+            return $directories
+        } else {
+            # Write-Host "The path '$Path' does not exist or is not a directory."
+            return @() # Return an empty array if the path is invalid
+        }
+    } catch {
+        Write-Host "An error occurred while retrieving directories: $_.Exception.Message"
+        return @() # Return an empty array in case of an error
     }
 }
 
@@ -78,27 +113,27 @@ function g {
 
     $presetDirs = @(
         "C:\",
-        "C:\MartinPrivat",
-        "C:\Github",
-        "C:\temp",
+        # "C:\MartinPrivat",
+        # "C:\Github",
+        # "C:\temp",
         "$userDir",
         "$userDir\source\repos",
         "$userDir\source\repos\EmplyInddateringV2",
         "$userDir\source\repos\Esas-Dmjx-Metadir-Inddatering",
-        "$userDir\Documents",
-        "$userDir\Downloads",
-        "$userDir\Desktop",
-        "$userDir\Videos",
-        "$userDir\.vscode",
-        "$userDir\AppData",
+        # "$userDir\Documents",
+        # "$userDir\Downloads",
+        # "$userDir\Desktop",
+        # "$userDir\Videos",
+        # "$userDir\.vscode",
+        # "$userDir\AppData",
         "$userDir\AppData\Local\Microsoft\VisualStudio",
-        "$userDir\Obsidian2",
+        # "$userDir\Obsidian2",
         "$userDir\Desktop\SCREENSHOTS",
         "$userDir\Documents\WindowsPowerShell",
         "$userDir\Documents\PowerShell",
-        "C:\Program Files",
-        "C:\Program Files (x86)",
-        "C:\ProgramData",
+        # "C:\Program Files",
+        # "C:\Program Files (x86)",
+        # "C:\ProgramData",
         "C:\ProgramData\chocolatey\lib"
     )
 
@@ -115,17 +150,41 @@ function g {
 
     # CD special case commands "-" "--" "~" ----------------------------------------
 
-       # Handle special cases for "-", "--", and "~"
-       if ($searchStr -eq "-" -or $searchStr -eq "--" -or $searchStr -eq "~") {
-        try {
-            # Use Set-Location to handle these special cases
-            Set-Location -Path $searchStr
-            return
-        } catch {
-            Write-Host "An error occurred while navigating to '$searchStr': $_.Exception.Message"
-            return
+    # Handle special cases for "-", "--", and "~"
+    try {
+        switch ($searchStr) {
+            # Handle special cases for "-", "--", and "~"
+            "..." { 
+                Set-Location -Path ..\..
+                return 
+            }
+            "...." { 
+                Set-Location -Path ..\..\.. 
+                return 
+            }
+            "....." { 
+                Set-Location -Path ..\..\..\..
+                return 
+            }
+            "......" { 
+                Set-Location -Path ..\..\..\..
+                return 
+            }
+            "-" { 
+                Set-Location -Path -
+                return 
+            }
+            "~" { 
+                Set-Location -Path ~
+                return 
+            }
         }
+    } catch {
+        Write-Host "An error occurred while navigating to '$searchStr': $_.Exception.Message"
+        return
     }
+
+    # CD to number of parent folders, depending on the amount of dots -----------
 
     # Number Jump ---------------------------------------------------------------
     #  g <number> 
@@ -266,6 +325,25 @@ function g {
         # Write-Host "The bookmarks file does not exist: $tempFile"
     }
 
+
+    # Add folders from C:\  ----------------------------------------------
+    $cDriveDirs = Get-DirectoriesFromPath -Path "C:\"
+
+    foreach ($dir in $cDriveDirs) {
+        if (-not [string]::IsNullOrWhiteSpace($dir)) {
+            $result.Add($dir) | Out-Null
+        }
+    }
+
+    # Add folders from C:\Users\<user>\ home dir  ----------------------------------------------
+    $userDirs = Get-DirectoriesFromPath -Path "$env:USERPROFILE"
+
+    foreach ($dir in $userDirs) {
+        if (-not [string]::IsNullOrWhiteSpace($dir)) {
+            $result.Add($dir) | Out-Null
+        }
+    }
+
     # Set the location  ----------------------------------------------
 
     # Filter the paths in $result to only include those paths that exist
@@ -301,4 +379,4 @@ function g {
 
 
 
-g "$inputValue"
+# g "$inputValue"
