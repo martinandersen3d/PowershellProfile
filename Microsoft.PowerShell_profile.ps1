@@ -997,23 +997,23 @@ $keyGroup2 = @(
 )
 
 # Fallback layout for Powershell below version 7. Since it does not support colors in a table:
-if ($PSVersionTable.PSVersion.Major -le 7) {
-    # Search In Key ($keyGroup1 and $keyGroup2) and remove formatting
-    $keyGroup1 = $keyGroup1 | ForEach-Object {
-        [PSCustomObject]@{
-            Key         = $_.Key -replace '[^a-zA-Z0-9<>";`t]', ""
-            Description = $_.Description
-        }
-    }
+# if ($PSVersionTable.PSVersion.Major -le 7) {
+#     # Search In Key ($keyGroup1 and $keyGroup2) and remove formatting
+#     $keyGroup1 = $keyGroup1 | ForEach-Object {
+#         [PSCustomObject]@{
+#             Key         = $_.Key -replace '[^a-zA-Z0-9<>";`t]', ""
+#             Description = $_.Description
+#         }
+#     }
 
-    $keyGroup2 = $keyGroup2 | ForEach-Object {
-        [PSCustomObject]@{
-            Key         = $_.Key -replace '[^a-zA-Z0-9<>";`t]', ""
-            Description = $_.Description
-        }
-    }
+#     $keyGroup2 = $keyGroup2 | ForEach-Object {
+#         [PSCustomObject]@{
+#             Key         = $_.Key -replace '[^a-zA-Z0-9<>";`t]', ""
+#             Description = $_.Description
+#         }
+#     }
 
-}
+# }
 
 # Create table combining the two arrays
 $table = for ($i = 0; $i -lt [Math]::Max($keyGroup1.Count, $keyGroup2.Count); $i++) {
