@@ -1,0 +1,104 @@
+Write-Host "────────────────────────────────────────────────────────────────────────────────────────"
+Write-Host " Ctrl+Alt: | ▶ BOOKMARKS | ▼ SUBDIRS | ▲ Up | ◀ BACK | 'fn-' Tab | Type 'h' for help 🔎"
+Write-Host "────────────────────────────────────────────────────────────────────────────────────────"
+
+
+
+# Bind Cltr+Alt+Down to function s
+Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+DownArrow" -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("s")
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+}
+
+# Function to get Windows Explorer pinned/bookmarked paths
+function fn-explorer-bookmarks {
+    <#
+    .SYNOPSIS
+        Gets all pinned paths from Windows Explorer (Quick Access)
+    .DESCRIPTION
+        Retrieves pinned folders from Windows Explorer's Quick Access section
+        using the Shell.Application COM object and registry locations
+    #>
+    
+    Write-Host "`n=== METHOD 1: Shell.Application COM (Quick Access) ==="
+    $method1Items = @()
+    try {
+        $shell = New-Object -ComObject Shell.Application
+        $quickAccess = $shell.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}")
+        
+        if ($quickAccess) {
+            foreach ($item in $quickAccess.Items()) {
+                $method1Items += [PSCustomObject]@{
+                    Name = $item.Name
+                    Path = $item.Path
+                    IsFolder = $item.IsFolder
+                }
+            }
+        }
+        
+        if ($method1Items.Count -gt 0) {
+            $method1Items | Format-Table -AutoSize
+            Write-Host "Found: $($method1Items.Count) items"
+        } else {
+            Write-Host "No items found"
+        }
+    }
+    catch {
+        Write-Warning "Could not access Quick Access via COM: $_"
+    }
+    
+    Write-Host "`n=== METHOD 2: Registry Desktop NameSpace ==="
+    $method2Items = @()
+    try {
+        $regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace"
+        if (Test-Path $regPath) {
+            Get-ChildItem $regPath | ForEach-Object {
+                $clsid = $_.PSChildName
+                $regItem = "Registry::HKEY_CLASSES_ROOT\CLSID\$clsid"
+                if (Test-Path $regItem) {
+                    $name = (Get-ItemProperty -Path $regItem -ErrorAction SilentlyContinue).'(default)'
+                    $method2Items += [PSCustomObject]@{
+                        Name = $name
+                        CLSID = $clsid
+                    }
+                }
+            }
+        }
+        
+        if ($method2Items.Count -gt 0) {
+            $method2Items | Format-Table -AutoSize
+            Write-Host "Found: $($method2Items.Count) items"
+        } else {
+            Write-Host "No items found"
+        }
+    }
+    catch {
+        Write-Warning "Could not read registry bookmarks: $_"
+    }
+    
+    Write-Host "`n=== METHOD 3: Recent AutomaticDestinations Folder ==="
+    try {
+        $quickAccessPath = Join-Path $env:APPDATA "Microsoft\Windows\Recent\AutomaticDestinations"
+        if (Test-Path $quickAccessPath) {
+            $files = Get-ChildItem $quickAccessPath -File | Select-Object Name, LastWriteTime, Length
+            $files | Format-Table -AutoSize
+            Write-Host "Found: $($files.Count) jump list files"
+        } else {
+            Write-Host "Path not found"
+        }
+    }
+    catch {
+        Write-Warning "Could not access Quick Access folder: $_"
+    }
+    
+    Write-Host "`n=== SUMMARY: Accessible Folder Paths ==="
+    $validPaths = $method1Items | Where-Object { $_.Path -and (Test-Path $_.Path) } | Select-Object -ExpandProperty Path -Unique
+    if ($validPaths) {
+        $validPaths | ForEach-Object { Write-Host "  $_" }
+    } else {
+        Write-Host "No accessible folder paths found"
+    }
+}
+
+fn-explorer-bookmarks

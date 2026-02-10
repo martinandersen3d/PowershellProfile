@@ -895,6 +895,7 @@ $table | Format-Table -AutoSize -HideTableHeaders
 # Uses 2>$null to suppress errors in case git is not available or the directory is not a repo.
 function prompt {
     $closedFolder = [char]::ConvertFromUtf32(0x1F4C1)  # Closed folder emoji
+    $arrow = [char]::ConvertFromUtf32(0x276F)  # Right angle arrow '❯'
     $adminPrefix = if ($isAdmin) { " [ADMIN]" } else { "" }
     $path = $PWD.Path
     $branch = ""
@@ -907,7 +908,7 @@ function prompt {
         }
     }
 
-    $promptString = "$closedFolder$adminPrefix $path$branch :"
+    $promptString = "$closedFolder$adminPrefix $path$branch $arrow"
     Write-Host -NoNewline $promptString -ForegroundColor Yellow
     return " "
 }
