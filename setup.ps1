@@ -160,7 +160,7 @@ try {
     }
 }
 catch {
-    Write-Error "Critical error handling $moduleName: $($_.Exception.Message)"
+    Write-Error "Critical error installing PSFzf - $($_.Exception.Message)"
 }
 
 # ---------------------------------------------------------------------------
