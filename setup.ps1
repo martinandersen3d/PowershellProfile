@@ -158,6 +158,10 @@ try {
         # Install-Module -Name $moduleName -Scope CurrentUser -Force -Confirm:$false -ErrorAction Stop
         Install-Module -Name PSFzf -Scope CurrentUser
     }
+    # If installed, give a OK message
+    if (Get-Module -ListAvailable -Name $moduleName) {
+        LogGreen "PSFzf Installed"
+    }
 }
 catch {
     Write-Error "Critical error installing PSFzf - $($_.Exception.Message)"
