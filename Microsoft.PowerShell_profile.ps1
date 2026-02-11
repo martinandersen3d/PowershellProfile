@@ -50,7 +50,9 @@ function y {
     Remove-Item -Path $tmp
 }
 
-# ALIAS ------------------------------
+# --------------------------------------------------------------------
+# CONFIGURATION
+# --------------------------------------------------------------------
 
 # Set UNIX-like aliases for the admin command, so sudo <command> will run the command
 # with elevated rights. 
@@ -62,92 +64,24 @@ Set-Alias -Name sudo -Value admin
 # Set-Alias WinGetShow winget show
 # Set-Alias WinGetUninstall winget uninstall
 
-# Quick shortcut
-function c. { code . }
-function e. { explorer . }
-
-function n { notepad $args }
-function fn-profile-show-path { Write-Host " Profile: $PROFILE" }
-function dotnetWatch { dotnet run watch }
-function clr { 
-    Clear-Host 
-    & $profile
-}
-function clear { 
-    Clear-Host 
-    & $profile
-}
-
-# Open files with micro
-function m {
-    [CmdletBinding()]
-    param (
-        [string[]]$File
-    )
-
-    if (-not (Get-Command fzf -ErrorAction SilentlyContinue)) {
-        Write-Error "fzf is not installed or not in PATH."
-        return
-    }
-    if (-not (Get-Command micro -ErrorAction SilentlyContinue)) {
-        Write-Error "micro editor is not installed or not in PATH."
-        return
-    }
-
+# --------------------------------------------------------------------
+# SCRIPT UPDATE
+# --------------------------------------------------------------------
+# Update scripts from the git repo
+function u {
+    $url = "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1"
     try {
-        if ($File) {
-            # Quote paths that may contain spaces
-            $quoted = $File | ForEach-Object { "`"$($_)`"" }
-            Invoke-Expression "micro $($quoted -join ' ')"
-            return
-        }
-
-        Write-Host "Loading..."
-        $files = Get-ChildItem -File -Recurse -ErrorAction SilentlyContinue |
-            Where-Object {
-                $_.FullName -notmatch '\\(node_modules|\.git)[\\\/]' -and
-                $_.Extension -notmatch '\.(exe|dll|bin|jpg|jpeg|png|gif|bmp|zip|rar|7z|iso|mp4|mp3|avi|mov|pdf|docx?|xlsx?|pptx?)$'
-            } |
-            ForEach-Object {
-                Resolve-Path -Relative $_.FullName
-            }
-
-        if (-not $files) {
-            Write-Host "No suitable files found."
-            return
-        }
-
-        $fzfArgs = @(
-            '--multi'
-            '--layout=reverse'
-            '--header=Micro: Select files to open'
-            '--preview=bat --theme="Visual Studio Dark+" --color=always {}'
-        )
-        $selected = $files | fzf @fzfArgs
-
-        if ([string]::IsNullOrWhiteSpace($selected)) {
-            Write-Host "No file selected."
-            return
-        }
-
-        # Split into lines (even if only one), trim and verify
-        $toOpen = $selected -split "`n" |
-            ForEach-Object { $_.Trim('"') } |
-            Where-Object { Test-Path $_ }
-
-        if (-not $toOpen) {
-            Write-Host "No valid files selected."
-            return
-        }
-
-        # Quote each path and launch micro
-        $quotedPaths = $toOpen | ForEach-Object { "`"$($_)`"" }
-        Invoke-Expression "micro $($quotedPaths -join ' ')"
+        $scriptContent = Invoke-RestMethod -Uri $url
+        Invoke-Expression -Command $scriptContent
     }
     catch {
-        Write-Error "An error occurred in function m: $_"
+        Write-Error "An error occurred while executing the script from URL: $_"
     }
 }
+
+# --------------------------------------------------------------------
+# CHEATSHEET / HELP 
+# --------------------------------------------------------------------
 
 function CheatsheetGit {
     $filePath = "$HOME\Documents\WindowsPowerShell\CheatSheet\git.md"
@@ -167,17 +101,65 @@ function CheatsheetPowershell {
     }
 }
 
-# Update scripts from the git repo
-function u {
-    $url = "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1"
-    try {
-        $scriptContent = Invoke-RestMethod -Uri $url
-        Invoke-Expression -Command $scriptContent
+# --------------------------------------------------------------------
+# GIT
+# --------------------------------------------------------------------
+function GitCommitPush {
+    param (
+        [string]$Message
+    )
+    
+    if (-not $Message) {
+        Write-Host "Error: A commit message is required."
+        return
     }
-    catch {
-        Write-Error "An error occurred while executing the script from URL: $_"
-    }
+    
+    # If message is passed, proceed with git add, commit, and push
+    Write-Host "[COMMAND] git add ."
+
+    git add .
+    Write-Host "[COMMAND] git commit -m '$Message'"
+    git commit -m "$Message"
+    Write-Host "[COMMAND] git push"
+    git push
 }
+
+function GitPush {    
+    Write-Host "[COMMAND] git push"
+    git push
+}
+
+function GitAutoCommitPush {
+    # Get the firectory name of the current powershell profile
+    $profileBasePath = Split-Path $PROFILE -Parent
+    & "$profileBasePath\UserScripts\GitAutoCommitPush.ps1"
+}
+
+function GitShowCurrentCommitDiffFzf {
+    git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --header "[COMMIT DIFF]: CURRENT vs. HEAD" --header-first --preview "git diff HEAD -- {} | bat --color=always" --layout=reverse
+}
+function GitShowCommitMessage {
+    # Get the firectory name of the current powershell profile
+    $profileBasePath = Split-Path $PROFILE -Parent
+    & "$profileBasePath\UserScripts\GitShowCommitMessagePreview.ps1"
+}
+function GitShowCurrentBranchVSDevFzf {
+    git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --color=always" --layout=reverse
+}
+
+# --------------------------------------------------------------------
+# NAVIGATION & FILE EDIT
+# --------------------------------------------------------------------
+# Useful shortcuts for traversing directories
+
+function .. { Set-Location .. }
+function ... { Set-Location ..\.. }
+function .... { Set-Location ..\..\.. }
+function ..... { Set-Location ..\..\..\.. }
+function cd.. { Set-Location .. }
+function cd... { Set-Location ..\.. }
+function cd.... { Set-Location ..\..\.. }
+function cd..... { Set-Location ..\..\..\.. }
 
 # Fzf Subdirs 3 leves down, that does not start with  ".git" or is "node_modules"
 # function s { Get-ChildItem -Path . -Directory -Recurse -Depth 3 | Where-Object { (-not $_.Name.StartsWith(".git")) -and ($_.Name -ne "node_modules") } | Select-Object -ExpandProperty FullName | fzf --layout=reverse | Set-Location }
@@ -217,6 +199,19 @@ function s {
 
 . "$PSScriptRoot\UserScripts\G-JumpToDir.ps1"
 
+# Drive shortcuts
+function HKLM: { Set-Location HKLM: }
+function HKCU: { Set-Location HKCU: }
+function Env: { Set-Location Env: }
+
+# Does the the rough equivalent of dir /s /b. For example, dirs *.png is dir /s /b *.png
+function dirs {
+    if ($args.Count -gt 0) {
+        Get-ChildItem -Recurse -Include "$args" | Foreach-Object FullName
+    } else {
+        Get-ChildItem -Recurse | Foreach-Object FullName
+    }
+}
 
 # Preview Files in Dir With FZF
 function p {
@@ -281,209 +276,6 @@ function t {
     }
 }
 
-# If so and the current host is a command line, then change to red color 
-# as warning to user that they are operating in an elevated context
-# Useful shortcuts for traversing directories
-
-function .. { Set-Location .. }
-function ... { Set-Location ..\.. }
-function .... { Set-Location ..\..\.. }
-function ..... { Set-Location ..\..\..\.. }
-function cd.. { Set-Location .. }
-function cd... { Set-Location ..\.. }
-function cd.... { Set-Location ..\..\.. }
-function cd..... { Set-Location ..\..\..\.. }
-
-# Drive shortcuts
-function HKLM: { Set-Location HKLM: }
-function HKCU: { Set-Location HKCU: }
-function Env: { Set-Location Env: }
-
-function choco-search {
-    param (
-        [string]$Query
-    )
-
-    choco search $Query
-}
-
-function choco-install {
-    param (
-        [string]$PackageName
-    )
-
-    choco install $PackageName
-}
-
-# takes multiple names as argument
-function choco-info {
-    param(
-        [string[]]$packages
-    )
-
-    foreach ($package in $packages) {
-        Write-Host "=== $package ======================================================="
-        choco info $package
-        Write-Host ""
-    }
-}
-
-# Set up command prompt and window title. Use UNIX-style convention for identifying 
-# whether user is elevated (root) or not. Window title shows current version of PowerShell
-# and appends [ADMIN] if appropriate for easy taskbar identification
-function prompt { 
-    if ($isAdmin) {
-        "[" + (Get-Location) + "] # " 
-    } else {
-        "[" + (Get-Location) + "] $ "
-    }
-}
-
-$Host.UI.RawUI.WindowTitle = "PowerShell {0}" -f $PSVersionTable.PSVersion.ToString()
-if ($isAdmin) {
-    $Host.UI.RawUI.WindowTitle += " [ADMIN]"
-}
-
-# Does the the rough equivalent of dir /s /b. For example, dirs *.png is dir /s /b *.png
-function dirs {
-    if ($args.Count -gt 0) {
-        Get-ChildItem -Recurse -Include "$args" | Foreach-Object FullName
-    } else {
-        Get-ChildItem -Recurse | Foreach-Object FullName
-    }
-}
-
-# Simple function to start a new elevated process. If arguments are supplied then 
-# a single command is started with admin rights; if not then a new admin instance
-# of PowerShell is started.
-function admin {
-    if ($args.Count -gt 0) {   
-        $argList = "& '" + $args + "'"
-        Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $argList
-    } else {
-        Start-Process "$psHome\powershell.exe" -Verb runAs
-    }
-}
-
-# Make it easy to edit this profile once it's installed
-function Edit-Profile {
-    if ($host.Name -match "ise") {
-        $psISE.CurrentPowerShellTab.Files.Add($profile.CurrentUserAllHosts)
-    } else {
-        notepad $profile.CurrentUserAllHosts
-    }
-}
-
-# We don't need these any more; they were just temporary variables to get to $isAdmin. 
-# Delete them to prevent cluttering up the user profile. 
-Remove-Variable identity
-Remove-Variable principal
-
-Function Test-CommandExists {
-    Param ($command)
-    $oldPreference = $ErrorActionPreference
-    $ErrorActionPreference = 'SilentlyContinue'
-    try { if (Get-Command $command) { RETURN $true } }
-    Catch { Write-Host "$command does not exist"; RETURN $false }
-    Finally { $ErrorActionPreference = $oldPreference }
-} 
-
-function ll {
-    param (
-        [string]$Path = "."
-    )
-
-    function Convert-Size {
-        param ([long]$bytes)
-        switch ($bytes) {
-            { $_ -lt 1KB } { return "{0:N1} B" -f $bytes; break }
-            { $_ -lt 1MB } { return "{0:N1} KB" -f ($bytes / 1KB); break }
-            { $_ -lt 1GB } { return "{0:N1} MB" -f ($bytes / 1MB); break }
-            { $_ -lt 1TB } { return "{0:N1} GB" -f ($bytes / 1GB); break }
-            default        { return "{0:N1} TB" -f ($bytes / 1TB) }
-        }
-    }
-    function Get-EmojiPrefix {
-        param ($item)
-    
-        # Use Unicode escape sequences to represent emojis
-        # $folderEmoji = [char]0x1F4C1  # 📁
-        # $fileEmoji   = [char]0x1F4C4  # 📄
-        $folderEmoji = "`u{1F4C1}"  # 📁
-        $fileEmoji   = "`u{1F4C4}"  # 📄
-    
-        if ($item.PSIsContainer) {
-            return $folderEmoji
-        } else {
-            return $fileEmoji
-        }
-    }
-    # function Get-EmojiPrefix {
-    #     param ($item)
-    #     if ($item.PSIsContainer) {
-    #         return "📁"
-    #     } else {
-    #         return "📄"
-    #     }
-    # }
-
-    Get-ChildItem -Path $Path | ForEach-Object {
-        $isFolder = $_.PSIsContainer
-        [PSCustomObject]@{
-            Name           = "$(Get-EmojiPrefix $_) $($_.Name)"
-            Type           = if ($isFolder) { "Folder" } else { $_.Extension.TrimStart('.') }
-            Size           = if ($isFolder) { "" } else { Convert-Size $_.Length }
-            'Date Modified'= $_.LastWriteTime
-            'Date Created' = $_.CreationTime
-        }
-    } | Format-Table -AutoSize
-}
-
-
-
-function GitCommitPush {
-    param (
-        [string]$Message
-    )
-    
-    if (-not $Message) {
-        Write-Host "Error: A commit message is required."
-        return
-    }
-    
-    # If message is passed, proceed with git add, commit, and push
-    Write-Host "[COMMAND] git add ."
-
-    git add .
-    Write-Host "[COMMAND] git commit -m '$Message'"
-    git commit -m "$Message"
-    Write-Host "[COMMAND] git push"
-    git push
-}
-
-function GitPush {    
-    Write-Host "[COMMAND] git push"
-    git push
-}
-
-function GitAutoCommitPush {
-    # Get the firectory name of the current powershell profile
-    $profileBasePath = Split-Path $PROFILE -Parent
-    & "$profileBasePath\UserScripts\GitAutoCommitPush.ps1"
-}
-
-function GitShowCurrentCommitDiffFzf {
-    git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --header "[COMMIT DIFF]: CURRENT vs. HEAD" --header-first --preview "git diff HEAD -- {} | bat --color=always" --layout=reverse
-}
-function GitShowCommitMessage {
-    # Get the firectory name of the current powershell profile
-    $profileBasePath = Split-Path $PROFILE -Parent
-    & "$profileBasePath\UserScripts\GitShowCommitMessagePreview.ps1"
-}
-function GitShowCurrentBranchVSDevFzf {
-    git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --color=always" --layout=reverse
-}
-
 function ShowCsvInGridView {
     [CmdletBinding()]
     param(
@@ -537,26 +329,6 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
 }
 
 
-function reload-profile {
-    & $profile
-}
-function unzip ($file) {
-    Write-Output("Extracting", $file, "to", $pwd)
-    $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
-    Expand-Archive -Path $fullFile -DestinationPath $pwd
-}
-
-function grep($regex, $dir) {
-    if ( $dir ) {
-        Get-ChildItem $dir | select-string $regex
-        return
-    }
-    $input | select-string $regex
-}
-function touch($file) {
-    "" | Out-File $file -Encoding ASCII
-}
-
 # Print info about a file or dir
 function info {
     param(
@@ -608,35 +380,6 @@ function Get-FolderSizes {
     catch {
         Write-Host "Error: $_"
     }
-}
-
-# Start firefox with json file file
-function json {
-    param (
-        [string]$FilePath
-    )
-
-    Start-Process -FilePath 'C:\Program Files\Mozilla Firefox\firefox.exe' -ArgumentList '-new-tab', $FilePath
-}
-
-function Is-Binary {
-    param (
-        [string]$filePath
-    )
-
-    # Read a portion of the file
-    $byteArray = [System.IO.File]::ReadAllBytes($filePath)
-    
-    # Loop through each byte
-    foreach ($byte in $byteArray) {
-        # If any byte is outside the range of printable ASCII characters (0x20 - 0x7E), it's binary
-        if ($byte -lt 0x20 -or $byte -gt 0x7E) {
-            return $true
-        }
-    }
-    
-    # If all bytes are within the printable ASCII range, it's likely a text file
-    return $false
 }
 
 # Searches all the content of files in the current diretory and subpaths for a given string
@@ -713,8 +456,23 @@ function SearchFolderName([string]$name = "") {
     }
 }
 
+
+# --------------------------------------------------------------------
+# PROFILE
+# --------------------------------------------------------------------
+function fn-profile-show-path { Write-Host " Profile: $PROFILE" }
+function fn-profile-reload { & $profile }
+# Make it easy to edit this profile once it's installed
+function fn-profile-edit-notepad {
+    if ($host.Name -match "ise") {
+        $psISE.CurrentPowerShellTab.Files.Add($profile.CurrentUserAllHosts)
+    } else {
+        notepad $profile.CurrentUserAllHosts
+    }
+}
+
 # Call the function to list all methods in the PowerShell profile
-function ListCommands {
+function fn-list-commands {
     try {
         $profilePath = $profile
         if (-not (Test-Path $profilePath)) {
@@ -739,7 +497,279 @@ function ListCommands {
         Write-Error "An error occurred: $_"
     }
 }
-function l { ListCommands }
+
+# --------------------------------------------------------------------
+# PACKAGE MANAGER
+# --------------------------------------------------------------------
+function choco-search {
+    param (
+        [string]$Query
+    )
+
+    choco search $Query
+}
+
+function choco-install {
+    param (
+        [string]$PackageName
+    )
+
+    choco install $PackageName
+}
+
+# takes multiple names as argument
+function choco-info {
+    param(
+        [string[]]$packages
+    )
+
+    foreach ($package in $packages) {
+        Write-Host "=== $package ======================================================="
+        choco info $package
+        Write-Host ""
+    }
+}
+
+# --------------------------------------------------------------------
+# TERMINAL
+# --------------------------------------------------------------------
+function clr { 
+    Clear-Host 
+    & $profile
+}
+function clear { 
+    Clear-Host 
+    & $profile
+}
+
+# --------------------------------------------------------------------
+# FUNCTIONS
+# --------------------------------------------------------------------
+function c. { code . }
+function e. { explorer . }
+function n { notepad $args }
+
+
+function dotnetWatch { dotnet run watch }
+
+
+# Open files with micro
+function m {
+    [CmdletBinding()]
+    param (
+        [string[]]$File
+    )
+
+    if (-not (Get-Command fzf -ErrorAction SilentlyContinue)) {
+        Write-Error "fzf is not installed or not in PATH."
+        return
+    }
+    if (-not (Get-Command micro -ErrorAction SilentlyContinue)) {
+        Write-Error "micro editor is not installed or not in PATH."
+        return
+    }
+
+    try {
+        if ($File) {
+            # Quote paths that may contain spaces
+            $quoted = $File | ForEach-Object { "`"$($_)`"" }
+            Invoke-Expression "micro $($quoted -join ' ')"
+            return
+        }
+
+        Write-Host "Loading..."
+        $files = Get-ChildItem -File -Recurse -ErrorAction SilentlyContinue |
+            Where-Object {
+                $_.FullName -notmatch '\\(node_modules|\.git)[\\\/]' -and
+                $_.Extension -notmatch '\.(exe|dll|bin|jpg|jpeg|png|gif|bmp|zip|rar|7z|iso|mp4|mp3|avi|mov|pdf|docx?|xlsx?|pptx?)$'
+            } |
+            ForEach-Object {
+                Resolve-Path -Relative $_.FullName
+            }
+
+        if (-not $files) {
+            Write-Host "No suitable files found."
+            return
+        }
+
+        $fzfArgs = @(
+            '--multi'
+            '--layout=reverse'
+            '--header=Micro: Select files to open'
+            '--preview=bat --theme="Visual Studio Dark+" --color=always {}'
+        )
+        $selected = $files | fzf @fzfArgs
+
+        if ([string]::IsNullOrWhiteSpace($selected)) {
+            Write-Host "No file selected."
+            return
+        }
+
+        # Split into lines (even if only one), trim and verify
+        $toOpen = $selected -split "`n" |
+            ForEach-Object { $_.Trim('"') } |
+            Where-Object { Test-Path $_ }
+
+        if (-not $toOpen) {
+            Write-Host "No valid files selected."
+            return
+        }
+
+        # Quote each path and launch micro
+        $quotedPaths = $toOpen | ForEach-Object { "`"$($_)`"" }
+        Invoke-Expression "micro $($quotedPaths -join ' ')"
+    }
+    catch {
+        Write-Error "An error occurred in function m: $_"
+    }
+}
+
+
+# If so and the current host is a command line, then change to red color 
+# as warning to user that they are operating in an elevated context
+
+# Set up command prompt and window title. Use UNIX-style convention for identifying 
+# whether user is elevated (root) or not. Window title shows current version of PowerShell
+# and appends [ADMIN] if appropriate for easy taskbar identification
+function prompt { 
+    if ($isAdmin) {
+        "[" + (Get-Location) + "] # " 
+    } else {
+        "[" + (Get-Location) + "] $ "
+    }
+}
+
+$Host.UI.RawUI.WindowTitle = "PowerShell {0}" -f $PSVersionTable.PSVersion.ToString()
+if ($isAdmin) {
+    $Host.UI.RawUI.WindowTitle += " [ADMIN]"
+}
+
+
+
+# Simple function to start a new elevated process. If arguments are supplied then 
+# a single command is started with admin rights; if not then a new admin instance
+# of PowerShell is started.
+function admin {
+    if ($args.Count -gt 0) {   
+        $argList = "& '" + $args + "'"
+        Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $argList
+    } else {
+        Start-Process "$psHome\powershell.exe" -Verb runAs
+    }
+}
+
+# We don't need these any more; they were just temporary variables to get to $isAdmin. 
+# Delete them to prevent cluttering up the user profile. 
+Remove-Variable identity
+Remove-Variable principal
+
+Function Test-CommandExists {
+    Param ($command)
+    $oldPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'SilentlyContinue'
+    try { if (Get-Command $command) { RETURN $true } }
+    Catch { Write-Host "$command does not exist"; RETURN $false }
+    Finally { $ErrorActionPreference = $oldPreference }
+} 
+
+function ll {
+    param (
+        [string]$Path = "."
+    )
+
+    function Convert-Size {
+        param ([long]$bytes)
+        switch ($bytes) {
+            { $_ -lt 1KB } { return "{0:N1} B" -f $bytes; break }
+            { $_ -lt 1MB } { return "{0:N1} KB" -f ($bytes / 1KB); break }
+            { $_ -lt 1GB } { return "{0:N1} MB" -f ($bytes / 1MB); break }
+            { $_ -lt 1TB } { return "{0:N1} GB" -f ($bytes / 1GB); break }
+            default        { return "{0:N1} TB" -f ($bytes / 1TB) }
+        }
+    }
+    function Get-EmojiPrefix {
+        param ($item)
+    
+        # Use Unicode escape sequences to represent emojis
+        # $folderEmoji = [char]0x1F4C1  # 📁
+        # $fileEmoji   = [char]0x1F4C4  # 📄
+        $folderEmoji = "`u{1F4C1}"  # 📁
+        $fileEmoji   = "`u{1F4C4}"  # 📄
+    
+        if ($item.PSIsContainer) {
+            return $folderEmoji
+        } else {
+            return $fileEmoji
+        }
+    }
+    # function Get-EmojiPrefix {
+    #     param ($item)
+    #     if ($item.PSIsContainer) {
+    #         return "📁"
+    #     } else {
+    #         return "📄"
+    #     }
+    # }
+
+    Get-ChildItem -Path $Path | ForEach-Object {
+        $isFolder = $_.PSIsContainer
+        [PSCustomObject]@{
+            Name           = "$(Get-EmojiPrefix $_) $($_.Name)"
+            Type           = if ($isFolder) { "Folder" } else { $_.Extension.TrimStart('.') }
+            Size           = if ($isFolder) { "" } else { Convert-Size $_.Length }
+            'Date Modified'= $_.LastWriteTime
+            'Date Created' = $_.CreationTime
+        }
+    } | Format-Table -AutoSize
+}
+
+
+
+function unzip ($file) {
+    Write-Output("Extracting", $file, "to", $pwd)
+    $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
+    Expand-Archive -Path $fullFile -DestinationPath $pwd
+}
+
+function grep($regex, $dir) {
+    if ( $dir ) {
+        Get-ChildItem $dir | select-string $regex
+        return
+    }
+    $input | select-string $regex
+}
+function touch($file) {
+    "" | Out-File $file -Encoding ASCII
+}
+
+# Start firefox with json file file
+function json {
+    param (
+        [string]$FilePath
+    )
+
+    Start-Process -FilePath 'C:\Program Files\Mozilla Firefox\firefox.exe' -ArgumentList '-new-tab', $FilePath
+}
+
+function Is-Binary {
+    param (
+        [string]$filePath
+    )
+
+    # Read a portion of the file
+    $byteArray = [System.IO.File]::ReadAllBytes($filePath)
+    
+    # Loop through each byte
+    foreach ($byte in $byteArray) {
+        # If any byte is outside the range of printable ASCII characters (0x20 - 0x7E), it's binary
+        if ($byte -lt 0x20 -or $byte -gt 0x7E) {
+            return $true
+        }
+    }
+    
+    # If all bytes are within the printable ASCII range, it's likely a text file
+    return $false
+}
 
 # JUNK SCRIPTS -------------------------------------------------------------------------------
 # Compute file hashes - useful for checking successful downloads 
@@ -784,7 +814,9 @@ function pgrep($name) {
 #     function Work: { Set-Location Work: }
 # }
 
-# First Lines when started -----------------------------------------------------------------------------
+# --------------------------------------------------------------------
+# POWERSHELL INITALIZATION - When you start a new terminal
+# --------------------------------------------------------------------
 
 Clear-Host
 
@@ -794,7 +826,9 @@ Write-Host "──────────────────────�
 Write-Host ""
 
 
-# Prompt Style  -----------------------------------------------------------------------------
+# --------------------------------------------------------------------
+# PROMT STYLE
+# --------------------------------------------------------------------
 # Checks if .git exists in the current directory (indicating a Git repo).
 # Runs git branch --show-current to get the active branch name.
 # Displays the branch name with  (or you can replace it with another symbol).
@@ -820,7 +854,10 @@ function prompt {
 }
 
 
-# Autocomplete with TAB Key -----------------------------------------------------------------
+
+# --------------------------------------------------------------------
+# Autocomplete with TAB Key
+# --------------------------------------------------------------------
 # Shows navigable menu of all options when hitting Tab
 # https://techcommunity.microsoft.com/blog/itopstalkblog/autocomplete-in-powershell/2604524
 Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
@@ -1094,7 +1131,6 @@ Register-ArgumentCompleter -Native -CommandName git -ScriptBlock {
 # ----------------------------------------------------------------------------
 # CHOCO command Autocomplete with TAB Key
 # ----------------------------------------------------------------------------
-
 
 Register-ArgumentCompleter -Native -CommandName choco -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
