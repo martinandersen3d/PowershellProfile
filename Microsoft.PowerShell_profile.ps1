@@ -229,7 +229,7 @@ function fn-subdirs-fzf {
         # Run Get-ChildItem with dynamic depth
         $selection = Get-ChildItem -Path "." -Recurse -Directory -Name -Depth $depth -ErrorAction SilentlyContinue |
                      Where-Object { $_ -notmatch $exclude } |
-                     fzf --height 40% --layout=reverse --prompt=" SUBDIRS (Depth:$nextDepth) $arrow "
+                     fzf --height 40% --layout=reverse --prompt='" SUBDIRS (Depth:$nextDepth) $arrow"'
     
         if ($selection) {
             Push-Location $selection
@@ -840,7 +840,7 @@ function admin {
     }
 }
 
-# We don't need these any more; they were just temporary variables to get to $isAdmin. 
+# We dont need these any more; they were just temporary variables to get to isAdmin. 
 # Delete them to prevent cluttering up the user profile. 
 Remove-Variable identity
 Remove-Variable principal
