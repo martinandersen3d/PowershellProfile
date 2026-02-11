@@ -279,7 +279,7 @@ function fn-GitCommitPush {
     Write-Host "[COMMAND] git add ."
 
     git add .
-    Write-Host "[COMMAND] git commit -m '$Message'"
+    Write-Host "[COMMAND] git commit -m ""$Message"""
     git commit -m "$Message"
     Write-Host "[COMMAND] git push"
     git push
