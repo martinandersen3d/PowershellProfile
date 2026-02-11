@@ -13,7 +13,7 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+DownArrow" -ScriptBlock {
 
 # Function to get Windows Explorer pinned/bookmarked paths
 # NOTE: do not "Run Code" from VScode. Only run in terminal
-function fn-explorer-bookmarks {
+function fn-windows-explorer-list-bookmarks {
     <#
     .SYNOPSIS
         Gets all pinned paths from Windows Explorer (Quick Access)
@@ -44,4 +44,16 @@ function fn-explorer-bookmarks {
     $allPaths | Select-Object -Unique
 }
 
-cd (fn-explorer-bookmarks | fzf)
+function fn-windows-explorer-bookmarks-fzf {
+    $selected = fn-windows-explorer-list-bookmarks | fzf
+    if ($selected) {
+        Set-Location $selected
+    }
+}
+
+# Bind Cltr+Alt+Down to function s
+Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+RightArrow" -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("fn-windows-explorer-bookmarks-fzf")
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+}
