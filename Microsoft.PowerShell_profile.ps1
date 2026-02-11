@@ -35,7 +35,8 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
 # Only load Powershell below version 7
 if ($PSVersionTable.PSVersion.Major -lt 7) {
     Write-Host "---------------------------------------------------------------------------------------"
-    Write-Host " Ctrl+Alt: | ▶ BOOKMARKS | ▼ SUBDIRS | ▲ Up | ◀ BACK | 'fn-' Tab | Type 'h' for help "
+    $ps5message =  " Ctrl+Alt: | ▶ BOOKMARKS | ▼ SUBDIRS | ▲ Up | ◀ BACK | 'fn-' Tab | Type 'h' for help "
+    Write-Host $ps5message
     Write-Host "---------------------------------------------------------------------------------------"
     Write-Host ""
 }
