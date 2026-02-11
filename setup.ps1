@@ -70,6 +70,7 @@ if (-not (CheckCommand "git")) { $allOk = $false }
 if (-not (CheckCommand "winget")) { $allOk = $false }
 if (-not (CheckCommand "powershell")) { $allOk = $false }
 if (-not (CheckCommand "pwsh")) { $allOk = $false }
+if (-not (CheckCommand "fzf")) { $allOk = $false }
 
 # If Git is missing, check if winget is installed and offer to install git
 if (-not (CheckCommand "git")) {
@@ -83,6 +84,12 @@ if (-not (CheckCommand "pwsh")){
 
 if (-not (CheckCommand "winget")){
     LogRed "WinGet is required for this script to continue. Maybe install winget manually, install 'App Installer' from Microsoft Store or install it from https://learn.microsoft.com/en-us/windows/msix/app-installer/install-update-app-installer. Aborting."
+    exit 1
+}
+
+
+if (-not (CheckCommand "fzf")){
+    LogRed "fzf is required for this script to continue. 'winget install junegunn.fzf' or 'choco install fzf'"
     exit 1
 }
 
@@ -137,6 +144,24 @@ micro -plugin install fzf
 
 LogInfo "micro -plugin install quoter:"
 micro -plugin install quoter
+
+# ---------------------------------------------------------------------------
+LogTitle "Install PowerShell Module: PSFzf (For Autocomlete): https://github.com/kelleyma49/PSFzf" 
+# ---------------------------------------------------------------------------
+$moduleName = "PSFzf"
+
+try {
+    # Check if the module is available on the system
+    if (-not (Get-Module -ListAvailable -Name $moduleName)) {
+        Write-Warning "PowerShell Autocomplete Module '$moduleName' not found. Attempting to install..."
+        # Note: -Force and -Confirm:$false act as your "auto-approve" flags
+        # Install-Module -Name $moduleName -Scope CurrentUser -Force -Confirm:$false -ErrorAction Stop
+        Install-Module -Name PSFzf -Scope CurrentUser
+    }
+}
+catch {
+    Write-Error "Critical error handling $moduleName: $($_.Exception.Message)"
+}
 
 # ---------------------------------------------------------------------------
 LogTitle "Clone Git Repo to: $home\AppData\Local\Temp\PowerShellProfile"

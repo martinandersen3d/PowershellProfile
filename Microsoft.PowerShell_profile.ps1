@@ -19,6 +19,17 @@ $principal = New-Object Security.Principal.WindowsPrincipal $identity
 $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 # --------------------------------------------------------------------
+# POWERSHELL INITALIZATION - When you start a new terminal
+# --------------------------------------------------------------------
+
+Clear-Host
+
+Write-Host "────────────────────────────────────────────────────────────────────────────────────────"
+Write-Host " Ctrl+Alt: | ▶ BOOKMARKS | ▼ SUBDIRS | ▲ Up | ◀ BACK | 'fn-' Tab | Type 'h' for help 🔎"
+Write-Host "────────────────────────────────────────────────────────────────────────────────────────"
+Write-Host ""
+
+# --------------------------------------------------------------------
 # CONFIGURATION & ENVIRONMENT VARIABLES
 # --------------------------------------------------------------------
 # BatCat: Tell batcat to use truecolors and theme
@@ -648,6 +659,19 @@ function fn-list-commands {
     }
 }
 
+function fn-profile-open-directory-in-explorer {
+    # Open folder if it exists
+    if (!(Test-Path -Path ($env:userprofile + "\Documents\WindowsPowerShell"))) {
+        explorer ($env:userprofile + "\Documents\WindowsPowerShell")
+
+    }
+    if (!(Test-Path -Path ($env:userprofile + "\Documents\Powershell"))) {
+        explorer ($env:userprofile + "\Documents\Powershell")
+    }
+
+    
+}
+
 # --------------------------------------------------------------------
 # PACKAGE MANAGER
 # --------------------------------------------------------------------
@@ -963,17 +987,6 @@ function pgrep($name) {
 #     New-PSDrive -Name Work -PSProvider FileSystem -Root "$env:USERPROFILE\Work Folders" -Description "Work Folders"
 #     function Work: { Set-Location Work: }
 # }
-
-# --------------------------------------------------------------------
-# POWERSHELL INITALIZATION - When you start a new terminal
-# --------------------------------------------------------------------
-
-Clear-Host
-
-Write-Host "────────────────────────────────────────────────────────────────────────────────────────"
-Write-Host " Ctrl+Alt: | ▶ BOOKMARKS | ▼ SUBDIRS | ▲ Up | ◀ BACK | 'fn-' Tab | Type 'h' for help 🔎"
-Write-Host "────────────────────────────────────────────────────────────────────────────────────────"
-Write-Host ""
 
 
 # --------------------------------------------------------------------
@@ -1564,5 +1577,40 @@ Register-ArgumentCompleter -Native -CommandName tsc -ScriptBlock {
     Where-Object { $_ -like "$wordToComplete*" } |
     ForEach-Object {
         [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+    }
+}
+
+# ----------------------------------------------------------------------------
+# CD command Autocomplete with TAB Key in FZF - Install: Install-Module -Name PSFzf -Scope CurrentUser
+# ----------------------------------------------------------------------------
+
+Import-Module PSFzf
+
+# This replaces the standard Tab completion with fzf
+Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
+
+# Commands that change the location
+Register-ArgumentCompleter -CommandName cd -ScriptBlock {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $cursorPosition)
+
+    try {
+        # Using 'dir /ad /b /s' to get only directories (bare format, recursive)
+        # Then piping to fzf with your typed word as a query
+        $selectedDir = cmd /c "dir /ad /b /s 2>null" | fzf --query="$wordToComplete" --select-1 --exit-0
+
+        if ($selectedDir) {
+            # Ensure the path is relative or formatted correctly for the shell
+            $quotedPath = if ($selectedDir.Contains(' ')) { "'$selectedDir'" } else { $selectedDir }
+            
+            [System.Management.Automation.CompletionResult]::new(
+                $quotedPath, 
+                $quotedPath, 
+                'ProviderContainer', 
+                $quotedPath
+            )
+        }
+    }
+    catch {
+        Write-Error "Fzf directory-only completion failed: $_"
     }
 }
