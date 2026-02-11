@@ -933,25 +933,32 @@ function fn-json {
     Start-Process -FilePath 'C:\Program Files\Mozilla Firefox\firefox.exe' -ArgumentList '-new-tab', $FilePath
 }
 
-function Is-Binary {
-    param (
-        [string]$filePath
-    )
+# Only load PS7-specific code if the current PowerShell version is 7 or higher
+# This avoids syntax errors in PowerShell 5, which can't parse newer language features
+if ($PSVersionTable.PSVersion.Major -ge 7) {
 
-    # Read a portion of the file
-    $byteArray = [System.IO.File]::ReadAllBytes($filePath)
-    
-    # Loop through each byte
-    foreach ($byte in $byteArray) {
-        # If any byte is outside the range of printable ASCII characters (0x20 - 0x7E), it's binary
-        if ($byte -lt 0x20 -or $byte -gt 0x7E) {
-            return $true
+    function Is-Binary {
+        param (
+            [string]$filePath
+        )
+
+        # Read a portion of the file
+        $byteArray = [System.IO.File]::ReadAllBytes($filePath)
+        
+        # Loop through each byte
+        foreach ($byte in $byteArray) {
+            # If any byte is outside the range of printable ASCII characters (0x20 - 0x7E), it's binary
+            if ($byte -lt 0x20 -or $byte -gt 0x7E) {
+                return $true
+            }
         }
+        
+        # If all bytes are within the printable ASCII range, it's likely a text file
+        return $false
     }
-    
-    # If all bytes are within the printable ASCII range, it's likely a text file
-    return $false
 }
+
+
 
 # JUNK SCRIPTS -------------------------------------------------------------------------------
 # Compute file hashes - useful for checking successful downloads 
