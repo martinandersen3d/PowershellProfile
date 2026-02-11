@@ -83,13 +83,67 @@ function u {
 # KEYBINDINGS
 # --------------------------------------------------------------------
 
-# Bind Cltr+Alt+Up to function "cd .."
-Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+UpArrow" -ScriptBlock {
+# ================================================ CTRL+ALT+LEFT: cd back
+function global:custom-cd {
+    param(
+        [Parameter(Position=0)]
+        [string]$Path
+    )
+
+    try {
+        if ($Path -eq "back") {
+            $stack = Get-Location -Stack
+            if ($null -eq $stack -or ($stack.Count -eq 0)) {
+                Write-Host "Directory stack empty." -ForegroundColor Yellow
+                return
+            }
+            Pop-Location
+            return
+        }
+
+        if ($Path -eq "-") {
+            Set-Location -Path -
+            return
+        }
+
+        # Resolve the target path first
+        $targetPath = if ([string]::IsNullOrWhiteSpace($Path)) { $HOME } else { Get-Item $Path }
+        $currentPath = (Get-Location).Path
+
+        # Only push to stack if we are actually moving to a DIFFERENT directory
+        if ($targetPath.Path -ne $currentPath) {
+            Push-Location $currentPath
+            Set-Location $targetPath
+        }
+    }
+    catch {
+        Write-Error "cd: Cannot find path because it does not exist."
+    }
+}
+
+Set-Alias -Name cd -Value custom-cd -Option AllScope -Force
+
+# CTRL+Alt+LEFT = cd back
+Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+LeftArrow" -ScriptBlock {
+    # Send the command to the current line and execute it
     [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
-    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("cd ..")
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("cd back")
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
 
+# ================================================ CTRL+ALT+UP: CD UP
+function fn-cd-up {
+    Push-Location $selected
+    cd ..
+}
+# Bind Cltr+Alt+Up to function "cd .."
+Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+UpArrow" -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("fn-cd-up")
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+}
+
+# ================================================ CTRL+ALT+LEFT: CD BACK
 # Function to get Windows Explorer pinned/bookmarked paths
 # NOTE: do not "Run Code" from VScode. Only run in terminal
 function fn-windows-explorer-list-bookmarks {
@@ -127,6 +181,7 @@ function fn-windows-explorer-bookmarks-fzf {
     $arrow = [char]::ConvertFromUtf32(0x276F)
     $selected = fn-windows-explorer-list-bookmarks | fzf --layout=reverse --prompt=" BOOKMARKS $arrow "
     if ($selected) {
+        Push-Location $selected
         Set-Location $selected
     }
 }
@@ -138,7 +193,7 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+RightArrow" -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
 
-
+# ================================================ CTRL+ALT+DOWN: CD SUBDIRS
 # Interactive directory navigation tool: CD into subfolders via fzf with context-aware depth limits.
 # Uses 2-level depth at root/home for speed, and 5-level depth elsewhere for project browsing,
 # while filtering out noise folders (e.g., .git, node_modules) to maximize relevance.
@@ -164,6 +219,7 @@ function fn-subdirs-fzf {
                  fzf --height 40% --layout=reverse --prompt=" SUBDIRS (Depth:$( $depth + 1 )) $arrow "
 
     if ($selection) {
+        Push-Location $selection
         Set-Location $selection
     }
 }
