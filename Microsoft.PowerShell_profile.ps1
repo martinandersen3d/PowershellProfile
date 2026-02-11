@@ -222,14 +222,19 @@ function fn-subdirs-fzf {
         $depth = 4 # 0, 1, 2, 3, 4 = 5 levels
     }
 
-    # Run Get-ChildItem with dynamic depth
-    $selection = Get-ChildItem -Path "." -Recurse -Directory -Name -Depth $depth -ErrorAction SilentlyContinue |
-                 Where-Object { $_ -notmatch $exclude } |
-                 fzf --height 40% --layout=reverse --prompt='" SUBDIRS (Depth:$($depth + 1)) $arrow"'
-
-    if ($selection) {
-        Push-Location $selection
-        Set-Location $selection
+    try {
+        # Run Get-ChildItem with dynamic depth
+        $selection = Get-ChildItem -Path "." -Recurse -Directory -Name -Depth $depth -ErrorAction SilentlyContinue |
+                     Where-Object { $_ -notmatch $exclude } |
+                     fzf --height 40% --layout=reverse --prompt=" SUBDIRS (Depth:$( $depth + 1 )) $arrow "
+    
+        if ($selection) {
+            Push-Location $selection
+            Set-Location $selection
+        }
+    }
+    catch {
+        <#Do this if a terminating exception happens#>
     }
 }
 
