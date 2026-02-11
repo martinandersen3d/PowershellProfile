@@ -80,6 +80,101 @@ function u {
 }
 
 # --------------------------------------------------------------------
+# KEYBINDINGS
+# --------------------------------------------------------------------
+
+# Bind Cltr+Alt+Up to function "cd .."
+Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+UpArrow" -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("cd ..")
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+}
+
+# Function to get Windows Explorer pinned/bookmarked paths
+# NOTE: do not "Run Code" from VScode. Only run in terminal
+function fn-windows-explorer-list-bookmarks {
+    <#
+    .SYNOPSIS
+        Gets all pinned paths from Windows Explorer (Quick Access)
+    .DESCRIPTION
+        Retrieves pinned folders from Windows Explorer's Quick Access section
+        and returns only the accessible folder paths for use with fzf
+    #>
+    
+    $allPaths = @()
+    
+    try {
+        $shell = New-Object -ComObject Shell.Application
+        $quickAccess = $shell.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}")
+        
+        if ($quickAccess) {
+            foreach ($item in $quickAccess.Items()) {
+                if ($item.Path -and (Test-Path $item.Path -ErrorAction SilentlyContinue)) {
+                    $allPaths += $item.Path
+                }
+            }
+        }
+    }
+    catch {
+        # Silently continue if Quick Access is not accessible
+    }
+    
+    # Return unique paths
+    $allPaths | Select-Object -Unique
+}
+
+function fn-windows-explorer-bookmarks-fzf {
+    $selected = fn-windows-explorer-list-bookmarks | fzf
+    if ($selected) {
+        Set-Location $selected
+    }
+}
+
+# Bind Cltr+Alt+Right to function "fn-windows-explorer-bookmarks-fzf"
+Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+RightArrow" -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("fn-windows-explorer-bookmarks-fzf")
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+}
+
+
+# Interactive directory navigation tool: CD into subfolders via fzf with context-aware depth limits.
+# Uses 2-level depth at root/home for speed, and 5-level depth elsewhere for project browsing,
+# while filtering out noise folders (e.g., .git, node_modules) to maximize relevance.
+function fn-subdirs-fzf {
+    $exclude = "\.git|node_modules|bin|obj"
+    $arrow = [char]::ConvertFromUtf32(0x276F)
+    
+    # Get current path to check against criteria
+    $currentPath = (Get-Location).Path
+    $homeDir = $HOME # C:\Users\m
+    $rootDrive = [System.IO.Path]::GetPathRoot($currentPath) # C:\
+
+    # Determine depth: Default to 5, reduce to 2 for Home or Root
+    if ($currentPath -eq $homeDir -or $currentPath -eq $rootDrive) {
+        $depth = 1 # 0, 1 = 2 levels
+    } else {
+        $depth = 4 # 0, 1, 2, 3, 4 = 5 levels
+    }
+
+    # Run Get-ChildItem with dynamic depth
+    $selection = Get-ChildItem -Path "." -Recurse -Directory -Name -Depth $depth -ErrorAction SilentlyContinue |
+                 Where-Object { $_ -notmatch $exclude } |
+                 fzf --height 40% --layout=reverse --prompt="SUBDIRS (Depth:$( $depth + 1 )) $arrow "
+
+    if ($selection) {
+        Set-Location $selection
+    }
+}
+
+# Bind Cltr+Alt+Down to function "fn-subdirs-fzf"
+Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+DownArrow" -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("fn-subdirs-fzf")
+    [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+}
+
+# --------------------------------------------------------------------
 # CHEATSHEET / HELP 
 # --------------------------------------------------------------------
 
