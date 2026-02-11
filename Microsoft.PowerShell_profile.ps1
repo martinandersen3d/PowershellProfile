@@ -276,17 +276,17 @@ function fn-GitCommitPush {
     }
     
     # If message is passed, proceed with git add, commit, and push
-    Write-Host "[COMMAND] git add ."
+    Write-Host "COMMAND: git add ."
 
     git add .
-    Write-Host "[COMMAND] git commit -m ""$Message"""
+    Write-Host "COMMAND: git commit -m '$Message'"
     git commit -m "$Message"
-    Write-Host "[COMMAND] git push"
+    Write-Host "COMMAND: git push"
     git push
 }
 
 function fn-GitPush {    
-    Write-Host "[COMMAND] git push"
+    Write-Host "COMMAND: git push"
     git push
 }
 
