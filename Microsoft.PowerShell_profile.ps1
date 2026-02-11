@@ -223,10 +223,13 @@ function fn-subdirs-fzf {
     }
 
     try {
+        # Calculate depth beforehand for cleaner expansion
+        $nextDepth = $depth + 1
+
         # Run Get-ChildItem with dynamic depth
         $selection = Get-ChildItem -Path "." -Recurse -Directory -Name -Depth $depth -ErrorAction SilentlyContinue |
                      Where-Object { $_ -notmatch $exclude } |
-                     fzf --height 40% --layout=reverse --prompt=" SUBDIRS (Depth:$( $depth + 1 )) $arrow "
+                     fzf --height 40% --layout=reverse --prompt=" SUBDIRS (Depth:$nextDepth) $arrow "
     
         if ($selection) {
             Push-Location $selection
