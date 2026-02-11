@@ -35,7 +35,7 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
     $downArrow = [char]0x25BC    # ▼
     $upArrow = [char]0x25B2      # ▲
     $leftArrow = [char]0x25C0    # ◀
-    $magnifyingGlass = [char]0x1F50E  # 🔎
+    $magnifyingGlass = [char]::ConvertFromUtf32(0x1F50E) 
     
     Write-Host "────────────────────────────────────────────────────────────────────────────────────────"
     Write-Host " Ctrl+Alt: $pipe $rightArrow BOOKMARKS $pipe $downArrow SUBDIRS $pipe $upArrow Up $pipe $leftArrow BACK $pipe 'fn-' Tab $pipe Type 'h' for help $magnifyingGlass"
