@@ -124,7 +124,8 @@ function fn-windows-explorer-list-bookmarks {
 }
 
 function fn-windows-explorer-bookmarks-fzf {
-    $selected = fn-windows-explorer-list-bookmarks | fzf
+    $arrow = [char]::ConvertFromUtf32(0x276F)
+    $selected = fn-windows-explorer-list-bookmarks | fzf --layout=reverse --prompt=" BOOKMARKS $arrow "
     if ($selected) {
         Set-Location $selected
     }
@@ -160,7 +161,7 @@ function fn-subdirs-fzf {
     # Run Get-ChildItem with dynamic depth
     $selection = Get-ChildItem -Path "." -Recurse -Directory -Name -Depth $depth -ErrorAction SilentlyContinue |
                  Where-Object { $_ -notmatch $exclude } |
-                 fzf --height 40% --layout=reverse --prompt="SUBDIRS (Depth:$( $depth + 1 )) $arrow "
+                 fzf --height 40% --layout=reverse --prompt=" SUBDIRS (Depth:$( $depth + 1 )) $arrow "
 
     if ($selection) {
         Set-Location $selection
