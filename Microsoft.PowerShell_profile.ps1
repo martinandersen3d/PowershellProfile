@@ -18,8 +18,9 @@ $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
 $principal = New-Object Security.Principal.WindowsPrincipal $identity
 $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
-# ENVIRONMENT VARIABLES ------------------------------
-
+# --------------------------------------------------------------------
+# CONFIGURATION & ENVIRONMENT VARIABLES
+# --------------------------------------------------------------------
 # BatCat: Tell batcat to use truecolors and theme
 $Env:COLORTERM = 'truecolor'
 $Env:BAT_THEME = 'Visual Studio Dark+'
@@ -50,10 +51,6 @@ function y {
     Remove-Item -Path $tmp
 }
 
-# --------------------------------------------------------------------
-# CONFIGURATION
-# --------------------------------------------------------------------
-
 # Set UNIX-like aliases for the admin command, so sudo <command> will run the command
 # with elevated rights. 
 Set-Alias -Name su -Value admin
@@ -68,7 +65,7 @@ Set-Alias -Name sudo -Value admin
 # SCRIPT UPDATE
 # --------------------------------------------------------------------
 # Update scripts from the git repo
-function u {
+function fn-profile-download-script-update {
     $url = "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1"
     try {
         $scriptContent = Invoke-RestMethod -Uri $url
@@ -236,7 +233,7 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+DownArrow" -ScriptBlock {
 # CHEATSHEET / HELP 
 # --------------------------------------------------------------------
 
-function CheatsheetGit {
+function fn-CheatsheetGit {
     $filePath = "$HOME\Documents\WindowsPowerShell\CheatSheet\git.md"
     if (Test-Path $filePath) {
         bat --paging=never  --style=plain $filePath
@@ -245,7 +242,7 @@ function CheatsheetGit {
     }
 }
 
-function CheatsheetPowershell {
+function fn-CheatsheetPowershell {
     $filePath = "$HOME\Documents\WindowsPowerShell\CheatSheet\powershell.md"
     if (Test-Path $filePath) {
         bat --paging=never  --style=plain $filePath
@@ -257,7 +254,7 @@ function CheatsheetPowershell {
 # --------------------------------------------------------------------
 # GIT
 # --------------------------------------------------------------------
-function GitCommitPush {
+function fn-GitCommitPush {
     param (
         [string]$Message
     )
@@ -277,26 +274,26 @@ function GitCommitPush {
     git push
 }
 
-function GitPush {    
+function fn-GitPush {    
     Write-Host "[COMMAND] git push"
     git push
 }
 
-function GitAutoCommitPush {
+function fn-GitAutoCommitPush {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\GitAutoCommitPush.ps1"
 }
 
-function GitShowCurrentCommitDiffFzf {
+function fn-GitShowCurrentCommitDiffFzf {
     git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --header "[COMMIT DIFF]: CURRENT vs. HEAD" --header-first --preview "git diff HEAD -- {} | bat --color=always" --layout=reverse
 }
-function GitShowCommitMessage {
+function fn-GitShowCommitMessage {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\GitShowCommitMessagePreview.ps1"
 }
-function GitShowCurrentBranchVSDevFzf {
+function fn-GitShowCurrentBranchVSDevFzf {
     git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --color=always" --layout=reverse
 }
 
@@ -367,7 +364,7 @@ function dirs {
 }
 
 # Preview Files in Dir With FZF
-function p {
+function fn-preview-directory {
     if (!(Get-Command fzf -ErrorAction SilentlyContinue)) {
         Write-Host "fzf is not installed. Please install it and try again."
         Exit
@@ -378,7 +375,7 @@ function p {
 # Generate or copy a file from ~/Templates to the current directory
 # 1. Select the file
 # 2. Rename to new filename
-function t {
+function fn-file-new-from-template {
     if (!(Get-Command fzf -ErrorAction SilentlyContinue)) {
         Write-Host "fzf is not installed. Please install it and try again."
         Exit
@@ -429,7 +426,7 @@ function t {
     }
 }
 
-function ShowCsvInGridView {
+function fn-ShowCsvInGridView {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)]
@@ -483,7 +480,7 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
 
 
 # Print info about a file or dir
-function info {
+function fn-info {
     param(
         [string]$Path
     )
@@ -515,7 +512,7 @@ function info {
 }
 
 # It will get the sizes of the folders in the current directory, and show it as a table
-function Get-FolderSizes {
+function fn-get-folderSizes {
     try {
         $folders = Get-ChildItem -Directory
         $folderInfo = @()
@@ -537,7 +534,7 @@ function Get-FolderSizes {
 
 # Searches all the content of files in the current diretory and subpaths for a given string
 # example usage: Search-Content "TODO"
-function SearchContent {
+function fn-SearchContent {
     param (
         [Parameter(Mandatory=$true, Position=0)]
         [string]$searchContent
@@ -596,14 +593,14 @@ function SearchContent {
     }
 }
 
-function SearchFileName($name) {
+function fn-SearchFileName($name) {
     Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
         $place_path = $_.directory
         Write-Output "${place_path}\${_}"
     }
 }
 
-function SearchFolderName([string]$name = "") {
+function fn-SearchFolderName([string]$name = "") {
     Get-ChildItem -Directory -Recurse -Filter "*$name*" -ErrorAction SilentlyContinue | ForEach-Object {
         Write-Output $_.FullName
     }
@@ -878,13 +875,13 @@ function ll {
 
 
 
-function unzip ($file) {
+function fn-unzip ($file) {
     Write-Output("Extracting", $file, "to", $pwd)
     $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
     Expand-Archive -Path $fullFile -DestinationPath $pwd
 }
 
-function grep($regex, $dir) {
+function fn-grep($regex, $dir) {
     if ( $dir ) {
         Get-ChildItem $dir | select-string $regex
         return
@@ -896,7 +893,7 @@ function touch($file) {
 }
 
 # Start firefox with json file file
-function json {
+function fn-json {
     param (
         [string]$FilePath
     )
