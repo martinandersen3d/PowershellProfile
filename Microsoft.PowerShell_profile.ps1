@@ -132,8 +132,9 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+LeftArrow" -ScriptBlock {
 }
 
 # ================================================ CTRL+ALT+UP: CD UP
+# Push the current directory onto the stack before cd up one directory
 function fn-cd-up {
-    Push-Location $selected
+    Push-Location (Get-Location)
     cd ..
 }
 # Bind Cltr+Alt+Up to function "cd .."
