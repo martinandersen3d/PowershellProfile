@@ -262,7 +262,7 @@ function fn-subdirs-fzf {
     
         if ($selection) {
             Push-Location (Get-Location)
-            Set-Location $selection
+            Set-Location "$selection"
         }
     }
     catch {
