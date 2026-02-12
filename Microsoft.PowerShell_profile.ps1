@@ -290,7 +290,7 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+DownArrow" -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
 
-# Only load Powershell below version 7
+# Powershell 5 compatability: Only load Powershell below version 7
 if ($PSVersionTable.PSVersion.Major -lt 7) {
     Set-PSReadLineKeyHandler -Chord "Ctrl+NumPad4" -ScriptBlock {
         [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
