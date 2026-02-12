@@ -292,7 +292,7 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+DownArrow" -ScriptBlock {
 
 # Only load Powershell below version 7
 if ($PSVersionTable.PSVersion.Major -lt 7) {
-    Set-PSReadLineKeyHandler -Chord "Ctrl+NumPad8" -ScriptBlock {
+    Set-PSReadLineKeyHandler -Chord "Ctrl+NumPad4" -ScriptBlock {
         [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
         [Microsoft.PowerShell.PSConsoleReadLine]::Insert("cd back")
         [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
