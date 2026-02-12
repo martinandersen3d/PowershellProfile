@@ -219,7 +219,7 @@ function fn-windows-explorer-bookmarks-fzf {
     $arrow = [char]::ConvertFromUtf32(0x276F)
     $selected = fn-windows-explorer-list-bookmarks | fzf --layout=reverse --prompt=" BOOKMARKS $arrow "
     if ($selected) {
-        Push-Location $selected
+        Push-Location (Get-Location)
         Set-Location $selected
     }
 }
@@ -261,7 +261,7 @@ function fn-subdirs-fzf {
                      fzf --height 40% --layout=reverse --prompt=" SUBDIRS (Depth:$nextDepth) $arrow"
     
         if ($selection) {
-            Push-Location $selection
+            Push-Location (Get-Location)
             Set-Location $selection
         }
     }
