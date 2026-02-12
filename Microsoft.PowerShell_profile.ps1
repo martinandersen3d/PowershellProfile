@@ -45,8 +45,13 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
 
 # Only load Powershell below version 7
 if ($PSVersionTable.PSVersion.Major -lt 7) {
+    $pipe = [char]0x007C  # |
+    $rightArrow = [char]0x25B6   # ▶
+    $downArrow = [char]0x25BC    # ▼
+    $upArrow = [char]0x25B2      # ▲
+    $leftArrow = [char]0x25C0    # ◀
     Write-Host "---------------------------------------------------------------------------------------"
-    $ps5message =  " Ctrl+Alt: / > BOOKMARKS / v SUBDIRS / ^ Up / `< BACK / 'fn-' Tab / Type 'h' for help "
+    $ps5message =  " Ctrl+Alt: $pipe $rightArrow BOOKMARKS $pipe $downArrow SUBDIRS $pipe $upArrow Up $pipe $leftArrow BACK $pipe 'fn-' Tab $pipe Type 'h' for help "
     Write-Host $ps5message
     Write-Host "---------------------------------------------------------------------------------------"
     Write-Host ""
