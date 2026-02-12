@@ -752,7 +752,9 @@ function clear {
     Clear-Host 
     & $profile
 }
-
+function fn-show-all-terminal-hotkeys {
+    Get-PSReadLineKeyHandler
+}
 # --------------------------------------------------------------------
 # FUNCTIONS
 # --------------------------------------------------------------------
