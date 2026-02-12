@@ -64,10 +64,10 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
     $downArrow = [char]0x25BC    # ▼
     $upArrow = [char]0x25B2      # ▲
     $leftArrow = [char]0x25C0    # ◀
-    Write-Host "---------------------------------------------------------------------------------------"
+    Write-Host "--------------------------------------------------------------------------------------------"
     $ps5message =  " Ctrl+Num: $pipe $rightArrow 6:BOOKMARKS $pipe $downArrow 2:SUBDIRS $pipe $upArrow 8:Up $pipe $leftArrow 4:BACK $pipe 'fn-' Tab $pipe Type 'h' for help "
     Write-Host $ps5message
-    Write-Host "---------------------------------------------------------------------------------------"
+    Write-Host "--------------------------------------------------------------------------------------------"
     Write-Host ""
 }
 
@@ -289,6 +289,31 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+DownArrow" -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::Insert("fn-subdirs-fzf")
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
 }
+
+# Only load Powershell below version 7
+if ($PSVersionTable.PSVersion.Major -lt 7) {
+    Set-PSReadLineKeyHandler -Chord "Ctrl+NumPad8" -ScriptBlock {
+        [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert("cd back")
+        [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+    }
+    Set-PSReadLineKeyHandler -Chord "Ctrl+NumPad8" -ScriptBlock {
+        [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert("fn-cd-up")
+        [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+    }
+    Set-PSReadLineKeyHandler -Chord "Ctrl+NumPad6" -ScriptBlock {
+        [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert("fn-windows-explorer-bookmarks-fzf")
+        [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+    }
+    Set-PSReadLineKeyHandler -Chord "Ctrl+NumPad2" -ScriptBlock {
+        [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert("fn-subdirs-fzf")
+        [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+    }
+}
+
 
 # --------------------------------------------------------------------
 # CHEATSHEET / HELP 
