@@ -1133,7 +1133,7 @@ function prompt {
 
     # ANSI Color Codes
     $Esc    = [char]27
-    $Yellow = "$Esc[93m"            # High-intensity bright yellow
+    $Gold   = "$Esc[38;5;220m"
     $Orange = "$Esc[38;2;255;140;0m"
     $White  = "$Esc[97m"            # High-intensity crisp white for typing
     $Reset  = "$Esc[0m"
@@ -1143,10 +1143,10 @@ function prompt {
     $path = $PWD.Path
     
     # Get the branch (Orange), then immediately switch back to Yellow
-    $branch = if ($b = git branch --show-current 2>$null) { "${Orange} [$b]${Yellow}" } else { "" }
+    $branch = if ($b = git branch --show-current 2>$null) { "${Orange} [$b]${Gold}" } else { "" }
 
     # Construct the visual prompt string (stops right at the arrow)
-    $promptString = "${Yellow}$closedFolder $path$branch${Reset} $arrow"
+    $promptString = "${Gold}$closedFolder $path$branch${Reset} $arrow"
     
     Write-Host -NoNewline $promptString
     
