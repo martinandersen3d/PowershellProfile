@@ -1106,24 +1106,53 @@ function pgrep($name) {
 # Runs git branch --show-current to get the active branch name.
 # Displays the branch name with  (or you can replace it with another symbol).
 # Uses 2>$null to suppress errors in case git is not available or the directory is not a repo.
+# function prompt {
+
+#     #  Lazy Load Autocompleters
+#     if (-not $script:__completersLoaded) {
+#         . "$PSScriptRoot\UserScripts\ArgumentCompleters.ps1"  # ← NOT executed at load time
+#     }
+
+#     $closedFolder = [char]::ConvertFromUtf32(0x1F4C1)  # Closed folder emoji
+#     $arrow = [char]::ConvertFromUtf32(0x276F)  # Right angle arrow '❯'
+#     # $adminPrefix = if ($isAdmin) { " [ADMIN]" } else { "" }
+#     $path = $PWD.Path
+#     $branch = if ($b = git branch --show-current 2>$null) { " [$b]" } else { "" }
+
+#     $promptString = "$closedFolder $path$branch $arrow"
+#     Write-Host -NoNewline $promptString -ForegroundColor Yellow
+#     return " "
+# }
+
 function prompt {
 
-    #  Lazy Load Autocompleters
+    # Lazy Load Autocompleters
     if (-not $script:__completersLoaded) {
-        . "$PSScriptRoot\UserScripts\ArgumentCompleters.ps1"  # ← NOT executed at load time
+        . "$PSScriptRoot\UserScripts\ArgumentCompleters.ps1"
     }
+
+    # ANSI Color Codes
+    $Esc    = [char]27
+    $Yellow = "$Esc[93m"            # High-intensity bright yellow
+    $Orange = "$Esc[38;2;255;140;0m"
+    $White  = "$Esc[97m"            # High-intensity crisp white for typing
+    $Reset  = "$Esc[0m"
 
     $closedFolder = [char]::ConvertFromUtf32(0x1F4C1)  # Closed folder emoji
     $arrow = [char]::ConvertFromUtf32(0x276F)  # Right angle arrow '❯'
-    # $adminPrefix = if ($isAdmin) { " [ADMIN]" } else { "" }
     $path = $PWD.Path
-    $branch = if ($b = git branch --show-current 2>$null) { " [$b]" } else { "" }
+    
+    # Get the branch (Orange), then immediately switch back to Yellow
+    $branch = if ($b = git branch --show-current 2>$null) { "${Orange} [$b]${Yellow}" } else { "" }
 
-    $promptString = "$closedFolder $path$branch $arrow"
-    Write-Host -NoNewline $promptString -ForegroundColor Yellow
+    # Construct the visual prompt string (stops right at the arrow)
+    $promptString = "${Yellow}$closedFolder $path$branch${Reset} $arrow"
+    
+    Write-Host -NoNewline $promptString
+    
+    # Passing White inside the return guarantees that your input stream uses it
     return " "
 }
-
 
 
 # --------------------------------------------------------------------
