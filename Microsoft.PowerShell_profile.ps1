@@ -1124,6 +1124,16 @@ function pgrep($name) {
 #     return " "
 # }
 
+# Color Theme - Set default typing colors (Wheat for both commands and arguments)
+if (Get-Module PSReadLine) {
+    $WheatColor = "$([char]27)[38;2;245;222;179m"
+    
+    Set-PSReadLineOption -Colors @{
+        Command = $WheatColor  # Like 'cd', 'dir'
+        Default = $WheatColor  # Like './Documents'
+    }
+}
+
 function prompt {
 
     # Lazy Load Autocompleters
