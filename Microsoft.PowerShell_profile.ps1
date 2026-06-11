@@ -1168,7 +1168,14 @@ if (Get-Module PSReadLine) {
     $WheatColor = "$([char]27)[38;2;245;222;179m"
     $BrightGray = "$([char]27)[38;2;170;170;170m"
     $WhiteColor = "$([char]27)[38;2;255;255;255m"
-    
+
+    # History Listview inline prediction: https://ianmorozoff.com/2023/01/10/predictive-intellisense-on-by-default-in-powershell-7-3/
+    if ($PSVersionTable.PSVersion.Major -ge 7.3) {
+        if ((Get-Command Set-PSReadLineOption).Parameters.ContainsKey('PredictionViewStyle')) {
+            Set-PSReadLineOption -PredictionViewStyle ListView
+        }
+    }
+
     Set-PSReadLineOption -Colors @{
         Command          = $WheatColor  # Like 'cd', 'dir'
         Default          = $WhiteColor  # Like './Documents'

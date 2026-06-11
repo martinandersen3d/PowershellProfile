@@ -552,3 +552,52 @@ Register-ArgumentCompleter -Native -CommandName tsc -ScriptBlock {
         [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
     }
 }
+
+
+# ----------------------------------------------------------------------------
+# CD, Set-Location, Push-Location complete only folders with FZF
+# ----------------------------------------------------------------------------
+if ($PSVersionTable.PSVersion.Major -ge 7.3) {
+    $cdCompleter = {
+        param($commandName, $parameterName, $wordToComplete, $commandAst, $cursorPosition)
+
+        $word = $wordToComplete
+        if ($null -eq $word) { $word = "" }
+
+        # Handle trailing backslashes or slashes
+        if ($word -match '^(.*)[\\/]$') {
+            $parent = $word
+            $leaf = ""
+        } else {
+            $parent = Split-Path -Path $word -Parent -ErrorAction SilentlyContinue
+            $leaf = Split-Path -Path $word -Leaf -ErrorAction SilentlyContinue
+            if ([string]::IsNullOrEmpty($parent)) {
+                $parent = "."
+            }
+        }
+
+        if (Test-Path -Path $parent -ErrorAction SilentlyContinue) {
+            $filter = "$leaf*"
+            Get-ChildItem -Path $parent -Directory -ErrorAction SilentlyContinue |
+                Where-Object { $_.Name -like $filter } |
+                ForEach-Object {
+                    $fullPath = Join-Path -Path $parent -ChildPath $_.Name
+                    # Normalize separator to match the input style (slash vs backslash)
+                    if ($word -match '/') {
+                        $fullPath = $fullPath -replace '\\', '/'
+                    }
+                    
+                    [System.Management.Automation.CompletionResult]::new(
+                        $fullPath,                    # Completion text
+                        $_.Name,                      # List item text
+                        'ProviderContainer',          # Result type
+                        $_.FullName                   # Tooltip
+                    )
+                }
+        }
+    }
+
+    Register-ArgumentCompleter -CommandName @('cd', 'custom-cd', 'Set-Location', 'Push-Location', 'sl', 'chdir') -ParameterName 'Path' -ScriptBlock $cdCompleter
+    Register-ArgumentCompleter -CommandName @('cd', 'custom-cd', 'Set-Location', 'Push-Location', 'sl', 'chdir') -ParameterName 'LiteralPath' -ScriptBlock $cdCompleter    
+}
+
