@@ -186,14 +186,15 @@ function global:custom-cd {
                     }
                 }
                 else {
-                    Get-Item $Path
+                    Write-Error "Path can not be found"
+                    $null
                 }
             }
         }
         $currentPath = (Get-Location).Path
 
         # Only push to stack if we are actually moving to a DIFFERENT directory
-        if ($targetPath.Path -ne $currentPath) {
+        if ($null -ne $targetPath -and $targetPath.Path -ne $currentPath) {
             Push-Location $currentPath
             Set-Location $targetPath
         }
