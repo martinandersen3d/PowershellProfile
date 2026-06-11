@@ -32,7 +32,7 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
     $leftArrow = [char]0x25C0    # ◀
     
 Write-Host "────────────────────────────────────────────────────────────────────────────────────────
- Ctrl+Alt: $pipe $rightArrow BOOKMARKS $pipe $downArrow SUBDIRS $pipe $upArrow Up $pipe $leftArrow BACK $pipe 'fn-' Tab $pipe Type 'h' for help
+ Ctrl+Alt: $pipe $rightArrow BOOKMARKS $pipe $downArrow SUBDIRS $pipe $upArrow Up $pipe $leftArrow BACK $pipe 'fn-' Tab $pipe Type 'fn-help' for help
 ────────────────────────────────────────────────────────────────────────────────────────
 "
 }
@@ -370,7 +370,7 @@ function fn-CheatsheetPowershell {
     }
 }
 
-function h {
+function fn-help {
     $filePath = "$HOME\Documents\WindowsPowerShell\CheatSheet\help.md"
     if (Test-Path $filePath) {
         bat --paging=never  --style=plain $filePath
