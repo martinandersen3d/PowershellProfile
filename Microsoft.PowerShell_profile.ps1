@@ -1127,10 +1127,13 @@ function pgrep($name) {
 # Color Theme - Set default typing colors (Wheat for both commands and arguments)
 if (Get-Module PSReadLine) {
     $WheatColor = "$([char]27)[38;2;245;222;179m"
+    $BrightGray = "$([char]27)[38;2;170;170;170m"
+    $WhiteColor = "$([char]27)[38;2;255;255;255m"
     
     Set-PSReadLineOption -Colors @{
-        Command = $WheatColor  # Like 'cd', 'dir'
-        Default = $WheatColor  # Like './Documents'
+        Command          = $WheatColor  # Like 'cd', 'dir'
+        Default          = $WhiteColor  # Like './Documents'
+        InlinePrediction = $BrightGray  # The predictive ghost/shadow text in bright gray
     }
 }
 
