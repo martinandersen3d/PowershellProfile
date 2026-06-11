@@ -151,7 +151,45 @@ function global:custom-cd {
         }
 
         # Resolve the target path first
-        $targetPath = if ([string]::IsNullOrWhiteSpace($Path)) { $HOME } else { Get-Item $Path }
+        $targetPath = if ([string]::IsNullOrWhiteSpace($Path)) 
+        { 
+                $HOME 
+        } 
+        else { 
+            if (Test-Path -Path $Path -PathType Container) {
+                Get-Item $Path
+            }
+            else {
+                $matchedDirs = Get-ChildItem -Path "." -Directory -ErrorAction SilentlyContinue |
+                    Where-Object { $_.Name -ilike "*$Path*" }
+                
+                if ($matchedDirs) {
+                    if ($null -eq $matchedDirs.Count -or $matchedDirs.Count -eq 1) {
+                        $singleMatch = if ($null -eq $matchedDirs.Count) { $matchedDirs } else { $matchedDirs[0] }
+                        Get-Item $singleMatch.FullName
+                    }
+                    else {
+                        if (Get-Command fzf -ErrorAction SilentlyContinue) {
+                            $arrow = [char]::ConvertFromUtf32(0x276F)
+                            $selected = $matchedDirs | ForEach-Object { Resolve-Path -Relative $_.FullName } |
+                                fzf --height 40% --layout=reverse --prompt=" Multiple Matches $arrow "
+                            if ($selected) {
+                                Get-Item $selected
+                            }
+                            else {
+                                $null
+                            }
+                        }
+                        else {
+                            Get-Item $matchedDirs[0].FullName
+                        }
+                    }
+                }
+                else {
+                    Get-Item $Path
+                }
+            }
+        }
         $currentPath = (Get-Location).Path
 
         # Only push to stack if we are actually moving to a DIFFERENT directory
