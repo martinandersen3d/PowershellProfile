@@ -71,6 +71,7 @@ if (-not (CheckCommand "winget")) { $allOk = $false }
 if (-not (CheckCommand "powershell")) { $allOk = $false }
 if (-not (CheckCommand "pwsh")) { $allOk = $false }
 if (-not (CheckCommand "fzf")) { $allOk = $false }
+if (-not (CheckCommand "sd")) { $allOk = $false }
 
 # If Git is missing, check if winget is installed and offer to install git
 if (-not (CheckCommand "git")) {
@@ -129,6 +130,7 @@ CheckAndSuggestCommand "micro" "winget install zyedidia.micro" "choco install mi
 CheckAndSuggestCommand "pwsh" "winget install Microsoft.PowerShell" "choco install powershell-core"
 CheckAndSuggestCommand "tldr" "winget install tldr-pages.tlrc" "choco install tldr"
 CheckAndSuggestCommand "rg" "winget install BurntSushi.ripgrep.GNU" "choco install ripgrep"
+CheckAndSuggestCommand "sd" "winget install chmln.sd" "choco install ----x"
 
 # ---------------------------------------------------------------------------
 LogTitle "Install Micro Terminal Text Editor from winget"
