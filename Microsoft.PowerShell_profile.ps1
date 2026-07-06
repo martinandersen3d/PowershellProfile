@@ -348,6 +348,25 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
 }
 
 
+
+# --------------------------------------------------------------------
+# AI
+# --------------------------------------------------------------------
+# Core base alias
+Set-Alias -Name ai -Value copilot
+
+# Gemini 3.5 Flash (Medium Effort)
+function ai-gemini-3_5-flash { copilot --model gemini-3.5-flash --effort medium @args }
+
+# Claude Sonnet 4.6 (Medium Effort)
+function ai-claude-sonnet-4_6 { copilot --model claude-sonnet-4.6 --effort medium @args }
+
+# GPT 5.5 (Medium Effort)
+function ai-gpt-5_5 { copilot --model gpt-5.5 --effort medium @args }
+
+# GPT 5.3 Codex (Medium Effort)
+function ai-gpt-5_3-codex { copilot --model gpt-5.3-codex --effort medium @args }
+
 # --------------------------------------------------------------------
 # CHEATSHEET / HELP 
 # --------------------------------------------------------------------
