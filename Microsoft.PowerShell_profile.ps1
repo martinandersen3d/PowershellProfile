@@ -354,8 +354,14 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
 # --------------------------------------------------------------------
 # Core base alias
 Set-Alias -Name ai -Value copilot
-Set-Alias -Name skills -Value dir ~\.copilot\skills -Directory -Name
-Set-Alias -Name al-skills-list -Value dir ~\.copilot\skills -Directory -Name
+
+function skills {
+    Get-ChildItem -LiteralPath "$HOME\.copilot\skills" -Directory -Name
+}
+
+function al-skills-list {
+    Get-ChildItem -LiteralPath "$HOME\.copilot\skills" -Directory -Name
+}
 
 # Gemini 3.5 Flash (Medium Effort)
 function ai-gemini-3_5-flash { copilot --model gemini-3.5-flash --effort medium @args }
