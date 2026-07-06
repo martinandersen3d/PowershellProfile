@@ -1203,13 +1203,13 @@ if (Get-Module PSReadLine) {
     if ($PSVersionTable.PSVersion.Major -ge 7.3) {
         if ((Get-Command Set-PSReadLineOption).Parameters.ContainsKey('PredictionViewStyle')) {
             Set-PSReadLineOption -PredictionViewStyle ListView
+            InlinePrediction = $BrightGray  # The predictive ghost/shadow text in bright gray
         }
     }
 
     Set-PSReadLineOption -Colors @{
         Command          = $WheatColor  # Like 'cd', 'dir'
         Default          = $WhiteColor  # Like './Documents'
-        InlinePrediction = $BrightGray  # The predictive ghost/shadow text in bright gray
     }
 }
 
