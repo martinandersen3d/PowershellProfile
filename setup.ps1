@@ -123,6 +123,7 @@ function CheckAndSuggestCommand {
     }
 }
 CheckAndSuggestCommand "bat" "winget install sharkdp.bat" "choco install bat"
+CheckAndSuggestCommand "delta" "winget install winget install dandavison.delta" "choco install ----x"
 CheckAndSuggestCommand "fd" "winget install sharkdp.fd" "choco install fd"
 CheckAndSuggestCommand "fzf" "winget install junegunn.fzf" "choco install fzf"
 CheckAndSuggestCommand "git" "winget install git.git" "choco install git"
@@ -240,8 +241,8 @@ $GitDir = "$env:TEMP\PowerShellProfile"
 $documentsPath = [Environment]::GetFolderPath('MyDocuments')
 
 # Start Copy Files
-# TryCopyFile "$GitDir\Microsoft.WindowsTerminal\settings.json" "$home\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
-# TryCopyFile "$GitDir\Microsoft.WindowsTerminal\settings.json" "$home\AppData\Local\Microsoft\Windows Terminal\settings.json"
+TryCopyFile "$GitDir\Microsoft.WindowsTerminal\settings.json" "$home\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings_EXAMPLE.json"
+TryCopyFile "$GitDir\Microsoft.WindowsTerminal\settings.json" "$home\AppData\Local\Microsoft\Windows Terminal\settings_EXAMPLE.json"
 
 TryCopyFile "$GitDir\Microsoft.PowerShell_profile.ps1" "$documentsPath\WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
 TryCopyFile "$GitDir\Microsoft.PowerShell_profile.ps1" "$documentsPath\PowerShell\Microsoft.PowerShell_profile.ps1"
