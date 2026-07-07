@@ -72,6 +72,7 @@ if (-not (CheckCommand "powershell")) { $allOk = $false }
 if (-not (CheckCommand "pwsh")) { $allOk = $false }
 if (-not (CheckCommand "fzf")) { $allOk = $false }
 if (-not (CheckCommand "sd")) { $allOk = $false }
+if (-not (CheckCommand "delta")) { $allOk = $false }
 
 # If Git is missing, check if winget is installed and offer to install git
 if (-not (CheckCommand "git")) {
