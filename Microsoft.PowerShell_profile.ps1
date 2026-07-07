@@ -1260,7 +1260,7 @@ try {
     Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
     # 1. Force predictions and completions into a single vertical list view
     Import-Module DirectoryPredictor
-    # Import-Module CompletionPredictor
+    Import-Module CompletionPredictor
     Set-PSReadLineOption -PredictionViewStyle ListView
     Set-PSReadLineOption -PredictionSource HistoryAndPlugin
     Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
