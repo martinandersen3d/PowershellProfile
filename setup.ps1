@@ -167,7 +167,51 @@ try {
     }
 }
 catch {
-    Write-Error "Critical error installing PSFzf - $($_.Exception.Message)"
+    Write-Error "Critical error installing PSFzf (MUST RUN AS ADMIN) - $($_.Exception.Message)"
+}
+
+# ---------------------------------------------------------------------------
+LogTitle "Install PowerShell Module: DirectoryPredictor (For Autocomlete): https://github.com/kelleyma49/PSFzf" 
+# ---------------------------------------------------------------------------
+$moduleName = "DirectoryPredictor"
+
+try {
+    # Check if the module is available on the system
+    if (-not (Get-Module -ListAvailable -Name $moduleName)) {
+        Write-Warning "PowerShell Autocomplete Module '$moduleName' not found. Attempting to install..."
+        # Note: -Force and -Confirm:$false act as your "auto-approve" flags
+        # Install-Module -Name $moduleName -Scope CurrentUser -Force -Confirm:$false -ErrorAction Stop
+        Install-Module -Name DirectoryPredictor -Scope CurrentUser
+    }
+    # If installed, give a OK message
+    if (Get-Module -ListAvailable -Name $moduleName) {
+        LogGreen "DirectoryPredictor Installed"
+    }
+}
+catch {
+    Write-Error "Critical error installing DirectoryPredictor (MUST RUN AS ADMIN) - $($_.Exception.Message)"
+}
+
+# ---------------------------------------------------------------------------
+LogTitle "Install PowerShell Module: CompletionPredictor (For Autocomlete): " 
+# ---------------------------------------------------------------------------
+$moduleName = "CompletionPredictor"
+
+try {
+    # Check if the module is available on the system
+    if (-not (Get-Module -ListAvailable -Name $moduleName)) {
+        Write-Warning "PowerShell Autocomplete Module '$moduleName' not found. Attempting to install..."
+        # Note: -Force and -Confirm:$false act as your "auto-approve" flags
+        # Install-Module -Name $moduleName -Scope CurrentUser -Force -Confirm:$false -ErrorAction Stop
+        Install-Module -Name CompletionPredictor -Repository PSGallery
+    }
+    # If installed, give a OK message
+    if (Get-Module -ListAvailable -Name $moduleName) {
+        LogGreen "CompletionPredictor Installed"
+    }
+}
+catch {
+    Write-Error "Critical error installing CompletionPredictor (MUST RUN AS ADMIN) - $($_.Exception.Message)"
 }
 
 # ---------------------------------------------------------------------------

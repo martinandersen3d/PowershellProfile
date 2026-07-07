@@ -1208,9 +1208,23 @@ if (Get-Module PSReadLine) {
     # History Listview inline prediction: https://ianmorozoff.com/2023/01/10/predictive-intellisense-on-by-default-in-powershell-7-3/
     if ($PSVersionTable.PSVersion.Major -ge 7.3) {
         if ((Get-Command Set-PSReadLineOption).Parameters.ContainsKey('PredictionViewStyle')) {
-            Set-PSReadLineOption -PredictionViewStyle ListView
             InlinePrediction = $BrightGray  # The predictive ghost/shadow text in bright gray
         }
+        try {
+            Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+            # 1. Force predictions and completions into a single vertical list view
+            Import-Module DirectoryPredictor
+            Import-Module -Name CompletionPredictor
+            Set-PSReadLineOption -PredictionViewStyle ListView
+            Set-PSReadLineOption -PredictionSource HistoryAndPlugin
+            Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
+            Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
+        }
+        catch {
+            Write-Error "Failed to configure vertical list options: $_"
+        }
+
+
     }
 
     Set-PSReadLineOption -Colors @{
@@ -1263,11 +1277,26 @@ function prompt {
 # ----------------------------------------------------------------------------
 
 # This replaces the standard Tab completion with fzf
-Set-PSReadLineKeyHandler -Key Tab -ScriptBlock {
-    # Check if the function exists; if not, source the script or module
-    if (-not (Get-Command Invoke-FzfTabCompletion -ErrorAction SilentlyContinue)) {
-    }
+# Set-PSReadLineKeyHandler -Key Tab -ScriptBlock {
+#     # Check if the function exists; if not, source the script or module
+#     if (-not (Get-Command Invoke-FzfTabCompletion -ErrorAction SilentlyContinue)) {
+#     }
     
-    # Now that it's loaded, invoke it
-    Invoke-FzfTabCompletion
-}
+#     # Now that it's loaded, invoke it
+#     Invoke-FzfTabCompletion
+# }
+
+# https://www.poppastring.com/blog/powershell-intellisense-completion
+# https://devblogs.microsoft.com/powershell/announcing-psreadline-2-1-with-predictive-intellisense/
+# https://mertsenel.tech/post/mypowershellswissknife/
+# https://www.thomasmaurer.ch/2021/02/powershell-predictive-intellisense/
+# https://learn.microsoft.com/en-us/powershell/scripting/dev-cross-plat/create-cmdline-predictor?view=powershell-7.4
+
+# Bind a key to a function:
+# - Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+# Argument Completer:
+# - tab completion carries out either a default completion, or built-in cmdlet, or even a custom function.  
+# - Register-ArgumentCompleter 
+# PSReadLine 2.1+ with Predictive IntelliSense:
+# - https://devblogs.microsoft.com/powershell/announcing-psreadline-2-1-with-predictive-intellisense/
+
