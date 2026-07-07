@@ -1210,21 +1210,6 @@ if (Get-Module PSReadLine) {
         if ((Get-Command Set-PSReadLineOption).Parameters.ContainsKey('PredictionViewStyle')) {
             InlinePrediction = $BrightGray  # The predictive ghost/shadow text in bright gray
         }
-        try {
-            Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
-            # 1. Force predictions and completions into a single vertical list view
-            Import-Module DirectoryPredictor
-            # Import-Module CompletionPredictor
-            Set-PSReadLineOption -PredictionViewStyle ListView
-            Set-PSReadLineOption -PredictionSource HistoryAndPlugin
-            Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
-            Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
-        }
-        catch {
-            Write-Error "Failed to configure vertical list options: $_"
-        }
-
-
     }
 
     Set-PSReadLineOption -Colors @{
@@ -1271,6 +1256,19 @@ function prompt {
 # https://techcommunity.microsoft.com/blog/itopstalkblog/autocomplete-in-powershell/2604524
 # Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
+try {
+    Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+    # 1. Force predictions and completions into a single vertical list view
+    Import-Module DirectoryPredictor
+    # Import-Module CompletionPredictor
+    Set-PSReadLineOption -PredictionViewStyle ListView
+    Set-PSReadLineOption -PredictionSource HistoryAndPlugin
+    Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
+    Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
+}
+catch {
+    Write-Error "Failed to configure vertical list options: $_"
+}
 
 # ----------------------------------------------------------------------------
 # CD command Autocomplete with TAB Key in FZF - Install: Install-Module -Name PSFzf -Scope CurrentUser
