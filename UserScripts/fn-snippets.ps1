@@ -48,7 +48,7 @@ function Resolve-SnippetTemplate {
     })
 }
 
-function snip {
+function fn-snippets {
     $SnippetDir = "$HOME/MEGA/CLI"
     
     if (-not (Test-Path $SnippetDir)) {

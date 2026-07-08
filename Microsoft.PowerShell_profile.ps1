@@ -38,20 +38,6 @@ Write-Host "──────────────────────�
 }
 
 # Only load Powershell below version 7
-# if ($PSVersionTable.PSVersion.Major -lt 7) {
-#     $pipe = [char]0x007C  # |
-#     $rightArrow = [char]0x25B6   # ▶
-#     $downArrow = [char]0x25BC    # ▼
-#     $upArrow = [char]0x25B2      # ▲
-#     $leftArrow = [char]0x25C0    # ◀
-#     Write-Host "---------------------------------------------------------------------------------------"
-#     $ps5message =  " Ctrl+Alt: $pipe $rightArrow BOOKMARKS $pipe $downArrow SUBDIRS $pipe $upArrow Up $pipe $leftArrow BACK $pipe 'fn-' Tab $pipe Type 'h' for help "
-#     Write-Host $ps5message
-#     Write-Host "---------------------------------------------------------------------------------------"
-#     Write-Host ""
-# }
-
-# Only load Powershell below version 7
 if ($PSVersionTable.PSVersion.Major -lt 7) {
     $pipe = [char]0x007C  # |
     $rightArrow = [char]0x25B6   # ▶
@@ -87,8 +73,30 @@ $Env:FZF_DEFAULT_OPTS = @(
 # Yazi file manager
 $Env:YAZI_FILE_ONE = 'C:\Program Files\Git\usr\bin\file.exe'
 
-# Yazi file manager
-function y {
+# --------------------------------------------------------------------
+# ALIASES
+# --------------------------------------------------------------------
+Set-Alias -Name d -Value fn-directory-list
+Set-Alias -Name f -Value fn-file-list
+Set-Alias -Name dd -Value fn-directory-list-as-table
+Set-Alias -Name y -Value fn-app-yasi
+Set-Alias -Name snip -Value fn-snippets 
+# Set UNIX-like aliases for the admin command, so sudo <command> will run the command
+# with elevated rights. 
+Set-Alias -Name su -Value admin
+Set-Alias -Name sudo -Value admin
+
+# --------------------------------------------------------------------
+# APPS
+# --------------------------------------------------------------------
+function c. { code . }
+function i. { code-insiders . }
+function e. { explorer . }
+function n { notepad $args }
+
+# Yazi file manager ---------------------------------------------------
+
+function fn-app-yasi {
     $tmp = [System.IO.Path]::GetTempFileName()
     yazi $args --cwd-file="$tmp"
     $cwd = Get-Content -Path $tmp -Encoding UTF8
@@ -98,15 +106,77 @@ function y {
     Remove-Item -Path $tmp
 }
 
-# Set UNIX-like aliases for the admin command, so sudo <command> will run the command
-# with elevated rights. 
-Set-Alias -Name su -Value admin
-Set-Alias -Name sudo -Value admin
+# Micro: Open file  ---------------------------------------------------
+# Open files with micro
+function m {
+    [CmdletBinding()]
+    param (
+        [string[]]$File
+    )
 
-# Set-Alias WinGetInstall winget install
-# Set-Alias WinGetSearch winget search
-# Set-Alias WinGetShow winget show
-# Set-Alias WinGetUninstall winget uninstall
+    if (-not (Get-Command fzf -ErrorAction SilentlyContinue)) {
+        Write-Error "fzf is not installed or not in PATH."
+        return
+    }
+    if (-not (Get-Command micro -ErrorAction SilentlyContinue)) {
+        Write-Error "micro editor is not installed or not in PATH."
+        return
+    }
+
+    try {
+        if ($File) {
+            # Quote paths that may contain spaces
+            $quoted = $File | ForEach-Object { "`"$($_)`"" }
+            Invoke-Expression "micro $($quoted -join ' ')"
+            return
+        }
+
+        Write-Host "Loading..."
+        $files = Get-ChildItem -File -Recurse -ErrorAction SilentlyContinue |
+            Where-Object {
+                $_.FullName -notmatch '\\(node_modules|\.git)[\\\/]' -and
+                $_.Extension -notmatch '\.(exe|dll|bin|jpg|jpeg|png|gif|bmp|zip|rar|7z|iso|mp4|mp3|avi|mov|pdf|docx?|xlsx?|pptx?)$'
+            } |
+            ForEach-Object {
+                Resolve-Path -Relative $_.FullName
+            }
+
+        if (-not $files) {
+            Write-Host "No suitable files found."
+            return
+        }
+
+        $fzfArgs = @(
+            '--multi'
+            '--layout=reverse'
+            '--header=Micro: Select files to open'
+            '--preview=bat --theme="Visual Studio Dark+" --color=always {}'
+        )
+        $selected = $files | fzf @fzfArgs
+
+        if ([string]::IsNullOrWhiteSpace($selected)) {
+            Write-Host "No file selected."
+            return
+        }
+
+        # Split into lines (even if only one), trim and verify
+        $toOpen = $selected -split "`n" |
+            ForEach-Object { $_.Trim('"') } |
+            Where-Object { Test-Path $_ }
+
+        if (-not $toOpen) {
+            Write-Host "No valid files selected."
+            return
+        }
+
+        # Quote each path and launch micro
+        $quotedPaths = $toOpen | ForEach-Object { "`"$($_)`"" }
+        Invoke-Expression "micro $($quotedPaths -join ' ')"
+    }
+    catch {
+        Write-Error "An error occurred in function m: $_"
+    }
+}
 
 # --------------------------------------------------------------------
 # SCRIPT UPDATE
@@ -375,10 +445,6 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
 # Core base alias
 Set-Alias -Name ai -Value copilot
 
-function skills {
-    Get-ChildItem -LiteralPath "$HOME\.copilot\skills" -Directory -Name
-}
-
 function al-skills-list {
     Get-ChildItem -LiteralPath "$HOME\.copilot\skills" -Directory -Name
 }
@@ -429,7 +495,7 @@ function fn-help {
 # --------------------------------------------------------------------
 # GIT
 # --------------------------------------------------------------------
-function fn-GitCommitPush {
+function fn-gitCommitPush {
     param (
         [string]$Message
     )
@@ -449,25 +515,26 @@ function fn-GitCommitPush {
     git push
 }
 
-function fn-GitPush {    
+function fn-gitPush {    
     Write-Host "COMMAND: git push"
     git push
 }
 
-function fn-GitAutoCommitPush {
-    # Get the firectory name of the current powershell profile
+function fn-gitAutoCommitPush {
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\GitAutoCommitPush.ps1"
 }
 
-function fn-GitShowCurrentCommitDiffFzf {
+function fn-gitShowCurrentCommitDiffFzf {
     git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --header "[COMMIT DIFF]: CURRENT vs. HEAD" --header-first --preview "git diff HEAD -- {} | bat --color=always" --layout=reverse
 }
-function fn-GitShowCommitMessage {
+
+function fn-gitShowCommitMessage {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\GitShowCommitMessagePreview.ps1"
 }
+
 function fn-GitShowCurrentBranchVSDevFzf {
     git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --color=always" --layout=reverse
 }
@@ -486,20 +553,95 @@ function cd... { Set-Location ..\.. }
 function cd.... { Set-Location ..\..\.. }
 function cd..... { Set-Location ..\..\..\.. }
 
-# Fzf Subdirs 3 leves down, that does not start with  ".git" or is "node_modules"
-# function s { Get-ChildItem -Path . -Directory -Recurse -Depth 3 | Where-Object { (-not $_.Name.StartsWith(".git")) -and ($_.Name -ne "node_modules") } | Select-Object -ExpandProperty FullName | fzf --layout=reverse | Set-Location }
+# --------------------------------------------------------------------
+# DIRECTORYS 
+# --------------------------------------------------------------------
+
+function ll {
+    param (
+        [string]$Path = "."
+    )
+
+    function Convert-Size {
+        param ([long]$bytes)
+        switch ($bytes) {
+            { $_ -lt 1KB } { return "{0:N1} B" -f $bytes; break }
+            { $_ -lt 1MB } { return "{0:N1} KB" -f ($bytes / 1KB); break }
+            { $_ -lt 1GB } { return "{0:N1} MB" -f ($bytes / 1MB); break }
+            { $_ -lt 1TB } { return "{0:N1} GB" -f ($bytes / 1GB); break }
+            default        { return "{0:N1} TB" -f ($bytes / 1TB) }
+        }
+    }
+    function Get-EmojiPrefix {
+        param ($item)
+    
+        # Use Unicode escape sequences to represent emojis
+        # $folderEmoji = [char]0x1F4C1  # 📁
+        # $fileEmoji   = [char]0x1F4C4  # 📄
+        $folderEmoji = "`u{1F4C1}"  # 📁
+        $fileEmoji   = "`u{1F4C4}"  # 📄
+    
+        if ($item.PSIsContainer) {
+            return $folderEmoji
+        } else {
+            return $fileEmoji
+        }
+    }
+    # function Get-EmojiPrefix {
+    #     param ($item)
+    #     if ($item.PSIsContainer) {
+    #         return "📁"
+    #     } else {
+    #         return "📄"
+    #     }
+    # }
+
+    Get-ChildItem -Path $Path | ForEach-Object {
+        $isFolder = $_.PSIsContainer
+        [PSCustomObject]@{
+            Name           = "$(Get-EmojiPrefix $_) $($_.Name)"
+            Type           = if ($isFolder) { "Folder" } else { $_.Extension.TrimStart('.') }
+            Size           = if ($isFolder) { "" } else { Convert-Size $_.Length }
+            'Date Modified'= $_.LastWriteTime
+            'Date Created' = $_.CreationTime
+        }
+    } | Format-Table -AutoSize
+}
+
+
+# Only load PS7-specific code if the current PowerShell version is 7 or higher
+# This avoids syntax errors in PowerShell 5, which can't parse newer language features
+if ($PSVersionTable.PSVersion.Major -ge 7) {
+
+    function Is-Binary {
+        param (
+            [string]$filePath
+        )
+
+        # Read a portion of the file
+        $byteArray = [System.IO.File]::ReadAllBytes($filePath)
+        
+        # Loop through each byte
+        foreach ($byte in $byteArray) {
+            # If any byte is outside the range of printable ASCII characters (0x20 - 0x7E), it's binary
+            if ($byte -lt 0x20 -or $byte -gt 0x7E) {
+                return $true
+            }
+        }
+        
+        # If all bytes are within the printable ASCII range, it's likely a text file
+        return $false
+    }
+}
+
 
 # List Dirs in current dir
-function d { Get-ChildItem -Path . -Directory | Select-Object @{Name='SubPath';Expression={Split-Path $_.FullName -Leaf} } }
+function fn-directory-list { Get-ChildItem -Path . -Directory | Select-Object @{Name='SubPath';Expression={Split-Path $_.FullName -Leaf} } }
 
 # List Dirs in current dir as table with columns
-function dd {
+function fn-directory-list-as-table {
     Get-ChildItem | Format-Wide -Column 3
   }
- 
-
-# List files in current dir
-function f {  Get-ChildItem -Path . -File | Select-Object @{Name='SubPath';Expression={Split-Path $_.FullName -Leaf} } }
 
 # Navigate subdirectories with fzf
 function s {
@@ -522,24 +664,8 @@ function s {
     }
 }
 
-. "$PSScriptRoot\UserScripts\G-JumpToDir.ps1"
-. "$PSScriptRoot\UserScripts\Snippets.ps1"
-# Drive shortcuts
-function HKLM: { Set-Location HKLM: }
-function HKCU: { Set-Location HKCU: }
-function Env: { Set-Location Env: }
-
-# Does the the rough equivalent of dir /s /b. For example, dirs *.png is dir /s /b *.png
-function dirs {
-    if ($args.Count -gt 0) {
-        Get-ChildItem -Recurse -Include "$args" | Foreach-Object FullName
-    } else {
-        Get-ChildItem -Recurse | Foreach-Object FullName
-    }
-}
-
 # Preview Files in Dir With FZF
-function fn-preview-directory {
+function fn-directory-preview-fzf {
     if (!(Get-Command fzf -ErrorAction SilentlyContinue)) {
         Write-Host "fzf is not installed. Please install it and try again."
         Exit
@@ -547,147 +673,8 @@ function fn-preview-directory {
     fzf --preview 'bat --theme="Visual Studio Dark+" --color=always {}' --layout=reverse
 }
 
-# Generate or copy a file from ~/MEGA/Templates to the current directory
-# 1. Select the file
-# 2. Rename to new filename
-function fn-file-new-from-template {
-    if (!(Get-Command fzf -ErrorAction SilentlyContinue)) {
-        Write-Host "fzf is not installed. Please install it and try again."
-        Exit
-    }
-    
-    $files = Get-ChildItem -Path "~/MEGA/Templates" -Recurse -File | Select-Object -ExpandProperty FullName
-
-    # Use fzf to select a file
-    $selectedFile = $files | fzf --layout=reverse --header="TEMPALTE: Copy File to Current Dir" --preview 'bat --theme="Visual Studio Dark+" --color=always {}'
-    $currentDir = $PWD.Path
-    # Check if a file is selected
-    if ($selectedFile) {
-        # Extract filename
-        $fileName = Split-Path -Path $selectedFile -Leaf
-        # Navigate to the selected subdirectory
-        $newFileName = Read-Host -Prompt "TEMPLATE`n`nSelected: $fileName`nDir: $currentDir`n`n(Press Enter to keep the same name)`n`n`nEnter New Filename"
-        
-        # If no filename is given, then set it to the selected
-        if ($newFileName -eq "") {
-            $newFileName = $fileName 
-        }
-
-        # Check if the file already exists
-        if (Test-Path -Path ".\$newFileName") {
-            # Prompt user for confirmation
-            $confirmation = Read-Host "File '$newFileName' already exists. Do you want to overwrite it? (Y/N)"
-            
-            # If user confirms, copy the file with force
-            if ($confirmation -eq "Y" -or $confirmation -eq "y") {
-                Copy-Item -Path "$selectedFile" -Destination ".\$newFileName" -Force -Confirm:$false
-                
-                Write-Host "`nCreated: $currentDir\$newFileName`n"
-            }
-            else {
-                Write-Host "Operation aborted by user."
-            }
-        }
-        else {
-            # If file does not exist, simply copy it
-            Copy-Item -Path "$selectedFile" -Destination ".\$newFileName"
-            $currentDir = $PWD.Path
-            Write-Host "`nCreated: $currentDir\$newFileName`n"
-        }
-
-
-    } else {
-        Write-Host "Nothing selected."
-    }
-}
-
-function fn-ShowCsvInGridView {
-    [CmdletBinding()]
-    param(
-        [Parameter(Position = 0)]
-        [string]$Path,
-
-        [Parameter(Position = 1)]
-        [string]$Delimiter
-    )
-
-    if (-not $Path) {
-        Write-Host ""
-        Write-Host "Usage:" -ForegroundColor Yellow
-        Write-Host "Show-CsvInGridView -Path '<PathToCsv>' [-Delimiter '<DelimiterCharacter>']"
-        Write-Host ""
-        Write-Host "Examples:"
-        Write-Host "Show-CsvInGridView -Path 'C:\data.csv'"
-        Write-Host "Show-CsvInGridView -Path 'C:\data.csv' -Delimiter ';'"
-        Write-Host "Show-CsvInGridView -Path 'C:\data.csv' -Delimiter '`t'"
-
-        return
-    }
-
-    if (-not (Test-Path $Path)) {
-        Write-Error "Error: File '$Path' not found."
-        return
-    }
-
-    try {
-        if ($Delimiter) {
-            # Validate: must be exactly one character
-            if ($Delimiter.Length -ne 1) {
-                throw "Delimiter must be exactly one character. Provided: '$Delimiter'"
-            }
-
-            Import-Csv -Path $Path -Delimiter $Delimiter | Out-GridView -Title ($Path | Split-Path -Leaf)
-        }
-        else {
-            Import-Csv -Path $Path | Out-GridView -Title ($Path | Split-Path -Leaf)
-        }
-    }
-    catch {
-        Write-Error "Error: $_"
-    }
-}
-
-# Only load PS7-specific code if the current PowerShell version is 7 or higher
-# This avoids syntax errors in PowerShell 5, which can't parse newer language features
-if ($PSVersionTable.PSVersion.Major -ge 7) {
-    . "$PSScriptRoot\UserScripts\ShowJsonInGridView-Powershell-7.ps1"
-}
-
-
-# Print info about a file or dir
-function fn-info {
-    param(
-        [string]$Path
-    )
-
-    try {
-        $item = Get-Item $Path -ErrorAction Stop
-        Write-Host "Name: $($item.Name)"
-        Write-Host "Type: $($item.GetType().Name)"
-        Write-Host "Full Path: $($item.FullName)"
-        
-        if ($item -is [System.IO.FileInfo]) {
-            $sizeMB = [math]::Round($item.Length / 1MB, 2)
-            Write-Host "Size: $($sizeMB) MB"
-        }
-        elseif ($item -is [System.IO.DirectoryInfo]) {
-            $totalSize = 0
-            $childItems = Get-ChildItem $Path -Recurse
-            foreach ($child in $childItems) {
-                $totalSize += $child.Length
-            }
-            $totalSizeMB = [math]::Round($totalSize / 1MB, 2)
-            Write-Host "Total Size: $($totalSizeMB) MB"
-            Write-Host "Number of items inside: $($childItems.Count)"
-        }
-    }
-    catch {
-        Write-Host "Error: $_"
-    }
-}
-
 # It will get the sizes of the folders in the current directory, and show it as a table
-function fn-get-folderSizes {
+function fn-directory-list-sizes {
     try {
         $folders = Get-ChildItem -Directory
         $folderInfo = @()
@@ -706,76 +693,7 @@ function fn-get-folderSizes {
         Write-Host "Error: $_"
     }
 }
-
-# Searches all the content of files in the current diretory and subpaths for a given string
-# example usage: Search-Content "TODO"
-function fn-SearchContent {
-    param (
-        [Parameter(Mandatory=$true, Position=0)]
-        [string]$searchContent
-    )
-
-    # Step 1: Define an array of exclude strings
-    $excludeDirs = @(
-        "node_modules",
-        "dist",
-        "bin",
-        "obj",
-        "build",
-        "out",
-        "tmp",
-        "temp",
-        "coverage",
-        ".cache",
-        ".vs",
-        ".idea"
-        )
-
-    # Step 1: Get a list of all subdirectories
-    $subdirs = Get-ChildItem -Directory -Recurse
-
-    # Step 2: Initialize an array to store the full names
-    $subdirNames = @()
-
-    # Step 3: Iterate over each subdirectory and add its full name to the array
-    foreach ($subdir in $subdirs) {
-        $subdirNames += $subdir.FullName
-    }
-
-
-    # Step 4: Initialize an array to store filtered directory names
-    $subdirsFiltered = @()
-
-    # Step 5: Iterate over each directory name and check if it should be excluded
-    foreach ($dirName in $subdirNames) {
-        $exclude = $false
-        foreach ($excludedir in $excludeDirs) {
-            if ($dirName -like "*\$excludedir*") {
-                $exclude = $true
-                break
-            }
-        }
-        if (-not $exclude) {
-            $subdirsFiltered += $dirName
-        }
-    }
-
-
-    foreach ($path in $subdirsFiltered) {
-        Write-Host ""
-        Write-Host "$path" -ForegroundColor Yellow
-        rg -i --context 1 "$searchContent" "$path"
-    }
-}
-
-function fn-SearchFileName($name) {
-    Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
-        $place_path = $_.directory
-        Write-Output "${place_path}\${_}"
-    }
-}
-
-function fn-SearchFolderName([string]$name = "") {
+function fn-directory-search-directory-name([string]$name = "") {
     Get-ChildItem -Directory -Recurse -Filter "*$name*" -ErrorAction SilentlyContinue | ForEach-Object {
         Write-Output $_.FullName
     }
@@ -839,6 +757,222 @@ function fn-list-subdirs-levels {
 		}
 }
 # --------------------------------------------------------------------
+# FILES 
+# --------------------------------------------------------------------
+
+function touch($file) {
+    "" | Out-File $file -Encoding ASCII
+}
+
+# List files in current dir
+function fn-file-list {  Get-ChildItem -Path . -File | Select-Object @{Name='SubPath';Expression={Split-Path $_.FullName -Leaf} } }
+
+# It returns a list of paths, that matches the search pattern. Does the the rough equivalent of dir /s /b. For example, dirs *.png is dir /s /b *.png
+function fn-file-filename-search {
+    if ($args.Count -gt 0) {
+        Get-ChildItem -Recurse -Include "$args" | Foreach-Object FullName
+    } else {
+        Get-ChildItem -Recurse | Foreach-Object FullName
+    }
+}
+
+# Generate or copy a file from ~/MEGA/Templates to the current directory
+# 1. Select the file
+# 2. Rename to new filename
+function fn-file-new-from-template {
+    if (!(Get-Command fzf -ErrorAction SilentlyContinue)) {
+        Write-Host "fzf is not installed. Please install it and try again."
+        Exit
+    }
+    
+    $files = Get-ChildItem -Path "~/MEGA/Templates" -Recurse -File | Select-Object -ExpandProperty FullName
+
+    # Use fzf to select a file
+    $selectedFile = $files | fzf --layout=reverse --header="TEMPALTE: Copy File to Current Dir" --preview 'bat --theme="Visual Studio Dark+" --color=always {}'
+    $currentDir = $PWD.Path
+    # Check if a file is selected
+    if ($selectedFile) {
+        # Extract filename
+        $fileName = Split-Path -Path $selectedFile -Leaf
+        # Navigate to the selected subdirectory
+        $newFileName = Read-Host -Prompt "TEMPLATE`n`nSelected: $fileName`nDir: $currentDir`n`n(Press Enter to keep the same name)`n`n`nEnter New Filename"
+        
+        # If no filename is given, then set it to the selected
+        if ($newFileName -eq "") {
+            $newFileName = $fileName 
+        }
+
+        # Check if the file already exists
+        if (Test-Path -Path ".\$newFileName") {
+            # Prompt user for confirmation
+            $confirmation = Read-Host "File '$newFileName' already exists. Do you want to overwrite it? (Y/N)"
+            
+            # If user confirms, copy the file with force
+            if ($confirmation -eq "Y" -or $confirmation -eq "y") {
+                Copy-Item -Path "$selectedFile" -Destination ".\$newFileName" -Force -Confirm:$false
+                
+                Write-Host "`nCreated: $currentDir\$newFileName`n"
+            }
+            else {
+                Write-Host "Operation aborted by user."
+            }
+        }
+        else {
+            # If file does not exist, simply copy it
+            Copy-Item -Path "$selectedFile" -Destination ".\$newFileName"
+            $currentDir = $PWD.Path
+            Write-Host "`nCreated: $currentDir\$newFileName`n"
+        }
+
+
+    } else {
+        Write-Host "Nothing selected."
+    }
+}
+
+function fn-file-show-csv-in-table {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0)]
+        [string]$Path,
+
+        [Parameter(Position = 1)]
+        [string]$Delimiter
+    )
+
+    if (-not $Path) {
+        Write-Host ""
+        Write-Host "Usage:" -ForegroundColor Yellow
+        Write-Host "Show-CsvInGridView -Path '<PathToCsv>' [-Delimiter '<DelimiterCharacter>']"
+        Write-Host ""
+        Write-Host "Examples:"
+        Write-Host "Show-CsvInGridView -Path 'C:\data.csv'"
+        Write-Host "Show-CsvInGridView -Path 'C:\data.csv' -Delimiter ';'"
+        Write-Host "Show-CsvInGridView -Path 'C:\data.csv' -Delimiter '`t'"
+
+        return
+    }
+
+    if (-not (Test-Path $Path)) {
+        Write-Error "Error: File '$Path' not found."
+        return
+    }
+
+    try {
+        if ($Delimiter) {
+            # Validate: must be exactly one character
+            if ($Delimiter.Length -ne 1) {
+                throw "Delimiter must be exactly one character. Provided: '$Delimiter'"
+            }
+
+            Import-Csv -Path $Path -Delimiter $Delimiter | Out-GridView -Title ($Path | Split-Path -Leaf)
+        }
+        else {
+            Import-Csv -Path $Path | Out-GridView -Title ($Path | Split-Path -Leaf)
+        }
+    }
+    catch {
+        Write-Error "Error: $_"
+    }
+}
+
+# Searches all the content of files in the current diretory and subpaths for a given string
+# example usage: Search-Content "TODO"
+function fn-file-search-content {
+    param (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$searchContent
+    )
+
+    # Step 1: Define an array of exclude strings
+    $excludeDirs = @(
+        "node_modules",
+        "dist",
+        "bin",
+        "obj",
+        "build",
+        "out",
+        "tmp",
+        "temp",
+        "coverage",
+        ".cache",
+        ".vs",
+        ".idea"
+        )
+
+    # Step 1: Get a list of all subdirectories
+    $subdirs = Get-ChildItem -Directory -Recurse
+
+    # Step 2: Initialize an array to store the full names
+    $subdirNames = @()
+
+    # Step 3: Iterate over each subdirectory and add its full name to the array
+    foreach ($subdir in $subdirs) {
+        $subdirNames += $subdir.FullName
+    }
+
+
+    # Step 4: Initialize an array to store filtered directory names
+    $subdirsFiltered = @()
+
+    # Step 5: Iterate over each directory name and check if it should be excluded
+    foreach ($dirName in $subdirNames) {
+        $exclude = $false
+        foreach ($excludedir in $excludeDirs) {
+            if ($dirName -like "*\$excludedir*") {
+                $exclude = $true
+                break
+            }
+        }
+        if (-not $exclude) {
+            $subdirsFiltered += $dirName
+        }
+    }
+
+
+    foreach ($path in $subdirsFiltered) {
+        Write-Host ""
+        Write-Host "$path" -ForegroundColor Yellow
+        rg -i --context 1 "$searchContent" "$path"
+    }
+}
+
+function fn-file-search-filename($name) {
+    Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
+        $place_path = $_.directory
+        Write-Output "${place_path}\${_}"
+    }
+}
+
+function fn-file-unzip ($file) {
+    Write-Output("Extracting", $file, "to", $pwd)
+    $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
+    Expand-Archive -Path $fullFile -DestinationPath $pwd
+}
+
+function fn-file-grep-in-file($regex, $dir) {
+    if ( $dir ) {
+        Get-ChildItem $dir | select-string $regex
+        return
+    }
+    $input | select-string $regex
+}
+
+# --------------------------------------------------------------------
+# Include scripts
+# --------------------------------------------------------------------
+. "$PSScriptRoot\UserScripts\G-JumpToDir.ps1"
+. "$PSScriptRoot\UserScripts\fn-snippets.ps1"
+. "$PSScriptRoot\UserScripts\fn-list-my-functions-help.ps1"
+
+
+# Only load PS7-specific code if the current PowerShell version is 7 or higher
+# This avoids syntax errors in PowerShell 5, which can't parse newer language features
+if ($PSVersionTable.PSVersion.Major -ge 7) {
+    . "$PSScriptRoot\UserScripts\fn-file-show-json-in-table-ps7.ps1"
+}
+
+# --------------------------------------------------------------------
 # PROFILE
 # --------------------------------------------------------------------
 function fn-profile-show-path { Write-Host " Profile: $PROFILE" }
@@ -892,37 +1026,6 @@ function fn-profile-open-directory-in-explorer {
     
 }
 
-# --------------------------------------------------------------------
-# PACKAGE MANAGER
-# --------------------------------------------------------------------
-function choco-search {
-    param (
-        [string]$Query
-    )
-
-    choco search $Query
-}
-
-function choco-install {
-    param (
-        [string]$PackageName
-    )
-
-    choco install $PackageName
-}
-
-# takes multiple names as argument
-function choco-info {
-    param(
-        [string[]]$packages
-    )
-
-    foreach ($package in $packages) {
-        Write-Host "=== $package ======================================================="
-        choco info $package
-        Write-Host ""
-    }
-}
 
 # --------------------------------------------------------------------
 # TERMINAL
@@ -941,88 +1044,98 @@ function fn-show-all-terminal-hotkeys {
 # --------------------------------------------------------------------
 # FUNCTIONS
 # --------------------------------------------------------------------
-function c. { code . }
-function i. { code-insiders . }
-function e. { explorer . }
-function n { notepad $args }
 
 
 function dotnetWatch { dotnet run watch }
 
-
-# Open files with micro
-function m {
-    [CmdletBinding()]
-    param (
-        [string[]]$File
+# Print info about a file or dir
+function fn-info {
+    param(
+        [string]$Path
     )
 
-    if (-not (Get-Command fzf -ErrorAction SilentlyContinue)) {
-        Write-Error "fzf is not installed or not in PATH."
-        return
-    }
-    if (-not (Get-Command micro -ErrorAction SilentlyContinue)) {
-        Write-Error "micro editor is not installed or not in PATH."
-        return
-    }
-
     try {
-        if ($File) {
-            # Quote paths that may contain spaces
-            $quoted = $File | ForEach-Object { "`"$($_)`"" }
-            Invoke-Expression "micro $($quoted -join ' ')"
-            return
+        $item = Get-Item $Path -ErrorAction Stop
+        Write-Host "Name: $($item.Name)"
+        Write-Host "Type: $($item.GetType().Name)"
+        Write-Host "Full Path: $($item.FullName)"
+        
+        if ($item -is [System.IO.FileInfo]) {
+            $sizeMB = [math]::Round($item.Length / 1MB, 2)
+            Write-Host "Size: $($sizeMB) MB"
         }
-
-        Write-Host "Loading..."
-        $files = Get-ChildItem -File -Recurse -ErrorAction SilentlyContinue |
-            Where-Object {
-                $_.FullName -notmatch '\\(node_modules|\.git)[\\\/]' -and
-                $_.Extension -notmatch '\.(exe|dll|bin|jpg|jpeg|png|gif|bmp|zip|rar|7z|iso|mp4|mp3|avi|mov|pdf|docx?|xlsx?|pptx?)$'
-            } |
-            ForEach-Object {
-                Resolve-Path -Relative $_.FullName
+        elseif ($item -is [System.IO.DirectoryInfo]) {
+            $totalSize = 0
+            $childItems = Get-ChildItem $Path -Recurse
+            foreach ($child in $childItems) {
+                $totalSize += $child.Length
             }
-
-        if (-not $files) {
-            Write-Host "No suitable files found."
-            return
+            $totalSizeMB = [math]::Round($totalSize / 1MB, 2)
+            Write-Host "Total Size: $($totalSizeMB) MB"
+            Write-Host "Number of items inside: $($childItems.Count)"
         }
-
-        $fzfArgs = @(
-            '--multi'
-            '--layout=reverse'
-            '--header=Micro: Select files to open'
-            '--preview=bat --theme="Visual Studio Dark+" --color=always {}'
-        )
-        $selected = $files | fzf @fzfArgs
-
-        if ([string]::IsNullOrWhiteSpace($selected)) {
-            Write-Host "No file selected."
-            return
-        }
-
-        # Split into lines (even if only one), trim and verify
-        $toOpen = $selected -split "`n" |
-            ForEach-Object { $_.Trim('"') } |
-            Where-Object { Test-Path $_ }
-
-        if (-not $toOpen) {
-            Write-Host "No valid files selected."
-            return
-        }
-
-        # Quote each path and launch micro
-        $quotedPaths = $toOpen | ForEach-Object { "`"$($_)`"" }
-        Invoke-Expression "micro $($quotedPaths -join ' ')"
     }
     catch {
-        Write-Error "An error occurred in function m: $_"
+        Write-Host "Error: $_"
     }
 }
 
-# $Host.UI.RawUI.WindowTitle = "PowerShell {0}" -f $PSVersionTable.PSVersion.ToString()
+function fn-locate {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ProgramName
+    )
 
+    try {
+        Write-Host "Searching for '$ProgramName'..." -ForegroundColor Cyan
+        $pathsFound = [System.Collections.Generic.List[string]]::new()
+
+        # 1. Check environmental PATH (Uses 'Get-Command' internally)
+        $cliCheck = Get-Command $ProgramName -ErrorAction SilentlyContinue
+        if ($cliCheck) {
+            $pathsFound.Add($cliCheck.Source)
+        }
+
+        # 2. Check Windows Registry (Both 64-bit and 32-bit paths)
+        $regPaths = @(
+            "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
+            "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*"
+        )
+
+        foreach ($regPath in $regPaths) {
+            try {
+                $apps = Get-ItemProperty $regPath -ErrorAction SilentlyContinue | 
+                        Where-Object { $_.DisplayName -match $ProgramName -or $_.PSChildName -match $ProgramName }
+
+                foreach ($app in $apps) {
+                    if ($app.InstallLocation) {
+                        $pathsFound.Add($app.InstallLocation)
+                    } elseif ($app.UninstallString -match '"([^"]+)"|(\S+)') {
+                        # Fallback: Extract directory from the uninstall string if InstallLocation is blank
+                        $uninstallPath = $Matches[0].Trim('"')
+                        if (Test-Path $uninstallPath) {
+                            $pathsFound.Add((Split-Path $uninstallPath))
+                        }
+                    }
+                }
+            } catch {
+                # Silently catch registry access errors for specific restricted keys
+            }
+        }
+
+        # Output results
+        $uniquePaths = $pathsFound | Select-Object -Unique
+        if ($uniquePaths.Count -gt 0) {
+            return $uniquePaths
+        } else {
+            Write-Warning "Could not find any installation paths matching '$ProgramName'."
+        }
+    }
+    catch {
+        Write-Error "An unexpected error occurred while locating the program: $_"
+    }
+}
 
 # Simple function to start a new elevated process. If arguments are supplied then 
 # a single command is started with admin rights; if not then a new admin instance
@@ -1045,110 +1158,6 @@ Function Test-CommandExists {
     Finally { $ErrorActionPreference = $oldPreference }
 } 
 
-function ll {
-    param (
-        [string]$Path = "."
-    )
-
-    function Convert-Size {
-        param ([long]$bytes)
-        switch ($bytes) {
-            { $_ -lt 1KB } { return "{0:N1} B" -f $bytes; break }
-            { $_ -lt 1MB } { return "{0:N1} KB" -f ($bytes / 1KB); break }
-            { $_ -lt 1GB } { return "{0:N1} MB" -f ($bytes / 1MB); break }
-            { $_ -lt 1TB } { return "{0:N1} GB" -f ($bytes / 1GB); break }
-            default        { return "{0:N1} TB" -f ($bytes / 1TB) }
-        }
-    }
-    function Get-EmojiPrefix {
-        param ($item)
-    
-        # Use Unicode escape sequences to represent emojis
-        # $folderEmoji = [char]0x1F4C1  # 📁
-        # $fileEmoji   = [char]0x1F4C4  # 📄
-        $folderEmoji = "`u{1F4C1}"  # 📁
-        $fileEmoji   = "`u{1F4C4}"  # 📄
-    
-        if ($item.PSIsContainer) {
-            return $folderEmoji
-        } else {
-            return $fileEmoji
-        }
-    }
-    # function Get-EmojiPrefix {
-    #     param ($item)
-    #     if ($item.PSIsContainer) {
-    #         return "📁"
-    #     } else {
-    #         return "📄"
-    #     }
-    # }
-
-    Get-ChildItem -Path $Path | ForEach-Object {
-        $isFolder = $_.PSIsContainer
-        [PSCustomObject]@{
-            Name           = "$(Get-EmojiPrefix $_) $($_.Name)"
-            Type           = if ($isFolder) { "Folder" } else { $_.Extension.TrimStart('.') }
-            Size           = if ($isFolder) { "" } else { Convert-Size $_.Length }
-            'Date Modified'= $_.LastWriteTime
-            'Date Created' = $_.CreationTime
-        }
-    } | Format-Table -AutoSize
-}
-
-
-
-function fn-unzip ($file) {
-    Write-Output("Extracting", $file, "to", $pwd)
-    $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
-    Expand-Archive -Path $fullFile -DestinationPath $pwd
-}
-
-function fn-grep($regex, $dir) {
-    if ( $dir ) {
-        Get-ChildItem $dir | select-string $regex
-        return
-    }
-    $input | select-string $regex
-}
-function touch($file) {
-    "" | Out-File $file -Encoding ASCII
-}
-
-# Start firefox with json file file
-function fn-json {
-    param (
-        [string]$FilePath
-    )
-
-    Start-Process -FilePath 'C:\Program Files\Mozilla Firefox\firefox.exe' -ArgumentList '-new-tab', $FilePath
-}
-
-# Only load PS7-specific code if the current PowerShell version is 7 or higher
-# This avoids syntax errors in PowerShell 5, which can't parse newer language features
-if ($PSVersionTable.PSVersion.Major -ge 7) {
-
-    function Is-Binary {
-        param (
-            [string]$filePath
-        )
-
-        # Read a portion of the file
-        $byteArray = [System.IO.File]::ReadAllBytes($filePath)
-        
-        # Loop through each byte
-        foreach ($byte in $byteArray) {
-            # If any byte is outside the range of printable ASCII characters (0x20 - 0x7E), it's binary
-            if ($byte -lt 0x20 -or $byte -gt 0x7E) {
-                return $true
-            }
-        }
-        
-        # If all bytes are within the printable ASCII range, it's likely a text file
-        return $false
-    }
-}
-
 
 
 # JUNK SCRIPTS -------------------------------------------------------------------------------
@@ -1156,24 +1165,10 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
 function md5 { Get-FileHash -Algorithm MD5 $args }
 function sha1 { Get-FileHash -Algorithm SHA1 $args }
 function sha256 { Get-FileHash -Algorithm SHA256 $args }
-function Get-PubIP {
+function fn-ip-get-PubIP {
     (Invoke-WebRequest http://ifconfig.me/ip ).Content
 }
-function uptime {
-    #Windows Powershell only
-	If ($PSVersionTable.PSVersion.Major -eq 5 ) {
-		Get-WmiObject win32_operatingsystem |
-        Select-Object @{EXPRESSION={ $_.ConverttoDateTime($_.lastbootuptime)}} | Format-Table -HideTableHeaders
-	} Else {
-        net statistics workstation | Select-String "since" | foreach-object {$_.ToString().Replace('Statistics since ', '')}
-    }
-}
-# function df {
-#     get-volume
-# }
-# function sed($file, $find, $replace) {
-#     (Get-Content $file).replace("$find", $replace) | Set-Content $file
-# }
+
 function which($name) {
     Get-Command $name | Select-Object -ExpandProperty Definition
 }
@@ -1183,10 +1178,14 @@ function which($name) {
 function pkill($name) {
     Get-Process $name -ErrorAction SilentlyContinue | Stop-Process
 }
-function pgrep($name) {
+function fn-process-grep($name) {
     Get-Process $name
 }
 
+# Drive shortcuts
+function HKLM: { Set-Location HKLM: }
+function HKCU: { Set-Location HKCU: }
+function Env: { Set-Location Env: }
 
 # # Creates drive shortcut for Work Folders, if current user account is using it
 # if (Test-Path "$env:USERPROFILE\Work Folders") {
@@ -1320,4 +1319,5 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
 # - Register-ArgumentCompleter 
 # PSReadLine 2.1+ with Predictive IntelliSense:
 # - https://devblogs.microsoft.com/powershell/announcing-psreadline-2-1-with-predictive-intellisense/
+
 

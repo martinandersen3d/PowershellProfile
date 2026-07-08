@@ -2,7 +2,7 @@
 
 # (Get-Content -Raw -Path "example.json" | ConvertFrom-Json) | Out-GridView -Title "Json Data"
 # (Get-Content -Raw -Path "example.json" | ConvertFrom-Json).People | Out-GridView -Title "Json Data"
-function ShowJsonInGridView {
+function fn-file-show-json-in-table {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)]
