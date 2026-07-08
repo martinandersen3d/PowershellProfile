@@ -88,7 +88,7 @@ function Get-Snippet {
         --delimiter '\t' `
         --with-nth 2 `
         --preview $PreviewCommand `
-        --preview-window 'top:55%:wrap' `
+        --preview-window 'top:15%:wrap' `
         --header="Select a snippet (Copies to clipboard)" `
         --height=90% `
         --reverse
