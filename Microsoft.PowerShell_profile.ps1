@@ -79,6 +79,7 @@ $Env:YAZI_FILE_ONE = 'C:\Program Files\Git\usr\bin\file.exe'
 Set-Alias -Name d -Value fn-directory-list
 Set-Alias -Name f -Value fn-file-list
 Set-Alias -Name dd -Value fn-directory-list-as-table
+Set-Alias -Name fn -Value fn-help-list-my-functions
 Set-Alias -Name gen -Value fn-file-new-from-template
 Set-Alias -Name y -Value fn-app-yasi
 Set-Alias -Name snip -Value fn-snippets 
@@ -960,11 +961,11 @@ function fn-file-grep-in-file($regex, $dir) {
 }
 
 # --------------------------------------------------------------------
-# Include scripts
+# INCLUDE SCRIPTS
 # --------------------------------------------------------------------
 . "$PSScriptRoot\UserScripts\G-JumpToDir.ps1"
 . "$PSScriptRoot\UserScripts\fn-snippets.ps1"
-. "$PSScriptRoot\UserScripts\fn-list-my-functions-help.ps1"
+. "$PSScriptRoot\UserScripts\fn-help-list-my-functions.ps1"
 
 
 # Only load PS7-specific code if the current PowerShell version is 7 or higher
@@ -987,33 +988,6 @@ function fn-profile-edit-notepad {
     }
 }
 
-# Call the function to list all methods in the PowerShell profile
-function fn-list-commands {
-    try {
-        $profilePath = $profile
-        if (-not (Test-Path $profilePath)) {
-            Write-Error "PowerShell profile not found."
-            return
-        }
-        
-        $profileContent = Get-Content $profilePath -Raw
-        $profileMethods = [regex]::Matches($profileContent, 'function\s+([^({\s]+)')
-        
-        if ($profileMethods.Count -eq 0) {
-            Write-Output "No custom methods found in the PowerShell profile."
-            return
-        }
-        
-        Write-Output "Methods in PowerShell profile:"
-        $profileMethods | ForEach-Object {
-            $_.Groups[1].Value
-        }
-    }
-    catch {
-        Write-Error "An error occurred: $_"
-    }
-}
-
 function fn-profile-open-directory-in-explorer {
     # Open folder if it exists
     if (!(Test-Path -Path ($env:userprofile + "\Documents\WindowsPowerShell"))) {
@@ -1026,7 +1000,6 @@ function fn-profile-open-directory-in-explorer {
 
     
 }
-
 
 # --------------------------------------------------------------------
 # TERMINAL
@@ -1159,7 +1132,76 @@ Function Test-CommandExists {
     Finally { $ErrorActionPreference = $oldPreference }
 } 
 
+# --------------------------------------------------------------------
+# HELP
+# --------------------------------------------------------------------
 
+
+# Call the function to list all methods in the PowerShell profile
+function fn-help-list-commands {
+    try {
+        $profilePath = $profile
+        if (-not (Test-Path $profilePath)) {
+            Write-Error "PowerShell profile not found."
+            return
+        }
+        
+        $profileContent = Get-Content $profilePath -Raw
+        $profileMethods = [regex]::Matches($profileContent, 'function\s+([^({\s]+)')
+        
+        if ($profileMethods.Count -eq 0) {
+            Write-Output "No custom methods found in the PowerShell profile."
+            return
+        }
+        
+        Write-Output "Methods in PowerShell profile:"
+        $profileMethods | ForEach-Object {
+            $_.Groups[1].Value
+        }
+    }
+    catch {
+        Write-Error "An error occurred: $_"
+    }
+}
+
+function fn-help-alias-list-all { Get-Alias }
+
+function fn-help-alias-list-profile-only {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $false)]
+        [string]$Name
+    )
+
+    try {
+        # Determine whether to use 'pwsh' (PS Core) or 'powershell' (Windows PS)
+        $psExe = if ($PSVersionTable.PSVersion.Major -ge 6) { "pwsh" } else { "powershell" }
+
+        # Get aliases from a clean session without loading the profile
+        $cleanAliases = & $psExe -NoProfile -Command { Get-Alias } -ErrorAction Stop
+
+        # Compare current session aliases against the clean session
+        $profileAliases = Compare-Object (Get-Alias) $cleanAliases -Property Name |
+            Where-Object { $_.SideIndicator -eq '<=' } |
+            ForEach-Object { Get-Alias $_.Name } |
+            Select-Object Name, Definition
+
+        # If a specific name filter was provided, filter the results
+        if ($Name) {
+            $profileAliases = $profileAliases | Where-Object { $_.Name -like "*$Name*" }
+        }
+
+        # Output the results
+        if ($profileAliases) {
+            return $profileAliases
+        } else {
+            Write-Warning "No custom profile aliases found."
+        }
+    }
+    catch {
+        Write-Error "Failed to retrieve profile aliases: $_"
+    }
+}
 
 # JUNK SCRIPTS -------------------------------------------------------------------------------
 # Compute file hashes - useful for checking successful downloads 
@@ -1173,9 +1215,7 @@ function fn-ip-get-PubIP {
 function which($name) {
     Get-Command $name | Select-Object -ExpandProperty Definition
 }
-# function export($name, $value) {
-#     set-item -force -path "env:$name" -value $value;
-# }
+
 function pkill($name) {
     Get-Process $name -ErrorAction SilentlyContinue | Stop-Process
 }

@@ -2,7 +2,7 @@
 .SYNOPSIS
 Lists all loaded functions named fn-* and prints each function's SYNTAX and SYNOPSIS.
 #>
-function fn {
+function fn-help-list-my-functions {
 	function Get-HelpSectionText {
 		param(
 			[string]$HelpText,
