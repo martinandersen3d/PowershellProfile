@@ -106,7 +106,10 @@ function Get-Snippet {
                 $SelectedSnippet.Code | clip.exe
             }
 
-            Write-Host "Copied to clipboard!" -ForegroundColor Green
+            Write-Host "______________ Copied to clipboard!" -ForegroundColor Green
+            Write-Host ""
+
+            Write-Output $SelectedSnippet.Preview
         }
     }
 }
