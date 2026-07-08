@@ -762,7 +762,7 @@ function fn-list-subdirs-levels {
 # FILES 
 # --------------------------------------------------------------------
 
-function touch($file) {
+function touch([string]$file) {
     "" | Out-File $file -Encoding ASCII
 }
 
@@ -939,20 +939,20 @@ function fn-file-search-content {
     }
 }
 
-function fn-file-search-filename($name) {
+function fn-file-search-filename([string]$name) {
     Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
         $place_path = $_.directory
         Write-Output "${place_path}\${_}"
     }
 }
 
-function fn-file-unzip ($file) {
+function fn-file-unzip ([string]$file) {
     Write-Output("Extracting", $file, "to", $pwd)
     $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
     Expand-Archive -Path $fullFile -DestinationPath $pwd
 }
 
-function fn-file-grep-in-file($regex, $dir) {
+function fn-file-grep-in-file([string]$regex, [string]$dir) {
     if ( $dir ) {
         Get-ChildItem $dir | select-string $regex
         return
@@ -1212,14 +1212,14 @@ function fn-ip-get-PubIP {
     (Invoke-WebRequest http://ifconfig.me/ip ).Content
 }
 
-function which($name) {
+function which([string]$name) {
     Get-Command $name | Select-Object -ExpandProperty Definition
 }
 
-function pkill($name) {
+function pkill([string]$name) {
     Get-Process $name -ErrorAction SilentlyContinue | Stop-Process
 }
-function fn-process-grep($name) {
+function fn-process-grep([string]$name) {
     Get-Process $name
 }
 
