@@ -322,7 +322,7 @@ if ($fonts | Where-Object { $_.Name -like "*$fontName*" }) {
 
 
 # ----------------------------------------------
-# COLOR THEME FOR DELTA:  https://github.com/dandavison/delta
+LogTitle "COLOR THEME FOR DELTA:  https://github.com/dandavison/delta"
 # ----------------------------------------------
 git config --global delta.file-style "yellow bold"
 git config --global delta.file-decoration-style "yellow ul"
