@@ -299,7 +299,7 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+RightArrow" -ScriptBlock {
 
 # ================================================ CTRL+ALT+DOWN: CD SUBDIRS
 # Interactive directory navigation tool: CD into subfolders via fzf with context-aware depth limits.
-# Uses 2-level depth at root/home for speed, and 5-level depth elsewhere for project browsing,
+# Uses 2-level depth at root/home for speed, and 3-level depth elsewhere for project browsing,
 # while filtering out noise folders (e.g., .git, node_modules) to maximize relevance.
 function fn-subdirs-fzf {
     $exclude = "\.git|node_modules|bin|obj"
@@ -314,7 +314,7 @@ function fn-subdirs-fzf {
     if ($currentPath -eq $homeDir -or $currentPath -eq $rootDrive) {
         $depth = 1 # 0, 1 = 2 levels
     } else {
-        $depth = 4 # 0, 1, 2, 3, 4 = 5 levels
+        $depth = 3 # 0, 1, 2, 3, 4 = 5 levels
     }
 
     try {
