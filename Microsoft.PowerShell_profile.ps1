@@ -79,6 +79,7 @@ $Env:YAZI_FILE_ONE = 'C:\Program Files\Git\usr\bin\file.exe'
 Set-Alias -Name d -Value fn-directory-list
 Set-Alias -Name f -Value fn-file-list
 Set-Alias -Name dd -Value fn-directory-list-as-table
+Set-Alias -Name gen -Value fn-file-new-from-template
 Set-Alias -Name y -Value fn-app-yasi
 Set-Alias -Name snip -Value fn-snippets 
 # Set UNIX-like aliases for the admin command, so sudo <command> will run the command
