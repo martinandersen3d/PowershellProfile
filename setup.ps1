@@ -322,6 +322,15 @@ if ($fonts | Where-Object { $_.Name -like "*$fontName*" }) {
 
 
 # ----------------------------------------------
+# COLOR THEME FOR DELTE
+# ----------------------------------------------
+git config --global delta.file-style "yellow bold"
+git config --global delta.file-decoration-style "yellow ul"
+git config --global delta.hunk-header-decoration-style "#333333 ol"
+git config --global delta.line-numbers-left-style "#333333"
+git config --global delta.line-numbers-right-style "#333333"
+
+# ----------------------------------------------
 # RELOAD PROFILE
 # ----------------------------------------------
 Start-Sleep -Seconds 1
