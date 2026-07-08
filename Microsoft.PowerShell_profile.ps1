@@ -98,6 +98,10 @@ function n { notepad $args }
 
 # Yazi file manager ---------------------------------------------------
 
+<#
+.SYNOPSIS
+    Launches Yazi and updates the shell location to the selected directory.
+#>
 function fn-app-yasi {
     $tmp = [System.IO.Path]::GetTempFileName()
     yazi $args --cwd-file="$tmp"
@@ -110,6 +114,10 @@ function fn-app-yasi {
 
 # Micro: Open file  ---------------------------------------------------
 # Open files with micro
+<#
+.SYNOPSIS
+    Opens one or more files in micro, optionally using fzf to select files.
+#>
 function m {
     [CmdletBinding()]
     param (
@@ -184,6 +192,10 @@ function m {
 # SCRIPT UPDATE
 # --------------------------------------------------------------------
 # Update scripts from the git repo
+<#
+.SYNOPSIS
+    Downloads and executes the profile setup script from the repository.
+#>
 function fn-profile-download-script-update {
     $url = "https://github.com/martinandersen3d/PowershellProfile/raw/main/setup.ps1"
     try {
@@ -200,6 +212,10 @@ function fn-profile-download-script-update {
 # --------------------------------------------------------------------
 
 # ================================================ CTRL+ALT+LEFT: cd back
+<#
+.SYNOPSIS
+    Extends cd with stack navigation, fuzzy matching, and back navigation.
+#>
 function global:custom-cd {
     param(
         [Parameter(Position=0)]
@@ -288,6 +304,10 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+LeftArrow" -ScriptBlock {
 
 # ================================================ CTRL+ALT+UP: CD UP
 # Push the current directory onto the stack before cd up one directory
+<#
+.SYNOPSIS
+    Moves to the parent directory and stores the current location on the stack.
+#>
 function fn-cd-up {
     Push-Location (Get-Location)
     cd ..
@@ -302,6 +322,10 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+UpArrow" -ScriptBlock {
 # ================================================ CTRL+ALT+LEFT: CD BACK
 # Function to get Windows Explorer pinned/bookmarked paths
 # NOTE: do not "Run Code" from VScode. Only run in terminal
+<#
+.SYNOPSIS
+    Lists accessible pinned folders from Windows Explorer Quick Access.
+#>
 function fn-windows-explorer-list-bookmarks {
     <#
     .SYNOPSIS
@@ -335,6 +359,10 @@ function fn-windows-explorer-list-bookmarks {
 
 # ================================================
 # Go to last directory by creation date
+<#
+.SYNOPSIS
+    Navigates to the most recently created subdirectory in the current path.
+#>
 function cd-last {
     <#
     .SYNOPSIS
@@ -353,6 +381,10 @@ function cd-last {
     }
 }
 
+<#
+.SYNOPSIS
+    Selects a Quick Access bookmark with fzf and navigates to it.
+#>
 function fn-windows-explorer-bookmarks-fzf {
     $arrow = [char]::ConvertFromUtf32(0x276F)
     $selected = fn-windows-explorer-list-bookmarks | fzf --layout=reverse --prompt=" BOOKMARKS $arrow "
@@ -373,6 +405,10 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+Alt+RightArrow" -ScriptBlock {
 # Interactive directory navigation tool: CD into subfolders via fzf with context-aware depth limits.
 # Uses 2-level depth at root/home for speed, and 3-level depth elsewhere for project browsing,
 # while filtering out noise folders (e.g., .git, node_modules) to maximize relevance.
+<#
+.SYNOPSIS
+    Selects a subdirectory with fzf and navigates to it.
+#>
 function fn-subdirs-fzf {
     $exclude = "\.git|node_modules|bin|obj"
     $arrow = [char]::ConvertFromUtf32(0x276F)
@@ -447,26 +483,50 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
 # Core base alias
 Set-Alias -Name ai -Value copilot
 
+<#
+.SYNOPSIS
+    Lists available Copilot skills from the local skills folder.
+#>
 function al-skills-list {
     Get-ChildItem -LiteralPath "$HOME\.copilot\skills" -Directory -Name
 }
 
 # Gemini 3.5 Flash (Medium Effort)
+<#
+.SYNOPSIS
+    Runs Copilot CLI with the gemini-3.5-flash model.
+#>
 function ai-gemini-3_5-flash { copilot --model gemini-3.5-flash --effort medium @args }
 
 # Claude Sonnet 4.6 (Medium Effort)
+<#
+.SYNOPSIS
+    Runs Copilot CLI with the claude-sonnet-4.6 model.
+#>
 function ai-claude-sonnet-4_6 { copilot --model claude-sonnet-4.6 --effort medium @args }
 
 # GPT 5.5 (Medium Effort)
+<#
+.SYNOPSIS
+    Runs Copilot CLI with the gpt-5.5 model.
+#>
 function ai-gpt-5_5 { copilot --model gpt-5.5 --effort medium @args }
 
 # GPT 5.3 Codex (Medium Effort)
+<#
+.SYNOPSIS
+    Runs Copilot CLI with the gpt-5.3-codex model.
+#>
 function ai-gpt-5_3-codex { copilot --model gpt-5.3-codex --effort medium @args }
 
 # --------------------------------------------------------------------
 # CHEATSHEET / HELP 
 # --------------------------------------------------------------------
 
+<#
+.SYNOPSIS
+    Displays the Git cheatsheet file using bat.
+#>
 function fn-CheatsheetGit {
     $filePath = "$HOME\Documents\WindowsPowerShell\CheatSheet\git.md"
     if (Test-Path $filePath) {
@@ -476,6 +536,10 @@ function fn-CheatsheetGit {
     }
 }
 
+<#
+.SYNOPSIS
+    Displays the PowerShell cheatsheet file using bat.
+#>
 function fn-CheatsheetPowershell {
     $filePath = "$HOME\Documents\WindowsPowerShell\CheatSheet\powershell.md"
     if (Test-Path $filePath) {
@@ -485,6 +549,10 @@ function fn-CheatsheetPowershell {
     }
 }
 
+<#
+.SYNOPSIS
+    Displays the general help cheatsheet file using bat.
+#>
 function fn-help {
     $filePath = "$HOME\Documents\WindowsPowerShell\CheatSheet\help.md"
     if (Test-Path $filePath) {
@@ -497,6 +565,10 @@ function fn-help {
 # --------------------------------------------------------------------
 # GIT
 # --------------------------------------------------------------------
+<#
+.SYNOPSIS
+    Stages all changes, creates a commit with a message, and pushes to the remote.
+#>
 function fn-gitCommitPush {
     param (
         [string]$Message
@@ -517,26 +589,46 @@ function fn-gitCommitPush {
     git push
 }
 
+<#
+.SYNOPSIS
+    Pushes the current branch to the remote repository.
+#>
 function fn-gitPush {    
     Write-Host "COMMAND: git push"
     git push
 }
 
+<#
+.SYNOPSIS
+    Executes the auto-commit-and-push helper script from UserScripts.
+#>
 function fn-gitAutoCommitPush {
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\GitAutoCommitPush.ps1"
 }
 
+<#
+.SYNOPSIS
+    Shows changed files and previews diffs against HEAD with fzf.
+#>
 function fn-gitShowCurrentCommitDiffFzf {
     git status --porcelain | ForEach-Object { $_.Substring(3) } | fzf --header "[COMMIT DIFF]: CURRENT vs. HEAD" --header-first --preview "git diff HEAD -- {} | bat --color=always" --layout=reverse
 }
 
+<#
+.SYNOPSIS
+    Shows commit message preview using the UserScripts helper.
+#>
 function fn-gitShowCommitMessage {
     # Get the firectory name of the current powershell profile
     $profileBasePath = Split-Path $PROFILE -Parent
     & "$profileBasePath\UserScripts\GitShowCommitMessagePreview.ps1"
 }
 
+<#
+.SYNOPSIS
+    Compares current branch files to origin/dev and previews diffs with fzf.
+#>
 function fn-GitShowCurrentBranchVSDevFzf {
     git diff --name-only origin/dev | fzf --header "[PULLREQUEST DIFF]: HEAD vs. origin/dev" --header-first --preview "git diff origin/dev -- {} | bat --color=always" --layout=reverse
 }
@@ -559,6 +651,10 @@ function cd..... { Set-Location ..\..\..\.. }
 # DIRECTORYS 
 # --------------------------------------------------------------------
 
+<#
+.SYNOPSIS
+    Lists files and folders with type, size, and timestamp metadata.
+#>
 function ll {
     param (
         [string]$Path = "."
@@ -638,14 +734,26 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
 
 
 # List Dirs in current dir
+<#
+.SYNOPSIS
+    Lists subdirectories in the current directory.
+#>
 function fn-directory-list { Get-ChildItem -Path . -Directory | Select-Object @{Name='SubPath';Expression={Split-Path $_.FullName -Leaf} } }
 
 # List Dirs in current dir as table with columns
+<#
+.SYNOPSIS
+    Shows directory contents in a multi-column table view.
+#>
 function fn-directory-list-as-table {
     Get-ChildItem | Format-Wide -Column 3
   }
 
 # Navigate subdirectories with fzf
+<#
+.SYNOPSIS
+    Selects a subdirectory with fzf and navigates to it.
+#>
 function s {
     if (!(Get-Command fzf -ErrorAction SilentlyContinue)) {
         Write-Host "fzf is not installed. Please install it and try again."
@@ -667,6 +775,10 @@ function s {
 }
 
 # Preview Files in Dir With FZF
+<#
+.SYNOPSIS
+    Opens fzf with file previews powered by bat.
+#>
 function fn-directory-preview-fzf {
     if (!(Get-Command fzf -ErrorAction SilentlyContinue)) {
         Write-Host "fzf is not installed. Please install it and try again."
@@ -676,6 +788,10 @@ function fn-directory-preview-fzf {
 }
 
 # It will get the sizes of the folders in the current directory, and show it as a table
+<#
+.SYNOPSIS
+    Calculates and displays folder sizes in the current directory.
+#>
 function fn-directory-list-sizes {
     try {
         $folders = Get-ChildItem -Directory
@@ -695,12 +811,20 @@ function fn-directory-list-sizes {
         Write-Host "Error: $_"
     }
 }
+<#
+.SYNOPSIS
+    Searches recursively for directories by name pattern.
+#>
 function fn-directory-search-directory-name([string]$name = "") {
     Get-ChildItem -Directory -Recurse -Filter "*$name*" -ErrorAction SilentlyContinue | ForEach-Object {
         Write-Output $_.FullName
     }
 }
 
+<#
+.SYNOPSIS
+    Lists subdirectories at a specific depth while excluding common build folders.
+#>
 function fn-list-subdirs-levels {
 	param(
 		[Parameter(Mandatory=$false, Position=0)]
@@ -762,14 +886,26 @@ function fn-list-subdirs-levels {
 # FILES 
 # --------------------------------------------------------------------
 
+<#
+.SYNOPSIS
+    Creates an empty file or overwrites an existing file with empty content.
+#>
 function touch([string]$file) {
     "" | Out-File $file -Encoding ASCII
 }
 
 # List files in current dir
+<#
+.SYNOPSIS
+    Lists files in the current directory.
+#>
 function fn-file-list {  Get-ChildItem -Path . -File | Select-Object @{Name='SubPath';Expression={Split-Path $_.FullName -Leaf} } }
 
 # It returns a list of paths, that matches the search pattern. Does the the rough equivalent of dir /s /b. For example, dirs *.png is dir /s /b *.png
+<#
+.SYNOPSIS
+    Recursively lists file paths that match include patterns.
+#>
 function fn-file-filename-search {
     if ($args.Count -gt 0) {
         Get-ChildItem -Recurse -Include "$args" | Foreach-Object FullName
@@ -781,6 +917,10 @@ function fn-file-filename-search {
 # Generate or copy a file from ~/MEGA/Templates to the current directory
 # 1. Select the file
 # 2. Rename to new filename
+<#
+.SYNOPSIS
+    Copies a selected template file into the current directory and optionally renames it.
+#>
 function fn-file-new-from-template {
     if (!(Get-Command fzf -ErrorAction SilentlyContinue)) {
         Write-Host "fzf is not installed. Please install it and try again."
@@ -832,6 +972,10 @@ function fn-file-new-from-template {
     }
 }
 
+<#
+.SYNOPSIS
+    Imports a CSV file and shows it in Out-GridView.
+#>
 function fn-file-show-csv-in-table {
     [CmdletBinding()]
     param(
@@ -880,6 +1024,10 @@ function fn-file-show-csv-in-table {
 
 # Searches all the content of files in the current diretory and subpaths for a given string
 # example usage: Search-Content "TODO"
+<#
+.SYNOPSIS
+    Searches file contents recursively while skipping common ignored folders.
+#>
 function fn-file-search-content {
     param (
         [Parameter(Mandatory=$true, Position=0)]
@@ -939,6 +1087,10 @@ function fn-file-search-content {
     }
 }
 
+<#
+.SYNOPSIS
+    Searches recursively for files by partial filename.
+#>
 function fn-file-search-filename([string]$name) {
     Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
         $place_path = $_.directory
@@ -946,12 +1098,20 @@ function fn-file-search-filename([string]$name) {
     }
 }
 
+<#
+.SYNOPSIS
+    Extracts a zip archive into the current directory.
+#>
 function fn-file-unzip ([string]$file) {
     Write-Output("Extracting", $file, "to", $pwd)
     $fullFile = Get-ChildItem -Path $pwd -Filter .\cove.zip | ForEach-Object { $_.FullName }
     Expand-Archive -Path $fullFile -DestinationPath $pwd
 }
 
+<#
+.SYNOPSIS
+    Searches text with Select-String in provided files or pipeline input.
+#>
 function fn-file-grep-in-file([string]$regex, [string]$dir) {
     if ( $dir ) {
         Get-ChildItem $dir | select-string $regex
@@ -977,9 +1137,21 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
 # --------------------------------------------------------------------
 # PROFILE
 # --------------------------------------------------------------------
+<#
+.SYNOPSIS
+    Displays the path to the active PowerShell profile.
+#>
 function fn-profile-show-path { Write-Host " Profile: $PROFILE" }
+<#
+.SYNOPSIS
+    Reloads the active PowerShell profile.
+#>
 function fn-profile-reload { & $profile }
 # Make it easy to edit this profile once it's installed
+<#
+.SYNOPSIS
+    Opens the current profile for editing in ISE or Notepad.
+#>
 function fn-profile-edit-notepad {
     if ($host.Name -match "ise") {
         $psISE.CurrentPowerShellTab.Files.Add($profile.CurrentUserAllHosts)
@@ -988,6 +1160,10 @@ function fn-profile-edit-notepad {
     }
 }
 
+<#
+.SYNOPSIS
+    Opens common PowerShell profile directories in File Explorer.
+#>
 function fn-profile-open-directory-in-explorer {
     # Open folder if it exists
     if (!(Test-Path -Path ($env:userprofile + "\Documents\WindowsPowerShell"))) {
@@ -1004,14 +1180,26 @@ function fn-profile-open-directory-in-explorer {
 # --------------------------------------------------------------------
 # TERMINAL
 # --------------------------------------------------------------------
+<#
+.SYNOPSIS
+    Clears the screen and reloads the profile.
+#>
 function clr { 
     Clear-Host 
     & $profile
 }
+<#
+.SYNOPSIS
+    Clears the screen and reloads the profile.
+#>
 function clear { 
     Clear-Host 
     & $profile
 }
+<#
+.SYNOPSIS
+    Lists all current PSReadLine keybindings.
+#>
 function fn-show-all-terminal-hotkeys {
     Get-PSReadLineKeyHandler
 }
@@ -1020,9 +1208,17 @@ function fn-show-all-terminal-hotkeys {
 # --------------------------------------------------------------------
 
 
+<#
+.SYNOPSIS
+    Runs dotnet watch for the current project.
+#>
 function dotnetWatch { dotnet run watch }
 
 # Print info about a file or dir
+<#
+.SYNOPSIS
+    Shows metadata about a file or directory, including size details.
+#>
 function fn-info {
     param(
         [string]$Path
@@ -1054,6 +1250,10 @@ function fn-info {
     }
 }
 
+<#
+.SYNOPSIS
+    Finds possible installation paths for a program from PATH and registry entries.
+#>
 function fn-locate {
     param(
         [Parameter(Mandatory = $true)]
@@ -1114,6 +1314,10 @@ function fn-locate {
 # Simple function to start a new elevated process. If arguments are supplied then 
 # a single command is started with admin rights; if not then a new admin instance
 # of PowerShell is started.
+<#
+.SYNOPSIS
+    Starts PowerShell or a command with elevated administrator privileges.
+#>
 function admin {
     if ($args.Count -gt 0) {   
         $argList = "& '" + $args + "'"
@@ -1123,6 +1327,10 @@ function admin {
     }
 }
 
+<#
+.SYNOPSIS
+    Checks whether a command is available in the current session.
+#>
 Function Test-CommandExists {
     Param ($command)
     $oldPreference = $ErrorActionPreference
@@ -1138,6 +1346,10 @@ Function Test-CommandExists {
 
 
 # Call the function to list all methods in the PowerShell profile
+<#
+.SYNOPSIS
+    Lists function definitions found in the current profile file.
+#>
 function fn-help-list-commands {
     try {
         $profilePath = $profile
