@@ -523,7 +523,7 @@ function s {
 }
 
 . "$PSScriptRoot\UserScripts\G-JumpToDir.ps1"
-
+. "$PSScriptRoot\UserScripts\Snippets.ps1"
 # Drive shortcuts
 function HKLM: { Set-Location HKLM: }
 function HKCU: { Set-Location HKCU: }

@@ -14,7 +14,7 @@
 # ```
 # ---
 
-function Get-Snippet {
+function snip {
     $SnippetDir = "$HOME/MEGA/CLI"
     
     if (-not (Test-Path $SnippetDir)) {
@@ -131,4 +131,3 @@ function Get-Snippet {
         }
     }
 }
-Get-Snippet
