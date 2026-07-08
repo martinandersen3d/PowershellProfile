@@ -14,6 +14,40 @@
 # ```
 # ---
 
+function Resolve-SnippetTemplate {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Code
+    )
+
+    $PlaceholderPattern = '<(?<name>[^<>\r\n]+)>'
+    $Matches = [regex]::Matches($Code, $PlaceholderPattern)
+    if ($Matches.Count -eq 0) {
+        return $Code
+    }
+
+    $Values = @{}
+    foreach ($Match in $Matches) {
+        $Name = $Match.Groups['name'].Value.Trim()
+        if (-not $Name) { continue }
+
+        if (-not $Values.ContainsKey($Name)) {
+            $Values[$Name] = Read-Host "Enter value for <$Name>"
+        }
+    }
+
+    return [regex]::Replace($Code, $PlaceholderPattern, {
+        param($Match)
+
+        $Name = $Match.Groups['name'].Value.Trim()
+        if ($Values.ContainsKey($Name)) {
+            return $Values[$Name]
+        }
+
+        return $Match.Value
+    })
+}
+
 function snip {
     $SnippetDir = "$HOME/MEGA/CLI"
     
@@ -61,9 +95,10 @@ function snip {
                         $DisplayStr = "[$Category] $SingleLineDesc"
 
                         [void]$AllSnippets.Add([PSCustomObject]@{
-                            Display = $DisplayStr
-                            Code    = $CleanCode
-                            Preview = "$SingleLineDesc`r`n`r`n$CleanCode"
+                            Display     = $DisplayStr
+                            Description = $SingleLineDesc
+                            Code        = $CleanCode
+                            Preview     = "$SingleLineDesc`r`n`r`n$CleanCode"
                         })
                     }
                 }
@@ -100,14 +135,33 @@ function snip {
     $PreviewScript = '& { param([string]$Line) $Index = ($Line -split [char]9, 2)[0]; [System.Environment]::GetEnvironmentVariable((''SNIP_PREVIEW_'' + $Index), ''Process'') }'
     $PreviewCommand = '"{0}" -NoProfile -ExecutionPolicy Bypass -Command "{1}" {{}}' -f $PowerShellCommand, $PreviewScript
 
-    $SelectedLine = $Choices | fzf `
+    $FzfResult = @($Choices | fzf `
+        --expect=ctrl-space `
         --delimiter '\t' `
         --with-nth 2 `
         --preview $PreviewCommand `
         --preview-window 'top:15%:wrap' `
-        --header="Select a snippet (Copies to clipboard)" `
+        --header="Enter: copy | Ctrl-Space: fill <params> and copy" `
         --height=90% `
-        --reverse
+        --reverse)
+
+    if ($FzfResult.Count -eq 0) {
+        return
+    }
+
+    $PressedKey = $null
+    $SelectedLine = $FzfResult[0]
+    if ([string]::IsNullOrEmpty($SelectedLine) -and $FzfResult.Count -ge 2) {
+        $SelectedLine = $FzfResult[1]
+    }
+    elseif ($FzfResult[0] -eq 'ctrl-space') {
+        $PressedKey = $FzfResult[0]
+        if ($FzfResult.Count -lt 2) {
+            return
+        }
+
+        $SelectedLine = $FzfResult[1]
+    }
 
     if ($SelectedLine) {
         # Split cleanly by the tab character to get the array index
@@ -115,14 +169,31 @@ function snip {
         $SelectedSnippet = $AllSnippets[$SelectedIndex]
         
         if ($SelectedSnippet) {
-            if (Get-Command Set-Clipboard -ErrorAction SilentlyContinue) {
-                $SelectedSnippet.Code | Set-Clipboard
-            }
-            else {
-                $SelectedSnippet.Code | clip.exe
+            $OutputCode = $SelectedSnippet.Code
+            $OutputPreview = "$($SelectedSnippet.Description)`r`n`r`n$OutputCode"
+            $Divider = [string]([char]0x2500) * $Host.UI.RawUI.WindowSize.Width
+
+            Write-Host $Divider -ForegroundColor DarkGray
+            Write-Output $OutputPreview
+            Write-Host $Divider -ForegroundColor DarkGray
+
+            if ($PressedKey -eq 'ctrl-space') {
+                Write-Host ""
+                $OutputCode = Resolve-SnippetTemplate $SelectedSnippet.Code
+                $OutputPreview = "$($SelectedSnippet.Description)`r`n`r`n$OutputCode"
+
+                Write-Host ""
+                Write-Host $Divider -ForegroundColor DarkGray
+                Write-Output $OutputPreview
+                Write-Host $Divider -ForegroundColor DarkGray
             }
 
-            Write-Output $SelectedSnippet.Preview
+            if (Get-Command Set-Clipboard -ErrorAction SilentlyContinue) {
+                $OutputCode | Set-Clipboard
+            }
+            else {
+                $OutputCode | clip.exe
+            }
 
             Write-Host ""
             Write-Host " ✅ Copied to clipboard!" -ForegroundColor Green
