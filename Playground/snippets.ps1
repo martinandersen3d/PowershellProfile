@@ -1,3 +1,19 @@
+# Folder has markdown documents.
+# They are formattet:
+# 1. Description
+# 2. Codeblock ``` ... ```
+# 3. Horizontal line "---"
+#
+# - There can be many in a single markdown file
+# - The codeblock can be multiline
+# 
+# Example (Git.md):
+# Git Log: Show compact decorated history.
+# ```bash
+# git log --oneline --decorate
+# ```
+# ---
+
 function Get-Snippet {
     $SnippetDir = "$HOME/MEGA/CLI"
     
@@ -106,10 +122,12 @@ function Get-Snippet {
                 $SelectedSnippet.Code | clip.exe
             }
 
-            Write-Host "______________ Copied to clipboard!" -ForegroundColor Green
+            Write-Output $SelectedSnippet.Preview
+
+            Write-Host ""
+            Write-Host " ✅ Copied to clipboard!" -ForegroundColor Green
             Write-Host ""
 
-            Write-Output $SelectedSnippet.Preview
         }
     }
 }
