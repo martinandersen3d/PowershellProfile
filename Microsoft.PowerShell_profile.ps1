@@ -261,6 +261,26 @@ function fn-windows-explorer-list-bookmarks {
     $allPaths | Select-Object -Unique
 }
 
+# ================================================
+# Go to last directory by creation date
+function cd-last {
+    <#
+    .SYNOPSIS
+        Changes the location to the most recently created directory in the current folder.
+    #>
+    # Find the latest directory, ignoring files
+    $lastDir = Get-ChildItem -Directory | 
+               Sort-Object CreationTime -Descending | 
+               Select-Object -First 1
+
+    if ($lastDir) {
+        Write-Host "Navigating to: $($lastDir.Name)" -ForegroundColor Cyan
+        Set-Location -Path $lastDir.FullName
+    } else {
+        Write-Warning "No subdirectories found in the current folder."
+    }
+}
+
 function fn-windows-explorer-bookmarks-fzf {
     $arrow = [char]::ConvertFromUtf32(0x276F)
     $selected = fn-windows-explorer-list-bookmarks | fzf --layout=reverse --prompt=" BOOKMARKS $arrow "
