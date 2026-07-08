@@ -922,6 +922,7 @@ function fn-show-all-terminal-hotkeys {
 # FUNCTIONS
 # --------------------------------------------------------------------
 function c. { code . }
+function i. { code-insiders . }
 function e. { explorer . }
 function n { notepad $args }
 
