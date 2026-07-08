@@ -547,7 +547,7 @@ function fn-preview-directory {
     fzf --preview 'bat --theme="Visual Studio Dark+" --color=always {}' --layout=reverse
 }
 
-# Generate or copy a file from ~/Templates to the current directory
+# Generate or copy a file from ~/MEGA/Templates to the current directory
 # 1. Select the file
 # 2. Rename to new filename
 function fn-file-new-from-template {
@@ -556,7 +556,7 @@ function fn-file-new-from-template {
         Exit
     }
     
-    $files = Get-ChildItem -Path "~/Templates" -Recurse -File | Select-Object -ExpandProperty FullName
+    $files = Get-ChildItem -Path "~/MEGA/Templates" -Recurse -File | Select-Object -ExpandProperty FullName
 
     # Use fzf to select a file
     $selectedFile = $files | fzf --layout=reverse --header="TEMPALTE: Copy File to Current Dir" --preview 'bat --theme="Visual Studio Dark+" --color=always {}'
