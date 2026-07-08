@@ -1206,7 +1206,7 @@ if (Get-Module PSReadLine) {
     $WhiteColor = "$([char]27)[38;2;255;255;255m"
 
     # History Listview inline prediction: https://ianmorozoff.com/2023/01/10/predictive-intellisense-on-by-default-in-powershell-7-3/
-    if ($PSVersionTable.PSVersion.Major -ge 7.3) {
+    if ($PSVersionTable.PSVersion.Major -ge 7) {
         if ((Get-Command Set-PSReadLineOption).Parameters.ContainsKey('PredictionViewStyle')) {
             InlinePrediction = $BrightGray  # The predictive ghost/shadow text in bright gray
         }
@@ -1255,19 +1255,21 @@ function prompt {
 # Shows navigable menu of all options when hitting Tab
 # https://techcommunity.microsoft.com/blog/itopstalkblog/autocomplete-in-powershell/2604524
 # Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+if ($PSVersionTable.PSVersion.Major -ge 7) {
+    try {
+        Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+        # 1. Force predictions and completions into a single vertical list view
+        Import-Module DirectoryPredictor
+        Import-Module CompletionPredictor
+        Set-PSReadLineOption -PredictionViewStyle ListView
+        Set-PSReadLineOption -PredictionSource HistoryAndPlugin
+        Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
+        Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
+    }
+    catch {
+        Write-Error "Failed to configure vertical list options: $_"
+    }
 
-try {
-    Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
-    # 1. Force predictions and completions into a single vertical list view
-    Import-Module DirectoryPredictor
-    Import-Module CompletionPredictor
-    Set-PSReadLineOption -PredictionViewStyle ListView
-    Set-PSReadLineOption -PredictionSource HistoryAndPlugin
-    Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
-    Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
-}
-catch {
-    Write-Error "Failed to configure vertical list options: $_"
 }
 
 # ----------------------------------------------------------------------------
