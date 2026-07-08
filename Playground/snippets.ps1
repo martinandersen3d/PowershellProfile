@@ -47,6 +47,7 @@ function Get-Snippet {
                         [void]$AllSnippets.Add([PSCustomObject]@{
                             Display = $DisplayStr
                             Code    = $CleanCode
+                            Preview = "$SingleLineDesc`r`n`r`n$CleanCode"
                         })
                     }
                 }
@@ -70,16 +71,17 @@ function Get-Snippet {
         
         # Keep environment variable assignments in process memory
         [System.Environment]::SetEnvironmentVariable("SNIP_$i", $AllSnippets[$i].Code, [System.EnvironmentVariableTarget]::Process)
+        [System.Environment]::SetEnvironmentVariable("SNIP_PREVIEW_$i", $AllSnippets[$i].Preview, [System.EnvironmentVariableTarget]::Process)
     }
 
     # Force fzf to use powershell to run the preview command.
-    # Pass the selected row as an argument so PowerShell can resolve SNIP_INDEX safely.
+    # Pass the selected row as an argument so PowerShell can resolve SNIP_PREVIEW_INDEX safely.
     $PowerShellCommand = (Get-Command powershell.exe -ErrorAction SilentlyContinue).Source
     if (-not $PowerShellCommand) {
         $PowerShellCommand = 'powershell.exe'
     }
 
-    $PreviewScript = '& { param([string]$Line) $Index = ($Line -split [char]9, 2)[0]; [System.Environment]::GetEnvironmentVariable((''SNIP_'' + $Index), ''Process'') }'
+    $PreviewScript = '& { param([string]$Line) $Index = ($Line -split [char]9, 2)[0]; [System.Environment]::GetEnvironmentVariable((''SNIP_PREVIEW_'' + $Index), ''Process'') }'
     $PreviewCommand = '"{0}" -NoProfile -ExecutionPolicy Bypass -Command "{1}" {{}}' -f $PowerShellCommand, $PreviewScript
 
     $SelectedLine = $Choices | fzf `
