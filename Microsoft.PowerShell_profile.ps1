@@ -1508,7 +1508,11 @@ function prompt {
     $closedFolder = [char]::ConvertFromUtf32(0x1F4C1)  # Closed folder emoji
     $arrow = [char]::ConvertFromUtf32(0x276F)  # Right angle arrow '❯'
     $path = $PWD.Path
-    
+
+    # Horizontal line
+    $Divider = [string]([char]0x2500) * $Host.UI.RawUI.WindowSize.Width
+    Write-Host "`e[38;2;45;45;45m$Divider`e[0m"
+
     # Get the branch (Orange), then immediately switch back to Yellow
     $branch = if ($b = git branch --show-current 2>$null) { "${Orange} [$b]${Gold}" } else { "" }
 
