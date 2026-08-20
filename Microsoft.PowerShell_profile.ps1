@@ -1539,19 +1539,26 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
     try {
         # Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
-        # Carapace terminal completions setup
-        # $env:CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
-        # Set-PSReadLineOption -Colors @{ "Selection" = "`e[7m" }
+        # Carapace terminal completions setup (Cached for fast shell startup!)
         Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
-        carapace _carapace | Out-String | Invoke-Expression
 
-        # Clean, modern VS Code inspired dark-terminal completion styling
-        carapace --style 'carapace.Value=bright-green'
-        carapace --style 'carapace.Description=gray'
-        carapace --style 'carapace.FlagLong=bright-green'
-        carapace --style 'carapace.FlagShort=bright-green'
-        carapace --style 'carapace.Keyword=bright-green'
-        carapace --style 'carapace.Highlight=bright-green'
+        if (Get-Command carapace -ErrorAction SilentlyContinue) {
+            $carapaceCache = Join-Path $env:TEMP "carapace_completions_cache.ps1"
+            # Regenerate the cache if it doesn't exist or is empty
+            if (-not (Test-Path $carapaceCache) -or (Get-Item $carapaceCache).Length -lt 100) {
+                $env:CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
+                carapace _carapace | Out-String | Out-File -FilePath $carapaceCache -Encoding utf8
+            }
+            . $carapaceCache
+
+            # Clean, modern VS Code inspired dark-terminal completion styling
+            carapace --style 'carapace.Value=bright-green'
+            carapace --style 'carapace.Description=gray'
+            carapace --style 'carapace.FlagLong=bright-green'
+            carapace --style 'carapace.FlagShort=bright-green'
+            carapace --style 'carapace.Keyword=bright-green'
+            carapace --style 'carapace.Highlight=bright-green'
+        }
 
         # 1. Force predictions and completions into a single vertical list view
         # Import-Module DirectoryPredictor
