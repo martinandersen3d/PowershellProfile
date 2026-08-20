@@ -1488,7 +1488,6 @@ if (Get-Module PSReadLine) {
     Set-PSReadLineOption -Colors @{
         Command          = $WheatColor  # Like 'cd', 'dir'
         Default          = $WhiteColor  # Like './Documents'
-        Selection        = "`e[7m"      # Reverse video for selected items in autocomplete menu
     }
 }
 
@@ -1536,13 +1535,6 @@ function prompt {
 if ($PSVersionTable.PSVersion.Major -ge 7) {
     try {
         Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
-
-        # Carapace terminal completions setup
-        if (Get-Command carapace -ErrorAction SilentlyContinue) {
-            $env:CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
-            carapace _carapace | Out-String | Invoke-Expression
-        }
-
         # 1. Force predictions and completions into a single vertical list view
         Import-Module DirectoryPredictor
         Import-Module CompletionPredictor
