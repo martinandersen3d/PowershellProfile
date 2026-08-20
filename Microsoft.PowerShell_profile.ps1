@@ -1495,9 +1495,9 @@ if (Get-Module PSReadLine) {
 function prompt {
 
     # Lazy Load Autocompleters
-    if (-not $script:__completersLoaded) {
-        . "$PSScriptRoot\UserScripts\ArgumentCompleters.ps1"
-    }
+    # if (-not $script:__completersLoaded) {
+    #     . "$PSScriptRoot\UserScripts\ArgumentCompleters.ps1"
+    # }
 
     # ANSI Color Codes
     $Esc    = [char]27
