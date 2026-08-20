@@ -1535,13 +1535,13 @@ function prompt {
 # Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 if ($PSVersionTable.PSVersion.Major -ge 7) {
     try {
-        Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+        # Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
         # Carapace terminal completions setup
-        if (Get-Command carapace -ErrorAction SilentlyContinue) {
-            $env:CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
-            carapace _carapace | Out-String | Invoke-Expression
-        }
+        $env:CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
+        Set-PSReadLineOption -Colors @{ "Selection" = "`e[7m" }
+        Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+        carapace _carapace | Out-String | Invoke-Expression
 
         # 1. Force predictions and completions into a single vertical list view
         # Import-Module DirectoryPredictor
