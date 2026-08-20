@@ -1543,6 +1543,14 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
         Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
         carapace _carapace | Out-String | Invoke-Expression
 
+        # Clean, modern VS Code inspired dark-terminal completion styling
+        carapace --style 'carapace.Value=bold,cyan'
+        carapace --style 'carapace.Description=gray,italic'
+        carapace --style 'carapace.FlagLong=blue'
+        carapace --style 'carapace.FlagShort=blue'
+        carapace --style 'carapace.Keyword=magenta'
+        carapace --style 'carapace.Highlight=bold,yellow'
+
         # 1. Force predictions and completions into a single vertical list view
         # Import-Module DirectoryPredictor
         # Import-Module CompletionPredictor
