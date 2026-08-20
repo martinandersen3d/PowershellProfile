@@ -1540,6 +1540,7 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
         # Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
         # Lazy-load Carapace completions only when Tab is pressed for instantaneous shell startup!
+        # https://github.com/carapace-sh/carapace-bin
         Set-PSReadlineKeyHandler -Key Tab -ScriptBlock {
             param($key, $arg)
 
