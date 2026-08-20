@@ -1477,6 +1477,7 @@ if (Get-Module PSReadLine) {
     $WheatColor = "$([char]27)[38;2;245;222;179m"
     $BrightGray = "$([char]27)[38;2;170;170;170m"
     $WhiteColor = "$([char]27)[38;2;255;255;255m"
+    $LightBlue  = "$([char]27)[38;2;156;220;254m" # VS Code Light Blue (crisp style for parameters)
 
     # History Listview inline prediction: https://ianmorozoff.com/2023/01/10/predictive-intellisense-on-by-default-in-powershell-7-3/
     # if ($PSVersionTable.PSVersion.Major -ge 7) {
@@ -1489,6 +1490,7 @@ if (Get-Module PSReadLine) {
         Command          = $WheatColor  # Like 'cd', 'dir'
         Default          = $WhiteColor  # Like './Documents'
         Selection        = "`e[7m"      # Reverse video for selected items in autocomplete menu
+        Parameter        = $LightBlue   # Bright light-blue/cyan for flags/parameters (like --bare, --git-dir)
     }
 }
 
@@ -1538,7 +1540,7 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
         # Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
         # Carapace terminal completions setup
-        $env:CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
+        # $env:CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
         # Set-PSReadLineOption -Colors @{ "Selection" = "`e[7m" }
         Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
         carapace _carapace | Out-String | Invoke-Expression
