@@ -1544,12 +1544,12 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
         carapace _carapace | Out-String | Invoke-Expression
 
         # Clean, modern VS Code inspired dark-terminal completion styling
-        carapace --style 'carapace.Value=lime'
+        carapace --style 'carapace.Value=#00FF00'
         carapace --style 'carapace.Description=gray'
-        carapace --style 'carapace.FlagLong=lime'
+        carapace --style 'carapace.FlagLong=#00FF00'
         carapace --style 'carapace.FlagShort=green'
-        carapace --style 'carapace.Keyword=lime'
-        carapace --style 'carapace.Highlight=lime'
+        carapace --style 'carapace.Keyword=#00FF00'
+        carapace --style 'carapace.Highlight=#00FF00'
 
         # 1. Force predictions and completions into a single vertical list view
         # Import-Module DirectoryPredictor
