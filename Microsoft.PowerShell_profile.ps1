@@ -1539,25 +1539,34 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
     try {
         # Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
-        # Carapace terminal completions setup (Cached for fast shell startup!)
-        Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+        # Lazy-load Carapace completions only when Tab is pressed for instantaneous shell startup!
+        Set-PSReadlineKeyHandler -Key Tab -ScriptBlock {
+            param($key, $arg)
 
-        if (Get-Command carapace -ErrorAction SilentlyContinue) {
-            $carapaceCache = Join-Path $env:TEMP "carapace_completions_cache.ps1"
-            # Regenerate the cache if it doesn't exist or is empty
-            if (-not (Test-Path $carapaceCache) -or (Get-Item $carapaceCache).Length -lt 100) {
-                $env:CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
-                carapace _carapace | Out-String | Out-File -FilePath $carapaceCache -Encoding utf8
+            if (-not $global:__carapaceLoaded) {
+                if (Get-Command carapace -ErrorAction SilentlyContinue) {
+                    $carapaceCache = Join-Path $env:TEMP "carapace_completions_cache.ps1"
+                    # Regenerate the cache if it doesn't exist or is empty
+                    if (-not (Test-Path $carapaceCache) -or (Get-Item $carapaceCache).Length -lt 100) {
+                        $env:CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
+                        carapace _carapace | Out-String | Out-File -FilePath $carapaceCache -Encoding utf8
+                    }
+                    . $carapaceCache
+
+                    # Clean, modern VS Code inspired dark-terminal completion styling
+                    carapace --style 'carapace.Value=bright-green'
+                    carapace --style 'carapace.Description=gray'
+                    carapace --style 'carapace.FlagLong=bright-green'
+                    carapace --style 'carapace.FlagShort=bright-green'
+                    carapace --style 'carapace.Keyword=bright-green'
+                    carapace --style 'carapace.Highlight=bright-green'
+                }
+                $global:__carapaceLoaded = $true
+                # Rebind Tab natively to MenuComplete to completely bypass this block on subsequent presses
+                Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
             }
-            . $carapaceCache
 
-            # Clean, modern VS Code inspired dark-terminal completion styling
-            carapace --style 'carapace.Value=bright-green'
-            carapace --style 'carapace.Description=gray'
-            carapace --style 'carapace.FlagLong=bright-green'
-            carapace --style 'carapace.FlagShort=bright-green'
-            carapace --style 'carapace.Keyword=bright-green'
-            carapace --style 'carapace.Highlight=bright-green'
+            [Microsoft.PowerShell.PSConsoleReadLine]::MenuComplete($key, $arg)
         }
 
         # 1. Force predictions and completions into a single vertical list view
