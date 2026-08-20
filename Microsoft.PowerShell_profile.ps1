@@ -1545,7 +1545,7 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
 
         # Clean, modern VS Code inspired dark-terminal completion styling
         carapace --style 'carapace.Value=lime'
-        carapace --style 'carapace.Description=gray,italic'
+        carapace --style 'carapace.Description=gray'
         carapace --style 'carapace.FlagLong=lime'
         carapace --style 'carapace.FlagShort=green'
         carapace --style 'carapace.Keyword=lime'
