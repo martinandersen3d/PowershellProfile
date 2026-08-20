@@ -132,6 +132,8 @@ CheckAndSuggestCommand "pwsh" "winget install Microsoft.PowerShell" "choco insta
 CheckAndSuggestCommand "tldr" "winget install tldr-pages.tlrc" "choco install tldr"
 CheckAndSuggestCommand "rg" "winget install BurntSushi.ripgrep.GNU" "choco install ripgrep"
 CheckAndSuggestCommand "sd" "winget install chmln.sd" "choco install ----x"
+CheckAndSuggestCommand "carapace" "winget install -e --id rsteube.Carapace" "choco install ----x"
+
 
 # ---------------------------------------------------------------------------
 LogTitle "Install Micro Terminal Text Editor from winget"
